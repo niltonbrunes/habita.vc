@@ -27,7 +27,7 @@ export interface Profile {
 export interface Property {
   id: string;
   registered_by_id: string;
-  development_id?: string;
+  development_id?: string | null;
   title: string;
   description: string;
   reference?: string;
@@ -62,6 +62,10 @@ export interface Property {
   images: string[];
   main_image?: string;
   commission_estimated_percent?: number;
+  accepts_financing?: boolean;
+  accepts_exchange?: boolean;
+  is_unit_of_development?: boolean;
+  development?: Development & { developer?: Developer };
   created_at: string;
 }
 
@@ -99,8 +103,10 @@ export interface Development {
   location_address: string;
   location_city: string;
   price_starting_at: number;
+  commercial_stage?: 'pre_launch' | 'launch' | 'construction' | 'ready';
   video_url?: string;
   launch_date?: string;
+  developer?: Developer;
   created_at: string;
 }
 
