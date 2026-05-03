@@ -15,7 +15,7 @@ import {
   Loader2
 } from 'lucide-react';
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { LeadsService } from '@/services/leads.service';
 
 export default function ArticlePage() {
@@ -26,8 +26,6 @@ export default function ArticlePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   
-  const supabase = createClient();
-
   useEffect(() => {
     const fetchPost = async () => {
       const { data, error } = await supabase

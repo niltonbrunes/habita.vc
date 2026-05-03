@@ -13,7 +13,7 @@ import {
   ShieldCheck,
   Search
 } from 'lucide-react';
-import { createClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 // Componente de Card de Artigo
 const ArticleCard = ({ post }: { post: any }) => (
