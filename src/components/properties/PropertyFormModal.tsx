@@ -44,7 +44,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
     title: '',
     description: '',
     reference: '',
-    development_id: '' as string | null,
+    development_id: null as string | null,
     transaction_type: 'sale' as 'sale' | 'rent' | 'both',
     property_category: 'residential' as 'residential' | 'commercial',
     type: 'Apartamento',
