@@ -72,7 +72,6 @@ const ArticleCard = ({ post }: { post: any }) => (
 export default function ConteudosPage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const supabase = createClient();
 
   useEffect(() => {
     const fetchPosts = async () => {
