@@ -153,6 +153,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
     try {
       await PropertiesService.create({
         ...formData,
+        reference: formData.reference || `REF-${Math.floor(Date.now() / 1000)}`,
         registered_by_id: user.id
       });
       onSuccess();
