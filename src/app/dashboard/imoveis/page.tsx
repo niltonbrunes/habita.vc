@@ -11,7 +11,8 @@ import {
   Square, 
   Car,
   TrendingUp,
-  RefreshCw
+  RefreshCw,
+  DollarSign
 } from 'lucide-react';
 import { PropertyFormModal } from '@/components/properties/PropertyFormModal';
 import { ImportService } from '@/services/import.service';
@@ -193,9 +194,22 @@ const PropertyCard = ({ property }: { property: any }) => (
             <Square size={14} className="text-muted-foreground" />
             <span className="text-xs font-bold">{property.metadata?.area || 0}m²</span>
           </div>
-          <div className="flex items-center gap-1.5">
+           <div className="flex items-center gap-1.5">
             <Car size={16} className="text-muted-foreground" />
             <span className="text-xs font-bold">{property.metadata?.parking || 0}</span>
+          </div>
+
+          <div className="ml-auto flex gap-2">
+            {property.accepts_financing && (
+              <div title="Aceita Financiamento" className="w-6 h-6 rounded-md bg-green-50 flex items-center justify-center text-green-600">
+                <DollarSign size={14} />
+              </div>
+            )}
+            {property.accepts_exchange && (
+              <div title="Aceita Permuta" className="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center text-blue-600">
+                <RefreshCw size={12} />
+              </div>
+            )}
           </div>
         </div>
       </div>

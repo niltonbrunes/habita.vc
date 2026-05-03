@@ -116,6 +116,57 @@ export default function PublicPropertyDetailPage({ params }: { params: Promise<{
                 </p>
               </div>
 
+              {/* Development Info (Inherited) */}
+              {property.development && (
+                <div className="p-10 bg-primary/5 rounded-[3rem] border border-accent/20 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="px-3 py-1 bg-accent text-white text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg">
+                          {property.development.commercial_stage === 'pre_launch' ? 'Pré-Lançamento' : 
+                           property.development.commercial_stage === 'launch' ? 'Lançamento' :
+                           property.development.commercial_stage === 'construction' ? 'Em Construção' : 'Pronto para Morar'}
+                        </span>
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Empreendimento</span>
+                      </div>
+                      <h3 className="text-3xl font-black text-primary">{property.development.name}</h3>
+                      <p className="text-sm font-bold text-muted-foreground">Por: {property.development.developer?.name}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Localização</p>
+                      <p className="font-bold text-primary">{property.development.location_city}, {property.development.location_address}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-black text-primary flex items-center gap-2">
+                      <CheckCircle2 className="text-accent" size={20} />
+                      Áreas Comuns & Diferenciais
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {property.development.features?.map((f: string, i: number) => (
+                        <span key={i} className="px-4 py-2 bg-white rounded-xl text-xs font-bold text-primary/70 shadow-sm border border-border">
+                          {f}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {property.development.gallery && property.development.gallery.length > 0 && (
+                    <div className="space-y-4">
+                      <h4 className="text-lg font-black text-primary">Galeria do Empreendimento</h4>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {property.development.gallery.slice(0, 4).map((img: string, i: number) => (
+                          <div key={i} className="aspect-square rounded-2xl overflow-hidden border border-white shadow-sm">
+                            <img src={img} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Features Chips */}
               <div className="space-y-6">
                 <h3 className="text-2xl font-black text-primary">O que este imóvel oferece</h3>
@@ -139,9 +190,22 @@ export default function PublicPropertyDetailPage({ params }: { params: Promise<{
                 {/* Price Card */}
                 <div className="bg-white p-8 rounded-[2.5rem] shadow-luxury border border-border">
                   <p className="text-sm font-black text-muted-foreground uppercase tracking-widest mb-2">Valor de Investimento</p>
-                  <h2 className="text-5xl font-black text-primary mb-8 tracking-tighter">
+                  <h2 className="text-5xl font-black text-primary mb-2 tracking-tighter">
                     R$ {property.price.toLocaleString()}
                   </h2>
+                  
+                  <div className="flex flex-wrap gap-2 mb-8">
+                    {property.accepts_financing && (
+                      <span className="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-[9px] font-black uppercase tracking-widest rounded-lg border border-green-100">
+                        <DollarSign size={12} /> Aceita Financiamento
+                      </span>
+                    )}
+                    {property.accepts_exchange && (
+                      <span className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 text-[9px] font-black uppercase tracking-widest rounded-lg border border-blue-100">
+                        <RefreshCw size={12} /> Aceita Permuta
+                      </span>
+                    )}
+                  </div>
 
                   {/* Lead Form */}
                   <div className="space-y-4">

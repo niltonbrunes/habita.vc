@@ -24,6 +24,7 @@ import {
 import { PropertiesService } from '@/services/properties.service';
 import { StorageService } from '@/services/storage.service';
 import { useAuth } from '@/context/AuthContext';
+import { DevelopmentsService } from '@/services/developments.service';
 import { PropertyPattern, PropertyStatus } from '@/types/database';
 
 interface PropertyFormModalProps {
@@ -42,6 +43,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
     title: '',
     description: '',
     reference: '',
+    development_id: '' as string | null,
     transaction_type: 'sale' as 'sale' | 'rent' | 'both',
     property_category: 'residential' as 'residential' | 'commercial',
     type: 'Apartamento',
@@ -69,6 +71,8 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
     video_url: '',
     tour_360_url: '',
     is_highlight: false,
+    accepts_financing: true,
+    accepts_exchange: false,
     metadata: {
       features: [] as string[]
     },
@@ -77,6 +81,13 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
   });
 
   const [tempId] = useState(() => Math.random().toString(36).substring(7));
+  const [developments, setDevelopments] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      DevelopmentsService.getAll().then(setDevelopments).catch(console.error);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -100,6 +111,28 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
       console.error('Erro no upload:', error);
     } finally {
       setUploading(false);
+    }
+  };
+
+  const fetchCep = async (cep: string) => {
+    const cleanCep = cep.replace(/\D/g, '');
+    if (cleanCep.length !== 8) return;
+    
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+      const data = await res.json();
+      if (!data.erro) {
+        setFormData(prev => ({
+          ...prev,
+          address_street: data.logradouro || prev.address_street,
+          address_neighborhood: data.bairro || prev.address_neighborhood,
+          address_city: data.localidade || prev.address_city,
+          address_state: data.uf || prev.address_state,
+          address_zip_code: cep
+        }));
+      }
+    } catch (err) {
+      console.error('Erro ao buscar CEP:', err);
     }
   };
 
@@ -175,6 +208,31 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
             {step === 1 && (
               <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2 col-span-full md:col-span-2">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Vincular a Empreendimento (Opcional)</label>
+                    <select
+                      value={formData.development_id || ''}
+                      onChange={e => {
+                        const devId = e.target.value;
+                        const selectedDev = developments.find(d => d.id === devId);
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          development_id: devId || null,
+                          // Herança de endereço automática
+                          address_street: selectedDev?.location_address || prev.address_street,
+                          address_city: selectedDev?.location_city || prev.address_city,
+                          address_neighborhood: selectedDev?.location_neighborhood || prev.address_neighborhood,
+                        }));
+                      }}
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
+                    >
+                      <option value="">Imóvel Avulso (Sem Condomínio)</option>
+                      {developments.map(d => (
+                        <option key={d.id} value={d.id}>{d.name} ({d.developer?.name})</option>
+                      ))}
+                    </select>
+                  </div>
+
                   <div className="space-y-2 col-span-full md:col-span-2">
                     <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Título do Anúncio</label>
                     <input
@@ -290,8 +348,13 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                       <input
                         type="text"
                         value={formData.address_zip_code}
-                        onChange={e => setFormData({ ...formData, address_zip_code: e.target.value })}
+                        onChange={e => {
+                          const val = e.target.value;
+                          setFormData({ ...formData, address_zip_code: val });
+                          if (val.replace(/\D/g, '').length === 8) fetchCep(val);
+                        }}
                         className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        placeholder="00000-000"
                       />
                     </div>
                   </div>
@@ -400,6 +463,26 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                       }`}
                     >
                       <Tag size={16} /> Imóvel em Destaque
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, accepts_financing: !formData.accepts_financing })}
+                      className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all border ${
+                        formData.accepts_financing ? 'bg-green-50 text-green-700 border-green-200' : 'bg-muted/50 text-muted-foreground border-transparent'
+                      }`}
+                    >
+                      <DollarSign size={16} /> Aceita Financiamento
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, accepts_exchange: !formData.accepts_exchange })}
+                      className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all border ${
+                        formData.accepts_exchange ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-muted/50 text-muted-foreground border-transparent'
+                      }`}
+                    >
+                      <RefreshCw size={16} /> Aceita Permuta
                     </button>
                   </div>
                 </div>

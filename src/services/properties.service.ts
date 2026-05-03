@@ -15,12 +15,12 @@ export const PropertiesService = {
   async getById(id: string) {
     const { data, error } = await supabase
       .from('properties')
-      .select('*')
+      .select('*, development:developments(*, developer:developers(*))')
       .eq('id', id)
       .single();
 
     if (error) throw error;
-    return data as Property;
+    return data;
   },
 
   async getByReference(reference: string) {

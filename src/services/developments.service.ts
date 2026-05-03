@@ -1,13 +1,12 @@
 import { supabase } from '@/lib/supabase';
-import { Development } from '@/types/database';
 
 export const DevelopmentsService = {
   async getAll() {
     const { data, error } = await supabase
       .from('developments')
-      .select('*, developer:developers(name, logo_url)')
-      .order('created_at', { ascending: false });
-
+      .select('*, developer:developers(*)')
+      .order('name');
+    
     if (error) throw error;
     return data;
   },
@@ -15,22 +14,22 @@ export const DevelopmentsService = {
   async getById(id: string) {
     const { data, error } = await supabase
       .from('developments')
-      .select('*, developer:developers(name, logo_url)')
+      .select('*, developer:developers(*)')
       .eq('id', id)
       .single();
-
+    
     if (error) throw error;
     return data;
   },
 
-  async create(development: Partial<Development>) {
+  async create(development: any) {
     const { data, error } = await supabase
       .from('developments')
-      .insert(development)
+      .insert([development])
       .select()
       .single();
-
+    
     if (error) throw error;
-    return data as Development;
+    return data;
   }
 };
