@@ -5,15 +5,31 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { KanbanColumnComponent } from '@/components/ui/Kanban';
 import { KANBAN_COLUMNS } from '@/lib/constants/kanban';
 import { useLeads } from '@/hooks/useLeads';
-import { Search, Filter, Plus, Download, RefreshCw, Upload } from 'lucide-react';
+import { Search, Filter, Plus, Download, RefreshCw, Upload, AlertCircle } from 'lucide-react';
 import { LeadFormModal } from '@/components/leads/LeadFormModal';
 import { ImportLeadsModal } from '@/components/leads/ImportLeadsModal';
 import { LeadsService } from '@/services/leads.service';
 
 export default function LeadsPage() {
-  const { leadsByStatus, loading, refresh } = useLeads();
+  const { leadsByStatus, loading, error, refresh } = useLeads();
   const [isLeadModalOpen, setIsLeadModalOpen] = React.useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = React.useState(false);
+  const [search, setSearch] = React.useState('');
+
+  const filteredLeadsByStatus = React.useMemo(() => {
+    if (!search.trim()) return leadsByStatus;
+    const q = search.toLowerCase();
+    return Object.fromEntries(
+      Object.entries(leadsByStatus).map(([status, leads]) => [
+        status,
+        leads.filter(l =>
+          (l.name ?? '').toLowerCase().includes(q) ||
+          (l.email ?? '').toLowerCase().includes(q) ||
+          (l.phone ?? '').includes(q)
+        )
+      ])
+    );
+  }, [leadsByStatus, search]);
 
   const handleExport = async () => {
     try {
@@ -44,6 +60,8 @@ export default function LeadsPage() {
               <input 
                 type="text" 
                 placeholder="Buscar lead..." 
+                value={search}
+                onChange={e => setSearch(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 bg-white rounded-2xl border border-border focus:border-primary/20 transition-all outline-none text-sm font-medium"
               />
             </div>
@@ -86,6 +104,16 @@ export default function LeadsPage() {
           onSuccess={refresh} 
         />
 
+        {error && (
+          <div className="bg-red-50 border border-red-100 p-6 rounded-[2rem] flex items-center gap-4 text-red-600 mb-8 animate-in fade-in duration-500">
+            <AlertCircle size={24} />
+            <div>
+              <p className="font-bold text-sm">Erro ao carregar leads</p>
+              <p className="text-xs opacity-80">Não foi possível conectar ao banco de dados ou a tabela não existe.</p>
+            </div>
+          </div>
+        )}
+
         {/* Kanban Board Container */}
         <div className="flex-1 overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-primary/10 relative">
           {loading && (
@@ -99,7 +127,7 @@ export default function LeadsPage() {
               <KanbanColumnComponent 
                 key={column.id} 
                 column={column} 
-                leads={leadsByStatus[column.id] || []} 
+                leads={filteredLeadsByStatus[column.id] || []} 
               />
             ))}
           </div>

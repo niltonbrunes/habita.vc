@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Tag, MessageSquare, Loader2, ShieldCheck } from 'lucide-react';
 import { TasksService } from '@/services/tasks.service';
 import { useAuth } from '@/context/AuthContext';
@@ -20,9 +20,18 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
     description: '',
     category: 'business' as TaskCategory,
     priority: 'medium' as TaskPriority,
-    due_date: new Date().toISOString().split('T')[0],
+    due_date: '',
     due_time: '09:00',
   });
+
+  // Set today's date only on the client to avoid hydration mismatch
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      due_date: new Date().toISOString().split('T')[0],
+    }));
+  }, []);
+
 
   if (!isOpen) return null;
 
@@ -44,8 +53,9 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
       });
       onSuccess();
       onClose();
-    } catch (error) {
-      console.error('Erro ao criar tarefa:', error);
+    } catch (error: any) {
+      console.error('Erro detalhado ao salvar tarefa:', error.message || error);
+      alert('Erro ao salvar tarefa: ' + (error.message || 'Verifique as permissões no banco.'));
     } finally {
       setLoading(false);
     }

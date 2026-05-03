@@ -17,7 +17,8 @@ import {
   User,
   TrendingUp,
   FileText,
-  RefreshCw
+  RefreshCw,
+  Download
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -40,6 +41,55 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     };
     fetch();
   }, [resolvedParams.id]);
+
+  const handleDownloadFicha = () => {
+    if (!property) return;
+    const commission = property.price * (property.commission_estimated_percent ?? 6) / 100;
+    const lines = [
+      `FICHA TÉCNICA — ${property.title}`,
+      `${'='.repeat(50)}`,
+      `Tipo: ${property.type} | Padrão: ${property.pattern ?? 'N/A'} | Status: ${property.status}`,
+      `Endereço: ${[property.address_street, property.address_city, property.address_state].filter(Boolean).join(', ') || 'Não informado'}`,
+      ``,
+      `PREÇO: R$ ${property.price.toLocaleString('pt-BR')}`,
+      `Comissão (${property.commission_estimated_percent ?? 6}%): R$ ${commission.toLocaleString('pt-BR')}`,
+      ``,
+      `ESPECIFICAÇÕES`,
+      `Quartos : ${property.metadata?.rooms ?? 0}`,
+      `Banheiros: ${property.metadata?.bathrooms ?? 0}`,
+      `Área    : ${property.metadata?.area ?? 0} m²`,
+      `Vagas   : ${property.metadata?.parking ?? 0}`,
+      ``,
+      `DESCRIÇÃO`,
+      property.description ?? 'Sem descrição.',
+      ``,
+      `DIFERENCIAIS`,
+      ...(property.metadata?.features?.length
+        ? property.metadata.features.map((f: string) => `  • ${f}`)
+        : ['  Nenhum diferencial cadastrado.']),
+      ``,
+      `Gerado em: ${new Date().toLocaleString('pt-BR')} | Habita.vc`,
+    ].join('\n');
+
+    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ficha_${property.title.replace(/\s+/g, '_')}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const whatsappUrl = property
+    ? `https://wa.me/?text=${encodeURIComponent(
+        `🏠 *${property.title}*\n` +
+        `📍 ${[property.address_street, property.address_city, property.address_state].filter(Boolean).join(', ') || 'Endereço a confirmar'}\n` +
+        `💰 R$ ${property.price.toLocaleString('pt-BR')}\n` +
+        `🛏 ${property.metadata?.rooms ?? 0} quartos | 📐 ${property.metadata?.area ?? 0} m² | 🚗 ${property.metadata?.parking ?? 0} vagas\n\n` +
+        `Saiba mais no Habita.vc`
+      )}`
+    : '#';
+
 
   if (loading) return (
     <DashboardLayout>
@@ -139,12 +189,20 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               </div>
 
               <div className="space-y-3">
-                <button className="w-full bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary-light transition-all shadow-premium group">
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary-light transition-all shadow-premium group"
+                >
                   <MessageCircle size={20} className="group-hover:rotate-12 transition-transform" />
                   Compartilhar no WhatsApp
-                </button>
-                <button className="w-full bg-white border border-border text-primary py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-muted transition-all">
-                  <FileText size={20} />
+                </a>
+                <button
+                  onClick={handleDownloadFicha}
+                  className="w-full bg-white border border-border text-primary py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-muted transition-all"
+                >
+                  <Download size={20} />
                   Baixar Ficha Técnica
                 </button>
               </div>
@@ -153,15 +211,30 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               <div className="mt-8 pt-8 border-t border-border">
                 <p className="text-xs font-bold text-muted-foreground uppercase mb-4">Proprietário</p>
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-                    <User size={24} className="text-primary/30" />
+                  <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center font-bold text-primary uppercase">
+                    {((property as any).profiles?.full_name ?? 'P').substring(0, 2)}
                   </div>
                   <div>
-                    <p className="text-sm font-bold">Carlos Augusto</p>
-                    <div className="flex gap-2 mt-1">
-                      <button className="p-1.5 bg-muted rounded-lg text-primary hover:bg-primary hover:text-white transition-all"><Phone size={14} /></button>
-                      <button className="p-1.5 bg-muted rounded-lg text-primary hover:bg-primary hover:text-white transition-all"><MessageCircle size={14} /></button>
-                    </div>
+                    <p className="text-sm font-bold">
+                      {(property as any).profiles?.full_name ?? 'Proprietário não vinculado'}
+                    </p>
+                    {(property as any).profiles?.phone && (
+                      <div className="flex gap-2 mt-1">
+                        <a
+                          href={`tel:${(property as any).profiles.phone}`}
+                          className="p-1.5 bg-muted rounded-lg text-primary hover:bg-primary hover:text-white transition-all"
+                        >
+                          <Phone size={14} />
+                        </a>
+                        <a
+                          href={`https://wa.me/${(property as any).profiles.phone.replace(/\D/g,'')}`}
+                          target="_blank" rel="noopener noreferrer"
+                          className="p-1.5 bg-muted rounded-lg text-primary hover:bg-primary hover:text-white transition-all"
+                        >
+                          <MessageCircle size={14} />
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

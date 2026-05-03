@@ -64,8 +64,9 @@ export default function SettingsPage() {
       await ProfilesService.update(user.id, formData);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (error) {
-      console.error('Erro ao salvar:', error);
+    } catch (error: any) {
+      console.error('Erro detalhado ao salvar configurações:', error.message || error);
+      alert('Erro ao salvar: ' + (error.message || 'Verifique as permissões no banco.'));
     } finally {
       setLoading(false);
     }

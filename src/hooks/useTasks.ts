@@ -9,19 +9,21 @@ export function useTasks() {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<(Task & { leads?: { name: string } })[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   const fetchTasks = useCallback(async () => {
-    if (!user) return;
     try {
       setLoading(true);
-      const data = await TasksService.getByUser(user.id);
+      setError(null);
+      const data = await TasksService.getAll();
       setTasks(data);
-    } catch (error) {
-      console.error('Erro ao buscar tarefas:', error);
+    } catch (err) {
+      console.error('Erro ao carregar tarefas:', err);
+      setError(err as Error);
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     fetchTasks();
@@ -48,6 +50,7 @@ export function useTasks() {
   return {
     tasks,
     loading,
+    error,
     refresh: fetchTasks,
     toggleTask,
     deleteTask

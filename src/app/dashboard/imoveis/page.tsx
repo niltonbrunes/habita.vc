@@ -23,6 +23,20 @@ export default function PropertiesPage() {
   const { properties, loading, refresh } = useProperties();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [syncing, setSyncing] = React.useState(false);
+  const [search, setSearch] = React.useState('');
+  const [patternFilter, setPatternFilter] = React.useState('');
+  const [statusFilter, setStatusFilter] = React.useState('');
+
+  const filtered = properties.filter(p => {
+    const q = search.toLowerCase();
+    const matchSearch = !q ||
+      (p.title ?? '').toLowerCase().includes(q) ||
+      (p.address_city ?? '').toLowerCase().includes(q) ||
+      (p.address_street ?? '').toLowerCase().includes(q);
+    const matchPattern = !patternFilter || p.pattern === patternFilter;
+    const matchStatus  = !statusFilter  || p.status  === statusFilter;
+    return matchSearch && matchPattern && matchStatus;
+  });
 
   const handleSync = async () => {
     if (!user) return;
@@ -78,36 +92,50 @@ export default function PropertiesPage() {
             <Search className="text-muted-foreground" size={18} />
             <input 
               type="text" 
+              value={search}
+              onChange={e => setSearch(e.target.value)}
               placeholder="Buscar por título, endereço ou código..."
               className="w-full bg-transparent border-none focus:outline-none text-sm"
             />
           </div>
           
           <div className="flex items-center gap-2">
-            <select className="bg-white border border-border px-3 py-1.5 rounded-lg text-xs font-bold text-muted-foreground outline-none focus:border-primary/30">
-              <option>Padrão</option>
-              <option>Alto Padrão</option>
-              <option>Médio</option>
-              <option>Econômico</option>
+            <select
+              value={patternFilter}
+              onChange={e => setPatternFilter(e.target.value)}
+              className="bg-white border border-border px-3 py-1.5 rounded-lg text-xs font-bold text-muted-foreground outline-none focus:border-primary/30"
+            >
+              <option value="">Padrão (todos)</option>
+              <option value="high_end">Alto Padrão</option>
+              <option value="medium">Médio</option>
+              <option value="economic">Econômico</option>
             </select>
-            <select className="bg-white border border-border px-3 py-1.5 rounded-lg text-xs font-bold text-muted-foreground outline-none focus:border-primary/30">
-              <option>Status</option>
-              <option>Disponível</option>
-              <option>Reservado</option>
-              <option>Vendido</option>
+            <select
+              value={statusFilter}
+              onChange={e => setStatusFilter(e.target.value)}
+              className="bg-white border border-border px-3 py-1.5 rounded-lg text-xs font-bold text-muted-foreground outline-none focus:border-primary/30"
+            >
+              <option value="">Status (todos)</option>
+              <option value="available">Disponível</option>
+              <option value="reserved">Reservado</option>
+              <option value="sold">Vendido</option>
             </select>
           </div>
         </div>
 
         {/* Properties Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {properties.length > 0 ? (
-            properties.map(property => (
+          {filtered.length > 0 ? (
+            filtered.map(property => (
               <PropertyCard key={property.id} property={property} />
             ))
           ) : !loading && (
             <div className="col-span-full py-20 text-center bg-white rounded-3xl border-2 border-dashed border-border">
-              <p className="text-muted-foreground font-medium">Nenhum imóvel encontrado no banco de dados.</p>
+              <p className="text-muted-foreground font-medium">
+                {search || patternFilter || statusFilter
+                  ? 'Nenhum imóvel encontrado para os filtros aplicados.'
+                  : 'Nenhum imóvel cadastrado ainda.'}
+              </p>
             </div>
           )}
         </div>

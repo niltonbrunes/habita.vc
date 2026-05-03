@@ -123,8 +123,9 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
       });
       onSuccess();
       onClose();
-    } catch (error) {
-      console.error('Erro ao criar imóvel:', error);
+    } catch (error: any) {
+      console.error('Erro detalhado ao criar imóvel:', error.message || error);
+      alert('Erro ao criar imóvel: ' + (error.message || 'Verifique as permissões no banco.'));
     } finally {
       setLoading(false);
     }

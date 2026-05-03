@@ -20,7 +20,7 @@ import {
 import { TaskModal } from '@/components/agenda/TaskModal';
 
 export default function AgendaPage() {
-  const { tasks, loading, refresh, toggleTask, deleteTask } = useTasks();
+  const { tasks, loading, error, refresh, toggleTask, deleteTask } = useTasks();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const completedCount = tasks.filter(t => t.completed).length;
@@ -63,6 +63,16 @@ export default function AgendaPage() {
           onClose={() => setIsModalOpen(false)} 
           onSuccess={refresh} 
         />
+
+        {error && (
+          <div className="bg-red-50 border border-red-100 p-6 rounded-[2rem] flex items-center gap-4 text-red-600 animate-in fade-in duration-500">
+            <AlertCircle size={24} />
+            <div>
+              <p className="font-bold text-sm">Erro ao carregar agenda</p>
+              <p className="text-xs opacity-80">Não foi possível conectar ao banco de dados ou a tabela não existe.</p>
+            </div>
+          </div>
+        )}
 
         {/* Progress Card */}
         <div className="bg-white p-6 rounded-3xl shadow-premium border border-border flex items-center gap-8 animate-in slide-in-from-top duration-500">

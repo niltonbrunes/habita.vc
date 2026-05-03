@@ -6,8 +6,11 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     id UUID REFERENCES auth.users(id) PRIMARY KEY,
     full_name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    role TEXT CHECK (role IN ('broker', 'manager', 'admin')) DEFAULT 'broker',
+    role TEXT CHECK (role IN ('broker', 'manager', 'director', 'admin')) DEFAULT 'broker',
     earnings_goal_monthly DECIMAL(12, 2) DEFAULT 0,
+    avg_ticket DECIMAL(15, 2) DEFAULT 0,
+    avg_commission_percent DECIMAL(5, 2) DEFAULT 0,
+    conversion_rates JSONB DEFAULT '{"lead_to_contact": 0, "contact_to_visit": 0, "visit_to_proposal": 0, "proposal_to_sale": 0}',
     focus TEXT CHECK (focus IN ('resale', 'launch', 'hybrid')) DEFAULT 'hybrid',
     high_end_mode BOOLEAN DEFAULT FALSE,
     avatar_url TEXT,
@@ -159,10 +162,26 @@ CREATE TABLE IF NOT EXISTS public.notifications (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+-- 12. TASKS (Agenda)
+CREATE TABLE IF NOT EXISTS public.tasks (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    lead_id UUID REFERENCES public.leads(id) ON DELETE SET NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    category TEXT CHECK (category IN ('business', 'personal', 'meeting', 'visit', 'followup')) DEFAULT 'business',
+    priority TEXT CHECK (priority IN ('low', 'medium', 'high')) DEFAULT 'medium',
+    due_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    completed BOOLEAN DEFAULT FALSE,
+    completed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
 -- RLS (Row Level Security) - Basic Setup
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
 
 -- Policies (Simplified for now)
 CREATE POLICY "Public profiles are viewable by everyone." ON public.profiles FOR SELECT USING (true);

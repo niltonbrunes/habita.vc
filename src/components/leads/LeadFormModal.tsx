@@ -46,8 +46,9 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess }: LeadFormModalProps
       });
       onSuccess();
       onClose();
-    } catch (error) {
-      console.error('Erro ao criar lead:', error);
+    } catch (error: any) {
+      console.error('Erro detalhado ao criar lead:', error.message || error);
+      alert('Erro ao criar lead: ' + (error.message || 'Verifique as permissões no banco.'));
     } finally {
       setLoading(false);
     }

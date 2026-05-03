@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Users, 
@@ -12,7 +13,9 @@ import {
   LogOut,
   Bell,
   Crown,
-  Calendar
+  Calendar,
+  Briefcase,
+  Sparkles
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -29,6 +32,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
   const { profile, signOut, isRole } = useAuth();
   const { notifications, unreadCount, markAsRead } = useNotifications();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className={`flex h-screen ${isLuxury ? 'bg-black' : 'bg-muted/30'}`}>
@@ -42,17 +46,15 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         </div>
 
         <nav className="flex-1 px-4 py-4 space-y-2">
-          <SidebarItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/dashboard" />
-          <SidebarItem icon={<Calendar size={20} />} label="Agenda" href="/dashboard/agenda" />
-          <SidebarItem icon={<Users size={20} />} label="Leads (CRM)" href="/dashboard/leads" />
-          <SidebarItem icon={<Home size={20} />} label="Meus Imóveis" href="/dashboard/imoveis" />
-          <SidebarItem icon={<TrendingUp size={20} />} label="Comissões" href="/dashboard/comissoes" />
-          
-          {isRole(['manager', 'director', 'admin']) && (
-            <SidebarItem icon={<Target size={20} />} label="Gestão de Equipe" href="/dashboard/metas" />
-          )}
-          
-          <SidebarItem icon={<Settings size={20} />} label="Configurações" href="/dashboard/settings" />
+          <SidebarItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/dashboard" active={pathname === '/dashboard'} />
+          <SidebarItem icon={<Calendar size={20} />} label="Agenda" href="/dashboard/agenda" active={pathname === '/dashboard/agenda'} />
+          <SidebarItem icon={<Users size={20} />} label="Leads (CRM)" href="/dashboard/leads" active={pathname === '/dashboard/leads'} />
+          <SidebarItem icon={<Sparkles size={20} />} label="Prospecção IA" href="/dashboard/prospeccao" active={pathname.startsWith('/dashboard/prospeccao')} />
+          <SidebarItem icon={<Home size={20} />} label="Meus Imóveis" href="/dashboard/imoveis" active={pathname.startsWith('/dashboard/imoveis')} />
+          <SidebarItem icon={<TrendingUp size={20} />} label="Comissões" href="/dashboard/comissoes" active={pathname.startsWith('/dashboard/comissoes')} />
+          <SidebarItem icon={<Target size={20} />} label="BI & Metas" href="/dashboard/metas" active={pathname.startsWith('/dashboard/metas')} />
+          <SidebarItem icon={<Briefcase size={20} />} label="Equipe" href="/dashboard/equipe" active={pathname.startsWith('/dashboard/equipe')} />
+          <SidebarItem icon={<Settings size={20} />} label="Configurações" href="/dashboard/settings" active={pathname.startsWith('/dashboard/settings')} />
         </nav>
 
         <div className="p-4 border-t border-white/10">
