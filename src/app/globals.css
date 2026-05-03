@@ -1,26 +1,122 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Habita.vc Core Palette */
+  --primary: #1a3c34;
+  --primary-light: #2d5a4e;
+  --accent: #d97706;
+  --accent-light: #f59e0b;
+  --background: #fdfdfd;
+  --foreground: #1e293b;
+  --card: #ffffff;
+  --card-foreground: #1e293b;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --border: #e2e8f0;
+  
+  /* High-End Mode (Luxury) - Initial variables */
+  --luxury-gold: #c5a059;
+  --luxury-black: #0f172a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-luxury-gold: var(--luxury-gold);
+  
+  --shadow-premium: 0 10px 30px -10px rgba(26, 60, 52, 0.1);
+  --shadow-luxury: 0 20px 40px -15px rgba(15, 23, 42, 0.15);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Premium Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Luxury Mode Transitions */
+.luxury-transition {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.luxury-mode {
+  --background: #050505;
+  --foreground: #f8fafc;
+  --primary: #0a0a0a;
+  --primary-light: #171717;
+  --accent: #c5a059;
+  --accent-light: #d4af37;
+  --muted: #0f172a;
+  --muted-foreground: #94a3b8;
+  --border: #1e293b;
+  --card: #0c0c0c;
+  --shadow-premium: 0 20px 40px -15px rgba(0, 0, 0, 0.8);
+  --shadow-luxury: 0 0 50px -12px rgba(197, 160, 89, 0.15);
+}
+
+.luxury-mode body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.luxury-mode .bg-white,
+.luxury-mode .bg-card {
+  background-color: var(--card) !important;
+}
+
+.luxury-mode .border-border,
+.luxury-mode .border {
+  border-color: var(--border) !important;
+}
+
+.luxury-mode h1,
+.luxury-mode h2,
+.luxury-mode h3,
+.luxury-mode h4,
+.luxury-mode h5,
+.luxury-mode h6,
+.luxury-mode .text-primary {
+  color: #f8fafc !important;
+}
+
+.luxury-mode .text-muted-foreground {
+  color: var(--muted-foreground) !important;
+}
+
+.luxury-mode .bg-muted {
+  background-color: var(--muted) !important;
+}
+
+.luxury-mode aside {
+  background-color: #000000 !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+.luxury-mode header {
+  background-color: rgba(5, 5, 5, 0.8) !important;
+  backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid var(--border) !important;
 }
