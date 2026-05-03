@@ -16,7 +16,8 @@ import {
   Share2,
   Calendar,
   ChevronLeft,
-  RefreshCw
+  RefreshCw,
+  DollarSign
 } from 'lucide-react';
 import Link from 'next/link';
 
