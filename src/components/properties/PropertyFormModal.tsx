@@ -189,7 +189,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
         {/* Header */}
         <div className="p-8 border-b border-border flex justify-between items-center bg-muted/30 shrink-0">
           <div>
-            <h2 className="text-2xl font-black text-primary mb-1">Novo Imóvel (Portal XML URBS)</h2>
+            <h2 className="text-2xl font-black text-primary mb-1">Novo Imóvel (Atualizado)</h2>
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
               Passo {step} de 4: {
                 step === 1 ? 'Identificação & Categoria' : 
