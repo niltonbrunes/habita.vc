@@ -19,7 +19,8 @@ import {
   Video,
   Eye,
   Hash,
-  Activity
+  Activity,
+  RefreshCw
 } from 'lucide-react';
 import { PropertiesService } from '@/services/properties.service';
 import { StorageService } from '@/services/storage.service';
