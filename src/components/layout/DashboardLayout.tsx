@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+// Layout de alto padrão Habita.vc - Atualizado para SaaS
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
