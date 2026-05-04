@@ -5,7 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { ProfilesService } from '@/services/profiles.service';
 import { PropertiesService } from '@/services/properties.service';
 import { 
-  Instagram, 
+  Camera, 
   MessageCircle, 
   Mail, 
   Phone, 
@@ -97,7 +97,7 @@ export default function BrokerShowcasePage({ params }: { params: Promise<{ broke
                 )}
                 {profile.instagram && (
                   <a href={`https://instagram.com/${profile.instagram.replace('@','')}`} target="_blank" className="bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:scale-105 transition-all">
-                    <Instagram size={20} /> Instagram
+                    <Camera size={20} /> Instagram
                   </a>
                 )}
                 <a href={`mailto:${profile.email}`} className="bg-white text-primary border border-border px-6 py-3 rounded-2xl font-bold flex items-center gap-2 hover:bg-muted transition-all">
