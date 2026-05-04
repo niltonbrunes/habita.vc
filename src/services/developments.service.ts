@@ -14,7 +14,7 @@ export const DevelopmentsService = {
   async getById(id: string) {
     const { data, error } = await supabase
       .from('developments')
-      .select('*, developer:developers(*)')
+      .select('*, developer:developers(*), properties(*)')
       .eq('id', id)
       .single();
     

@@ -21,6 +21,10 @@ export interface Profile {
   focus: BrokerFocus;
   high_end_mode: boolean;
   avatar_url?: string;
+  slug?: string;
+  whatsapp?: string;
+  instagram?: string;
+  bio?: string;
   created_at: string;
 }
 
@@ -104,6 +108,8 @@ export interface Development {
   location_city: string;
   price_starting_at: number;
   commercial_stage?: 'pre_launch' | 'launch' | 'construction' | 'ready';
+  plans_url?: string;
+  price_table_url?: string;
   video_url?: string;
   launch_date?: string;
   developer?: Developer;

@@ -5,23 +5,28 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { DevelopmentsService } from '@/services/developments.service';
 import { Plus, Building2, MapPin, Calendar, ArrowRight, RefreshCw, Layers } from 'lucide-react';
 import Link from 'next/link';
+import { DevelopmentFormModal } from '@/components/developments/DevelopmentFormModal';
 
 export default function DevelopmentsPage() {
   const [developments, setDevelopments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDevelopment, setSelectedDevelopment] = useState<any>(null);
+
+  const fetchDevelopments = async () => {
+    setLoading(true);
+    try {
+      const data = await DevelopmentsService.getAll();
+      setDevelopments(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const data = await DevelopmentsService.getAll();
-        setDevelopments(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
+    fetchDevelopments();
   }, []);
 
   return (
@@ -39,7 +44,13 @@ export default function DevelopmentsPage() {
             <p className="text-muted-foreground text-sm font-medium">Gerencie lançamentos e páginas de captação (AIDA).</p>
           </div>
           
-          <button className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-primary-light transition-all shadow-premium">
+          <button 
+            onClick={() => {
+              setSelectedDevelopment(null);
+              setIsModalOpen(true);
+            }}
+            className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-primary-light transition-all shadow-premium"
+          >
             <Plus size={20} /> Novo Lançamento
           </button>
         </div>
@@ -97,6 +108,17 @@ export default function DevelopmentsPage() {
           )}
         </div>
       </div>
+
+      {isModalOpen && (
+        <DevelopmentFormModal 
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={() => {
+            fetchDevelopments();
+            setIsModalOpen(false);
+          }}
+          development={selectedDevelopment}
+        />
+      )}
     </DashboardLayout>
   );
 }

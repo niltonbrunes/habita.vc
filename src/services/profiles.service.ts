@@ -11,6 +11,15 @@ export const ProfilesService = {
 
     if (error) throw error;
     return data as Profile;
+  },  async getBySlug(slug: string) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('slug', slug)
+      .single();
+
+    if (error) throw error;
+    return data as Profile;
   },
 
   async getAll() {

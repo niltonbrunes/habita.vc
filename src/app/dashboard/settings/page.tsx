@@ -34,7 +34,11 @@ export default function SettingsPage() {
       contact_to_visit: 0,
       visit_to_proposal: 0,
       proposal_to_sale: 0,
-    }
+    },
+    slug: '',
+    whatsapp: '',
+    instagram: '',
+    bio: ''
   });
 
   useEffect(() => {
@@ -49,7 +53,11 @@ export default function SettingsPage() {
           contact_to_visit: 20,
           visit_to_proposal: 15,
           proposal_to_sale: 10,
-        }
+        },
+        slug: profile.slug || '',
+        whatsapp: profile.whatsapp || '',
+        instagram: profile.instagram || '',
+        bio: profile.bio || ''
       });
     }
   }, [profile]);
@@ -115,6 +123,80 @@ export default function SettingsPage() {
                   type="email"
                   value={profile?.email || ''}
                   className="block w-full px-5 py-4 bg-muted/10 border border-transparent rounded-2xl font-bold text-muted-foreground cursor-not-allowed"
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Section: Branding & Vitrine */}
+          <section className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-border space-y-6">
+            <div className="flex items-center justify-between border-b border-border pb-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-accent/10 rounded-xl text-accent">
+                  <Sparkles size={20} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-black text-primary uppercase tracking-tight">Vitrine & Marca Pessoal</h2>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Sua página de vendas exclusiva</p>
+                </div>
+              </div>
+              
+              {formData.slug && (
+                <a 
+                  href={`/${formData.slug}`} 
+                  target="_blank" 
+                  className="text-[10px] font-black text-primary underline uppercase tracking-widest hover:text-accent transition-colors"
+                >
+                  Ver Minha Vitrine
+                </a>
+              )}
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Slug da Vitrine (Link Único)</label>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-muted-foreground">habita.vc/</span>
+                  <input
+                    type="text"
+                    value={formData.slug}
+                    onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/ /g, '-') })}
+                    className="block flex-1 px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                    placeholder="seu-nome"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">WhatsApp de Vendas</label>
+                <input
+                  type="text"
+                  value={formData.whatsapp}
+                  onChange={e => setFormData({ ...formData, whatsapp: e.target.value })}
+                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                  placeholder="Ex: 5562981234567"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Usuário Instagram (Sem @)</label>
+                <input
+                  type="text"
+                  value={formData.instagram}
+                  onChange={e => setFormData({ ...formData, instagram: e.target.value })}
+                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                  placeholder="seu.insta"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Sua Bio (Apresentação)</label>
+                <textarea
+                  rows={3}
+                  value={formData.bio}
+                  onChange={e => setFormData({ ...formData, bio: e.target.value })}
+                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary resize-none text-sm"
+                  placeholder="Conte brevemente sua experiência e foco de atuação..."
                 />
               </div>
             </div>

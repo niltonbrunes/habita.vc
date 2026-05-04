@@ -15,7 +15,8 @@ import {
   Crown,
   Calendar,
   Briefcase,
-  Sparkles
+  Sparkles,
+  Layers
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -51,6 +52,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
           <SidebarItem icon={<Users size={20} />} label="Leads (CRM)" href="/dashboard/leads" active={pathname === '/dashboard/leads'} />
           <SidebarItem icon={<Sparkles size={20} />} label="Prospecção IA" href="/dashboard/prospeccao" active={pathname.startsWith('/dashboard/prospeccao')} />
           <SidebarItem icon={<Home size={20} />} label="Meus Imóveis" href="/dashboard/imoveis" active={pathname.startsWith('/dashboard/imoveis')} />
+          <SidebarItem icon={<Layers size={20} />} label="Empreendimentos" href="/dashboard/empreendimentos" active={pathname.startsWith('/dashboard/empreendimentos')} />
           <SidebarItem icon={<TrendingUp size={20} />} label="Comissões" href="/dashboard/comissoes" active={pathname.startsWith('/dashboard/comissoes')} />
           <SidebarItem icon={<Target size={20} />} label="BI & Metas" href="/dashboard/metas" active={pathname.startsWith('/dashboard/metas')} />
           <SidebarItem icon={<Briefcase size={20} />} label="Equipe" href="/dashboard/equipe" active={pathname.startsWith('/dashboard/equipe')} />
