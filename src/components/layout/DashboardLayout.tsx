@@ -48,6 +48,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         </div>
 
         <nav className="flex-1 px-4 py-4 space-y-2">
+          <SidebarItem icon={<LayoutDashboard size={20} />} label="TESTE UPDATE" href="/dashboard" active={false} />
           <SidebarItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/dashboard" active={pathname === '/dashboard'} />
           <SidebarItem icon={<Calendar size={20} />} label="Agenda" href="/dashboard/agenda" active={pathname === '/dashboard/agenda'} />
           <SidebarItem icon={<Users size={20} />} label="Leads (CRM)" href="/dashboard/leads" active={pathname === '/dashboard/leads'} />
