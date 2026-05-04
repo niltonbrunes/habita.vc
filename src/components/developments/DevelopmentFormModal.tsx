@@ -71,7 +71,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
 
     setUploading(true);
     try {
-      const url = await StorageService.uploadImage(file, 'developments');
+      const url = await StorageService.uploadFile(file, 'property-images', 'developments');
       if (field === 'gallery') {
         setFormData(prev => ({ ...prev, gallery: [...prev.gallery, url] }));
       } else {

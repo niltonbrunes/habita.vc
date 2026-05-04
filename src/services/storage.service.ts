@@ -19,6 +19,24 @@ export const StorageService = {
     return publicUrl;
   },
 
+  async uploadFile(file: File, bucket: string, folder: string = 'general') {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `${folder}/${fileName}`;
+
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, file);
+
+    if (error) throw error;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  },
+
   async uploadLeadDocument(file: File, leadId: string) {
     const fileExt = file.name.split('.').pop();
     const fileName = `${leadId}/${Math.random()}.${fileExt}`;
