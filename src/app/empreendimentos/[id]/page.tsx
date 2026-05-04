@@ -218,7 +218,11 @@ export default function DevelopmentLandingPage({ params }: { params: Promise<{ i
                   className="group bg-white rounded-[3rem] p-4 shadow-premium hover:shadow-luxury transition-all border border-transparent hover:border-accent/20"
                 >
                   <div className="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-6 relative">
-                    <img src={prop.main_image} alt={prop.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <img 
+                      src={prop.main_image || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800'} 
+                      alt={prop.title} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                    />
                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest text-primary border border-white/20">
                       R$ {(prop.price / 1000).toFixed(0)}k
                     </div>
