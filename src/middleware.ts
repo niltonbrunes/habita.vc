@@ -16,6 +16,31 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(newPathname, request.url));
   }
 
+  // 2. Reserved system keywords (not brokers)
+  const reservedKeywords = [
+    'crmhabita', 
+    'imoveis', 
+    'empreendimentos', 
+    'login', 
+    'register', 
+    'api', 
+    'dashboard',
+    'conteudos',
+    'corretor'
+  ];
+
+  // 3. Detect if it's a potential broker slug (root level, single segment)
+  const segments = pathname.split('/').filter(Boolean);
+  const isPotentialBrokerSlug = segments.length === 1 && !reservedKeywords.includes(segments[0]);
+
+  // If it's a broker slug, we rewrite to the vitrine path internally
+  if (isPotentialBrokerSlug) {
+    const slug = segments[0];
+    const url = request.nextUrl.clone();
+    url.pathname = `/vitrine/${slug}`;
+    return NextResponse.rewrite(url);
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || '',
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
@@ -64,7 +89,7 @@ export async function middleware(request: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession();
 
-  // 2. Auth protection for CRM routes
+  // 4. Auth protection for CRM routes
   if (pathname.startsWith('/crmhabita') && !session) {
     const url = new URL('/login', request.url);
     url.searchParams.set('next', pathname);
@@ -75,5 +100,13 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/crmhabita/:path*', '/crmhabita'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
 };

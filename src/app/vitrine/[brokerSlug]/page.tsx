@@ -20,23 +20,11 @@ import Link from 'next/link';
 
 export default function BrokerShowcasePage({ params }: { params: Promise<{ brokerSlug: string }> }) {
   const resolvedParams = React.use(params);
-  const reservedKeywords = ['crmhabita', 'imoveis', 'empreendimentos', 'login', 'register', 'api', 'dashboard'];
-  
-  if (reservedKeywords.includes(resolvedParams.brokerSlug)) {
-    return null;
-  }
-
   const [profile, setProfile] = useState<any>(null);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Prevent dynamic route from catching system routes
-    const reservedKeywords = ['crmhabita', 'imoveis', 'empreendimentos', 'login', 'register', 'api'];
-    if (reservedKeywords.includes(resolvedParams.brokerSlug)) {
-      return;
-    }
-
     const fetch = async () => {
       try {
         const profileData = await ProfilesService.getBySlug(resolvedParams.brokerSlug);
@@ -159,7 +147,7 @@ export default function BrokerShowcasePage({ params }: { params: Promise<{ broke
           {properties.map((prop) => (
             <Link 
               key={prop.id} 
-              href={`/imoveis/${prop.id}`}
+              href={`/imoveis/${prop.address_city?.toLowerCase() || 'goiania'}/${prop.slug}`}
               className="group bg-white rounded-[3rem] p-5 shadow-premium hover:shadow-luxury transition-all border border-transparent hover:border-accent/20"
             >
               <div className="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-6 relative">
