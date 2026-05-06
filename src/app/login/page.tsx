@@ -1,15 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Home, Mail, Lock, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { Home, Mail, Lock, ArrowRight, Loader2, AlertCircle, TrendingUp, Handshake } from 'lucide-react';
 import Link from 'next/link';
+import { PropertiesService } from '@/services/properties.service';
+import { Property } from '@/types/database';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [recentProperties, setRecentProperties] = useState<Property[]>([]);
+
+  useEffect(() => {
+    PropertiesService.getAllFiltered({}).then(res => {
+      setRecentProperties(res.data?.slice(0, 8) || []);
+    }).catch(err => console.error(err));
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +39,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex bg-white">
       {/* Left Side - Form */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 md:px-24 py-12 relative overflow-hidden">
+      <div className="w-full lg:w-[40%] flex flex-col justify-center px-8 md:px-20 py-12 relative overflow-hidden">
         {/* Subtle Background Elements */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
         
@@ -122,42 +131,48 @@ export default function LoginPage() {
       </div>
 
       {/* Right Side - Visual/Quote */}
-      <div className="hidden lg:flex w-1/2 bg-primary relative items-center justify-center p-24 overflow-hidden">
-        {/* Dynamic Pattern Overlay */}
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+      <div className="hidden lg:flex w-[60%] bg-muted/20 relative items-center justify-center p-12 overflow-hidden border-l border-border">
         
-        <div className="relative z-10 text-white max-w-lg">
-          <div className="w-16 h-1 bg-accent mb-12 rounded-full" />
-          <h2 className="text-5xl font-black mb-8 leading-[1.1] tracking-tighter">
-            Acelerando a jornada do corretor de <span className="text-accent">alta performance.</span>
-          </h2>
-          <p className="text-xl text-white/60 font-medium mb-12">
-            "O Habita.vc mudou minha conversão de leads em visitas em 40% nas primeiras duas semanas."
-          </p>
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-accent/20 border border-accent/30 flex items-center justify-center font-black">
-              NB
+        <div className="relative z-10 w-full max-w-4xl">
+          <div className="mb-10 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-black uppercase tracking-widest mb-4">
+              <Handshake size={16} /> Parceria 50/50
             </div>
-            <div>
-              <p className="font-bold">Nilton Brunes</p>
-              <p className="text-sm text-white/50">Broker Sênior, Usuário Alpha</p>
-            </div>
+            <h2 className="text-4xl font-black text-primary mb-4 leading-[1.1] tracking-tighter">
+              Acesso a centenas de <span className="text-accent">captações exclusivas</span>
+            </h2>
+            <p className="text-lg text-muted-foreground font-medium">
+              Entre para a rede Habita.vc e faça parcerias seguras. Nossas captações mais recentes:
+            </p>
           </div>
-        </div>
 
-        {/* Floating UI Element Simulation */}
-        <div className="absolute bottom-20 right-20 bg-white/10 backdrop-blur-xl p-6 rounded-[2rem] border border-white/10 shadow-2xl animate-float max-w-xs">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
-              <TrendingUp size={20} />
-            </div>
-            <p className="text-sm font-bold text-white">Novo Lead Quente!</p>
-          </div>
-          <div className="space-y-2">
-            <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full bg-green-500 w-[85%]" />
-            </div>
-            <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Score de Conversão: 85%</p>
+          <div className="grid grid-cols-4 gap-4">
+            {recentProperties.map(property => (
+              <div key={property.id} className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden group hover:border-primary/20 transition-all">
+                <div className="aspect-[4/3] bg-muted relative overflow-hidden">
+                  {(property.main_image || (property.images && property.images.length > 0)) ? (
+                    <img src={property.main_image || property.images[0]} alt={property.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted">
+                      <Home className="text-muted-foreground/30" size={32} />
+                    </div>
+                  )}
+                  <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-white px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest">
+                    {property.pattern}
+                  </div>
+                </div>
+                <div className="p-3">
+                  <p className="text-xs font-black text-primary line-clamp-1">{property.title}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground mt-1">R$ {(property.price / 1000000).toFixed(1)}M</p>
+                </div>
+              </div>
+            ))}
+            {/* If less than 8, show skeletons or empty slots to fill the grid */}
+            {recentProperties.length < 8 && Array.from({ length: 8 - recentProperties.length }).map((_, i) => (
+              <div key={`empty-${i}`} className="bg-muted/50 rounded-2xl border border-dashed border-border aspect-[4/3] flex items-center justify-center">
+                <span className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">Disponível</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -165,6 +180,3 @@ export default function LoginPage() {
   );
 }
 
-const TrendingUp = ({ size, className }: any) => (
-  <svg className={className} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-);

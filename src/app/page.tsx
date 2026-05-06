@@ -5,7 +5,7 @@ import { Hero } from "@/components/layout/Hero";
 import { PropertyHighlights } from "@/components/public/PropertyHighlights";
 import { RegionSection } from "@/components/public/RegionSection";
 import Link from "next/link";
-import { ArrowRight, Star, Building2, TrendingUp } from "lucide-react";
+import { ArrowRight, Star, Building2, TrendingUp, Home as HomeIcon, CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Habita.vc | Imóveis de Luxo e Lançamentos em Goiânia",
@@ -59,31 +59,55 @@ export default function Home() {
 
         <section className="py-24 bg-muted/30">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div className="space-y-6">
-                <h2 className="text-4xl font-black text-primary leading-tight">
-                  Especialistas em Imóveis de <br />
-                  <span className="text-accent">Alto Padrão em Goiânia</span>
-                </h2>
-                <div className="space-y-4 text-lg text-muted-foreground font-medium leading-relaxed">
-                  <p>
-                    A <strong>Habita.vc</strong> nasceu para redefinir a experiência de compra e venda de imóveis. Atuamos com foco total em performance e transparência, trazendo para você as melhores oportunidades nos bairros mais desejados como <strong>Setor Bueno, Setor Marista, Jardim Goiás</strong> e os condomínios <strong>Alphaville</strong>.
+            <div className="bg-white rounded-[3rem] p-8 md:p-16 shadow-luxury border border-border relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+              <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
+                <div className="space-y-8">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-black uppercase tracking-widest">
+                    <HomeIcon size={16} />
+                    Para Proprietários
+                  </div>
+                  <h2 className="text-4xl font-black text-primary leading-tight">
+                    Venda ou Alugue seu imóvel mais <span className="text-accent">rápido</span>
+                  </h2>
+                  <p className="text-lg text-muted-foreground font-medium leading-relaxed">
+                    Cadastre seu imóvel gratuitamente em nossa plataforma e conecte-se com nossa rede exclusiva de corretores de alta performance.
                   </p>
+                  <ul className="space-y-4">
+                    {['Anúncio gratuito na vitrine Habita.vc', 'Acesso a centenas de corretores parceiros', 'Venda mais rápida e sem burocracia'].map((benefit, i) => (
+                      <li key={i} className="flex items-center gap-3 text-primary font-bold">
+                        <CheckCircle2 className="text-green-500" size={24} />
+                        {benefit}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="flex flex-wrap gap-4 pt-4">
-                  <Link href="/imoveis" className="bg-primary text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-primary-dark transition-all">
-                    Ver Catálogo Completo <ArrowRight size={20} />
-                  </Link>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-6">
-                  <StatBox value="+500" label="Imóveis Ativos" />
-                  <StatBox value="R$ 2B+" label="VGV Sob Gestão" />
-                </div>
-                <div className="space-y-6 pt-12">
-                  <StatBox value="+10" label="Incorporadoras Parceiras" />
-                  <StatBox value="4.9/5" label="Avaliação Média" />
+                <div className="bg-muted/30 p-8 rounded-[2rem] border border-border">
+                  <form className="space-y-4">
+                    <div>
+                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">Seu Nome</label>
+                      <input type="text" placeholder="Nome completo" className="w-full mt-1 px-4 py-4 rounded-xl bg-white border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">WhatsApp</label>
+                      <input type="text" placeholder="(00) 00000-0000" className="w-full mt-1 px-4 py-4 rounded-xl bg-white border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">Tipo de Imóvel</label>
+                      <select className="w-full mt-1 px-4 py-4 rounded-xl bg-white border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold text-primary">
+                        <option>Apartamento</option>
+                        <option>Casa em Condomínio</option>
+                        <option>Lote/Terreno</option>
+                        <option>Comercial</option>
+                      </select>
+                    </div>
+                    <button type="button" className="w-full mt-4 bg-primary hover:bg-primary-light text-white py-4 rounded-xl font-black text-lg transition-all shadow-premium flex justify-center items-center gap-2">
+                      Cadastrar Imóvel Grátis
+                    </button>
+                    <p className="text-center text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-4">
+                      Limite de 2 imóveis por proprietário.
+                    </p>
+                  </form>
                 </div>
               </div>
             </div>
