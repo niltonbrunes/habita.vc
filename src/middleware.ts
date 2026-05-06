@@ -16,6 +16,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(newPathname, request.url));
   }
 
+  // Handle legacy conteudos redirects
+  if (pathname.startsWith('/conteudos')) {
+    const newPathname = pathname.replace('/conteudos', '/blog');
+    return NextResponse.redirect(new URL(newPathname, request.url));
+  }
+
   // 2. Reserved system keywords (not brokers)
   const reservedKeywords = [
     'crmhabita', 
