@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
     'register', 
     'api', 
     'dashboard',
-    'conteudos',
+    'blog',
     'corretor',
     'ofertashabita'
   ];

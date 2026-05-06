@@ -20,7 +20,7 @@ export const Navbar = () => {
             <Link href="/" className="text-sm font-medium text-primary hover:text-accent transition-colors">Início</Link>
             <Link href="/imoveis" className="text-sm font-medium text-primary/70 hover:text-primary transition-colors">Imóveis</Link>
             <Link href="/empreendimentos" className="text-sm font-medium text-primary/70 hover:text-primary transition-colors">Empreendimentos</Link>
-            <Link href="/conteudos" className="text-sm font-medium text-primary/70 hover:text-primary transition-colors">Conteúdos</Link>
+            <Link href="/blog" className="text-sm font-medium text-primary/70 hover:text-primary transition-colors">Blog</Link>
           </div>
 
           <div className="flex items-center gap-4">
