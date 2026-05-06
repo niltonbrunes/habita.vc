@@ -67,5 +67,17 @@ export const PropertiesService = {
 
     if (error) throw error;
     return data as Property;
+  },
+
+  async update(id: string, property: Partial<Property>) {
+    const { data, error } = await supabase
+      .from('properties')
+      .update(property)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as Property;
   }
 };
