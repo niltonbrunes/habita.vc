@@ -26,7 +26,8 @@ export async function middleware(request: NextRequest) {
     'api', 
     'dashboard',
     'conteudos',
-    'corretor'
+    'corretor',
+    'ofertashabita'
   ];
 
   // 3. Detect if it's a potential broker slug (root level, single segment)
