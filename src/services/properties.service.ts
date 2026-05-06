@@ -41,7 +41,7 @@ export const PropertiesService = {
   async getBySlug(city: string, slug: string) {
     const { data, error } = await supabase
       .from('properties')
-      .select('*, development:developments(*, developer:developers(*))')
+      .select('*, development:developments(*, developer:developers(*)), registered_by_profile:profiles(*)')
       .ilike('address_city', city)
       .eq('slug', slug)
       .single();

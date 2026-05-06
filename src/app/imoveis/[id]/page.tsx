@@ -28,6 +28,17 @@ export default function PublicPropertyDetailPage({ params }: { params: Promise<{
 
   useEffect(() => {
     const fetch = async () => {
+      // Check if ID is not a UUID
+      const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(resolvedParams.id);
+      
+      if (!isUUID) {
+        // It's likely a city or something else, redirect to search
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.set('city', resolvedParams.id);
+        router.replace(`/imoveis?${searchParams.toString()}`);
+        return;
+      }
+
       try {
         setLoading(true);
         const data = await PropertiesService.getById(resolvedParams.id);
@@ -47,7 +58,7 @@ export default function PublicPropertyDetailPage({ params }: { params: Promise<{
       }
     };
     fetch();
-  }, [resolvedParams.id]);
+  }, [resolvedParams.id, router]);
 
   const handleWhatsApp = (message?: string) => {
     const brokerPhone = property?.registered_by_profile?.whatsapp || '5562999999999';
@@ -299,7 +310,7 @@ export default function PublicPropertyDetailPage({ params }: { params: Promise<{
             <h2 className="text-3xl font-black text-primary mb-10">Imóveis Similares</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {similarProperties.map(sim => (
-                <Link href={`/imoveis/${sim.id}`} key={sim.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-border group hover:border-primary/20 transition-all">
+                <Link href={`/imoveis/${sim.address_city.toLowerCase()}/${sim.slug || sim.id}`} key={sim.id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-border group hover:border-primary/20 transition-all">
                   <div className="aspect-[4/3] bg-muted relative overflow-hidden">
                     <img src={sim.main_image || (sim.images && sim.images[0]) || ''} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-md text-white px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest">
