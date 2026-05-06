@@ -20,6 +20,12 @@ import Link from 'next/link';
 
 export default function BrokerShowcasePage({ params }: { params: Promise<{ brokerSlug: string }> }) {
   const resolvedParams = React.use(params);
+  const reservedKeywords = ['crmhabita', 'imoveis', 'empreendimentos', 'login', 'register', 'api', 'dashboard'];
+  
+  if (reservedKeywords.includes(resolvedParams.brokerSlug)) {
+    return null;
+  }
+
   const [profile, setProfile] = useState<any>(null);
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
