@@ -71,6 +71,7 @@ export interface Property {
   accepts_exchange?: boolean;
   is_unit_of_development?: boolean;
   development?: Development & { developer?: Developer };
+  registered_by_profile?: Profile;
   created_at: string;
 }
 

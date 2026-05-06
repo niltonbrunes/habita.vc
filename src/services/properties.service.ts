@@ -30,7 +30,7 @@ export const PropertiesService = {
   async getById(id: string) {
     const { data, error } = await supabase
       .from('properties')
-      .select('*, development:developments(*, developer:developers(*))')
+      .select('*, development:developments(*, developer:developers(*)), registered_by_profile:profiles(*)')
       .eq('id', id)
       .single();
 

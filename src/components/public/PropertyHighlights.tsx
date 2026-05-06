@@ -1,48 +1,23 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { PropertyCard } from './PropertyCard';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { PropertiesService } from '@/services/properties.service';
+import { Property } from '@/types/database';
 
 export const PropertyHighlights = () => {
-  // Mock data for initial development, will be replaced with real data from service
-  const highlights = [
-    {
-      id: '1',
-      title: 'Apartamento de Alto Padrão no Bueno',
-      price: 1250000,
-      city: 'Goiânia',
-      neighborhood: 'Setor Bueno',
-      bedrooms: 3,
-      bathrooms: 4,
-      area: 145,
-      type: 'Apartamento',
-      slug: 'apartamento-alto-padrao-bueno'
-    },
-    {
-      id: '2',
-      title: 'Casa em Condomínio Fechado',
-      price: 2800000,
-      city: 'Goiânia',
-      neighborhood: 'Alphaville Flamboyant',
-      bedrooms: 4,
-      bathrooms: 6,
-      area: 420,
-      type: 'Casa',
-      slug: 'casa-condominio-alphaville'
-    },
-    {
-      id: '3',
-      title: 'Penthouse Exclusiva no Marista',
-      price: 4500000,
-      city: 'Goiânia',
-      neighborhood: 'Setor Marista',
-      bedrooms: 5,
-      bathrooms: 7,
-      area: 310,
-      type: 'Apartamento',
-      slug: 'penthouse-exclusiva-marista'
-    }
-  ];
+  const [highlights, setHighlights] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    PropertiesService.getAllFiltered({}).then(res => {
+      setHighlights(res.data?.slice(0, 3) || []);
+    }).finally(() => {
+      setLoading(false);
+    });
+  }, []);
 
   return (
     <section className="py-24 bg-background">
@@ -65,11 +40,30 @@ export const PropertyHighlights = () => {
           </Link>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {highlights.map((property) => (
-            <PropertyCard key={property.id} {...property} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center py-12">
+             <Loader2 className="animate-spin text-primary" size={32} />
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {highlights.map((property) => (
+              <PropertyCard 
+                key={property.id} 
+                id={property.id}
+                title={property.title}
+                price={property.price}
+                city={property.address_city}
+                neighborhood={property.address_neighborhood || property.address_city}
+                bedrooms={property.rooms || property.metadata?.rooms || 0}
+                bathrooms={property.suites || property.metadata?.bathrooms || 0}
+                area={property.area_useful || property.metadata?.area || 0}
+                type={property.type}
+                slug={property.slug || property.id}
+                imageUrl={property.main_image || (property.images && property.images[0]) || ''}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
