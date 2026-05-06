@@ -72,6 +72,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
     video_url: '',
     tour_360_url: '',
     is_highlight: false,
+    slug: '',
     accepts_financing: true,
     accepts_exchange: false,
     metadata: {
@@ -80,6 +81,17 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
     images: [] as string[],
     main_image: ''
   });
+
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/--+/g, '-')
+      .trim();
+  };
 
   const [tempId] = useState(() => Math.random().toString(36).substring(7));
   const [developments, setDevelopments] = useState<any[]>([]);
@@ -151,8 +163,10 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
 
     setLoading(true);
     try {
+      const slug = formData.slug || generateSlug(formData.title);
       await PropertiesService.create({
         ...formData,
+        slug,
         reference: formData.reference || `REF-${Math.floor(Date.now() / 1000)}`,
         registered_by_id: user.id
       });
@@ -244,6 +258,17 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                       onChange={e => setFormData({ ...formData, title: e.target.value })}
                       className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       placeholder="Ex: Cobertura Duplex no Setor Bueno"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Slug SEO (URL amigável)</label>
+                    <input
+                      type="text"
+                      value={formData.slug}
+                      onChange={e => setFormData({ ...formData, slug: e.target.value })}
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-medium text-primary text-xs"
+                      placeholder="auto-gerado-se-vazio"
                     />
                   </div>
                   

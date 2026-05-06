@@ -14,6 +14,10 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     focus TEXT CHECK (focus IN ('resale', 'launch', 'hybrid')) DEFAULT 'hybrid',
     high_end_mode BOOLEAN DEFAULT FALSE,
     avatar_url TEXT,
+    slug TEXT UNIQUE,
+    bio TEXT,
+    whatsapp TEXT,
+    instagram TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
@@ -52,6 +56,7 @@ CREATE TABLE IF NOT EXISTS public.developments (
     location_lng DECIMAL(11, 8),
     launch_date DATE,
     features JSONB DEFAULT '[]',
+    slug TEXT UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
@@ -93,6 +98,7 @@ CREATE TABLE IF NOT EXISTS public.properties (
     metadata JSONB, -- For extra specs and features
     images TEXT[] DEFAULT '{}',
     main_image TEXT,
+    slug TEXT UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 

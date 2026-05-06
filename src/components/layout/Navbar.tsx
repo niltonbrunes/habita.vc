@@ -28,11 +28,11 @@ export const Navbar = () => {
               <Search className="w-5 h-5" />
             </button>
             <Link 
-              href="/dashboard" 
+              href="/crmhabita" 
               className="hidden sm:flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-primary-light transition-all shadow-premium"
             >
               <LayoutDashboard className="w-4 h-4" />
-              Dashboard
+              CRM Habita
             </Link>
             <button className="md:hidden p-2 text-primary">
               <Menu className="w-6 h-6" />

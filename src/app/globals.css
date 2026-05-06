@@ -28,6 +28,14 @@
   
   --shadow-premium: 0 10px 30px -10px rgba(26, 60, 52, 0.1);
   --shadow-luxury: 0 20px 40px -15px rgba(15, 23, 42, 0.15);
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float 6s ease-in-out 3s infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
 }
 
 * {

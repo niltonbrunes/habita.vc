@@ -48,7 +48,19 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
     plans_url: development?.plans_url || '',
     price_table_url: development?.price_table_url || '',
     launch_date: development?.launch_date || '',
+    slug: (development as any)?.slug || '',
   });
+
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/--+/g, '-')
+      .trim();
+  };
 
   useEffect(() => {
     const fetchDevelopers = async () => {
@@ -89,10 +101,13 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
     e.preventDefault();
     setLoading(true);
     try {
+      const slug = formData.slug || generateSlug(formData.name);
+      const dataToSave = { ...formData, slug };
+
       if (development?.id) {
         // Implementar update se necessário
       } else {
-        await DevelopmentsService.create(formData);
+        await DevelopmentsService.create(dataToSave);
       }
       onSuccess();
       onClose();
@@ -145,6 +160,17 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                       onChange={e => setFormData({ ...formData, name: e.target.value })}
                       className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       placeholder="Ex: ParqVille Cerejeira"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Slug SEO (URL amigável)</label>
+                    <input
+                      type="text"
+                      value={formData.slug}
+                      onChange={e => setFormData({ ...formData, slug: e.target.value })}
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-medium text-primary text-xs"
+                      placeholder="auto-gerado-se-vazio"
                     />
                   </div>
 

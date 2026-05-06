@@ -38,6 +38,18 @@ export const PropertiesService = {
     return data;
   },
 
+  async getBySlug(city: string, slug: string) {
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*, development:developments(*, developer:developers(*))')
+      .ilike('address_city', city)
+      .eq('slug', slug)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
   async getByReference(reference: string) {
     return await supabase
       .from('properties')

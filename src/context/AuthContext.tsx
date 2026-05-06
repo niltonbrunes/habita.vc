@@ -30,9 +30,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
     
-    if (data) setProfile(data as Profile);
+    if (data) {
+      setProfile(data as Profile);
+    } else if (error) {
+      console.warn('Perfil não encontrado ou erro na busca:', error.message);
+    }
   };
 
   useEffect(() => {
@@ -56,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       
       if (_event === 'SIGNED_IN') {
-        router.push('/dashboard');
+        router.push('/crmhabita');
       }
       if (_event === 'SIGNED_OUT') {
         router.push('/login');
@@ -74,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Route Protection Logic
   useEffect(() => {
     if (!loading) {
-      const isDashboardRoute = pathname.startsWith('/dashboard');
+      const isDashboardRoute = pathname.startsWith('/crmhabita');
       if (isDashboardRoute && !user) {
         router.push('/login');
       }

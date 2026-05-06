@@ -22,6 +22,17 @@ export const DevelopmentsService = {
     return data;
   },
 
+  async getBySlug(slug: string) {
+    const { data, error } = await supabase
+      .from('developments')
+      .select('*, developer:developers(*), properties(*)')
+      .eq('slug', slug)
+      .single();
+    
+    if (error) throw error;
+    return data;
+  },
+
   async create(development: any) {
     const { data, error } = await supabase
       .from('developments')

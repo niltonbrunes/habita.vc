@@ -62,6 +62,7 @@ export interface Property {
   video_url?: string;
   tour_360_url?: string;
   is_highlight: boolean;
+  slug?: string;
   metadata: any;
   images: string[];
   main_image?: string;
@@ -112,6 +113,7 @@ export interface Development {
   price_table_url?: string;
   video_url?: string;
   launch_date?: string;
+  slug?: string;
   developer?: Developer;
   created_at: string;
 }

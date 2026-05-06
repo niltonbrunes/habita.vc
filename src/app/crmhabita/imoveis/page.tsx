@@ -146,7 +146,7 @@ export default function PropertiesPage() {
 }
 
 const PropertyCard = ({ property }: { property: any }) => (
-  <Link href={`/dashboard/imoveis/${property.id}`} className="group">
+  <Link href={`/crmhabita/imoveis/${property.id}`} className="group">
     <div className="bg-white rounded-3xl overflow-hidden shadow-premium border border-border group-hover:border-primary/20 transition-all">
       {/* Image Placeholder */}
       <div className="relative aspect-[4/3] bg-muted flex items-center justify-center overflow-hidden">

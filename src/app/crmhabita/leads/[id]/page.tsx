@@ -91,7 +91,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     <DashboardLayout>
       <div className="h-full flex flex-col items-center justify-center">
         <p className="text-muted-foreground font-bold">Lead não encontrado.</p>
-        <Link href="/dashboard/leads" className="text-primary font-bold underline mt-4">Voltar para o CRM</Link>
+        <Link href="/crmhabita/leads" className="text-primary font-bold underline mt-4">Voltar para o CRM</Link>
       </div>
     </DashboardLayout>
   );
@@ -99,7 +99,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <Link href="/dashboard/leads" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-bold text-sm">
+        <Link href="/crmhabita/leads" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-bold text-sm">
           <ArrowLeft size={16} /> Voltar para o CRM
         </Link>
 

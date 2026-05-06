@@ -17,7 +17,9 @@ import {
   Calendar,
   Briefcase,
   Sparkles,
-  Layers
+  Layers,
+  Trophy,
+  Globe
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -48,16 +50,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         </div>
 
         <nav className="flex-1 px-4 py-4 space-y-2">
-          <SidebarItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/dashboard" active={pathname === '/dashboard'} />
-          <SidebarItem icon={<Layers size={20} />} label="Empreendimentos" href="/dashboard/empreendimentos" active={pathname.startsWith('/dashboard/empreendimentos')} />
-          <SidebarItem icon={<Calendar size={20} />} label="Agenda" href="/dashboard/agenda" active={pathname === '/dashboard/agenda'} />
-          <SidebarItem icon={<Users size={20} />} label="Leads (CRM)" href="/dashboard/leads" active={pathname === '/dashboard/leads'} />
-          <SidebarItem icon={<Sparkles size={20} />} label="Prospecção IA" href="/dashboard/prospeccao" active={pathname.startsWith('/dashboard/prospeccao')} />
-          <SidebarItem icon={<Home size={20} />} label="Meus Imóveis" href="/dashboard/imoveis" active={pathname.startsWith('/dashboard/imoveis')} />
-          <SidebarItem icon={<TrendingUp size={20} />} label="Comissões" href="/dashboard/comissoes" active={pathname.startsWith('/dashboard/comissoes')} />
-          <SidebarItem icon={<Target size={20} />} label="BI & Metas" href="/dashboard/metas" active={pathname.startsWith('/dashboard/metas')} />
-          <SidebarItem icon={<Briefcase size={20} />} label="Equipe" href="/dashboard/equipe" active={pathname.startsWith('/dashboard/equipe')} />
-          <SidebarItem icon={<Settings size={20} />} label="Configurações" href="/dashboard/settings" active={pathname.startsWith('/dashboard/settings')} />
+          <SidebarItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/crmhabita" active={pathname === '/crmhabita'} />
+          <SidebarItem icon={<Trophy size={20} />} label="Performance" href="/crmhabita/ranking" active={pathname === '/crmhabita/ranking'} />
+          <SidebarItem icon={<Layers size={20} />} label="Empreendimentos" href="/crmhabita/empreendimentos" active={pathname.startsWith('/crmhabita/empreendimentos')} />
+          <SidebarItem icon={<Calendar size={20} />} label="Agenda" href="/crmhabita/agenda" active={pathname === '/crmhabita/agenda'} />
+          <SidebarItem icon={<Users size={20} />} label="Leads (CRM)" href="/crmhabita/leads" active={pathname === '/crmhabita/leads'} />
+          <SidebarItem icon={<Sparkles size={20} />} label="Prospecção IA" href="/crmhabita/prospeccao" active={pathname.startsWith('/crmhabita/prospeccao')} />
+          <SidebarItem icon={<Home size={20} />} label="Meus Imóveis" href="/crmhabita/imoveis" active={pathname.startsWith('/crmhabita/imoveis')} />
+          <SidebarItem icon={<Globe size={20} />} label="Publicação Portal" href="/crmhabita/publicacao" active={pathname === '/crmhabita/publicacao'} />
+          <SidebarItem icon={<TrendingUp size={20} />} label="Comissões" href="/crmhabita/comissoes" active={pathname.startsWith('/crmhabita/comissoes')} />
+          <SidebarItem icon={<Target size={20} />} label="BI & Metas" href="/crmhabita/metas" active={pathname.startsWith('/crmhabita/metas')} />
+          <SidebarItem icon={<Briefcase size={20} />} label="Equipe" href="/crmhabita/equipe" active={pathname.startsWith('/crmhabita/equipe')} />
+          <SidebarItem icon={<Settings size={20} />} label="Configurações" href="/crmhabita/settings" active={pathname.startsWith('/crmhabita/settings')} />
         </nav>
 
         <div className="p-4 border-t border-white/10">

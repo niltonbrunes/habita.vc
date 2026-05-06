@@ -62,9 +62,9 @@ export default function TeamManagementPage() {
           <AlertCircle size={48} className="text-red-500" />
           <h2 className="text-2xl font-bold">Acesso Negado</h2>
           <p className="text-muted-foreground">Esta área é restrita para gestores e diretores.</p>
-          <Link href="/dashboard" className="text-primary font-bold underline">Voltar para meu Dashboard</Link>
+          <Link href="/crmhabita" className="text-primary font-bold underline">Voltar para meu Dashboard</Link>
         </div>
-      </DashboardLayout>
+    </DashboardLayout>
     );
   }
 

@@ -25,6 +25,12 @@ export default function BrokerShowcasePage({ params }: { params: Promise<{ broke
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Prevent dynamic route from catching system routes
+    const reservedKeywords = ['crmhabita', 'imoveis', 'empreendimentos', 'login', 'register', 'api'];
+    if (reservedKeywords.includes(resolvedParams.brokerSlug)) {
+      return;
+    }
+
     const fetch = async () => {
       try {
         const profileData = await ProfilesService.getBySlug(resolvedParams.brokerSlug);

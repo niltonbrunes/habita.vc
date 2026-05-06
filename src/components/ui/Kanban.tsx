@@ -14,7 +14,7 @@ const getDaysActive = (dateStr: string) => {
 
 export const KanbanCard = ({ lead }: { lead: Lead }) => {
   return (
-    <Link href={`/dashboard/leads/${lead.id}`}>
+    <Link href={`/crmhabita/leads/${lead.id}`}>
       <motion.div 
         layout
         initial={{ opacity: 0, y: 10 }}

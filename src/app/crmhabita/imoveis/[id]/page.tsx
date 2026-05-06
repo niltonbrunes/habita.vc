@@ -103,7 +103,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     <DashboardLayout>
       <div className="h-full flex flex-col items-center justify-center space-y-4">
         <p className="text-muted-foreground font-bold">Imóvel não encontrado.</p>
-        <Link href="/dashboard/imoveis" className="text-primary font-bold underline">Voltar para lista</Link>
+        <Link href="/crmhabita/imoveis" className="text-primary font-bold underline">Voltar para lista</Link>
       </div>
     </DashboardLayout>
   );
@@ -111,7 +111,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto space-y-8 pb-20">
-        <Link href="/dashboard/imoveis" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-bold text-sm">
+        <Link href="/crmhabita/imoveis" className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors font-bold text-sm">
           <ArrowLeft size={16} /> Voltar para lista
         </Link>
 
