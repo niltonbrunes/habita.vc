@@ -136,6 +136,28 @@ export interface Task {
   created_at: string;
 }
 
+export interface PropertyOwner {
+  id: string;
+  property_id: string;
+  name: string;
+  cpf_cnpj?: string;
+  phone?: string;
+  email?: string;
+  ownership_percent: number;
+  owner_type: 'owner' | 'heir' | 'proxy';
+  created_at: string;
+}
+
+export interface PropertyDocument {
+  id: string;
+  property_id: string;
+  name: string;
+  url: string;
+  doc_type: 'escritura' | 'matricula' | 'iptu' | 'contrato' | 'procuracao' | 'other';
+  file_size?: number;
+  created_at: string;
+}
+
 export interface Sale {
   id: string;
   lead_id: string;

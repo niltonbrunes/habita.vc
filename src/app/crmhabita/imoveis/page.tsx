@@ -14,7 +14,6 @@ import {
   RefreshCw,
   DollarSign
 } from 'lucide-react';
-import { PropertyFormModal } from '@/components/properties/PropertyFormModal';
 import { ImportService } from '@/services/import.service';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -22,7 +21,6 @@ import Link from 'next/link';
 export default function PropertiesPage() {
   const { user } = useAuth();
   const { properties, loading, refresh } = useProperties();
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [syncing, setSyncing] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const [patternFilter, setPatternFilter] = React.useState('');
@@ -72,20 +70,14 @@ export default function PropertiesPage() {
               <RefreshCw size={16} className={syncing ? 'animate-spin' : ''} /> 
               {syncing ? 'Sincronizando...' : 'Sincronizar XML'}
             </button>
-            <button 
-              onClick={() => setIsModalOpen(true)}
+            <Link 
+              href="/crmhabita/imoveis/novo"
               className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary-light transition-all shadow-premium"
             >
               <Plus size={16} /> Novo Imóvel
-            </button>
+            </Link>
           </div>
         </div>
-
-        <PropertyFormModal 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
-          onSuccess={refresh} 
-        />
 
         {/* Filters and Search */}
         <div className="flex flex-wrap items-center gap-4 bg-white p-4 rounded-2xl shadow-premium border border-border">

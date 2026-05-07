@@ -1,14 +1,43 @@
 import { supabase } from '@/lib/supabase';
 
+// Compress image on the browser using Canvas API before upload
+async function compressImage(file: File, maxWidthPx = 1920, quality = 0.82): Promise<File> {
+  if (!file.type.startsWith('image/')) return file;
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const ratio = Math.min(1, maxWidthPx / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * ratio;
+      canvas.height = img.height * ratio;
+      canvas.getContext('2d')!.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return resolve(file);
+          const compressed = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' });
+          resolve(compressed.size < file.size ? compressed : file);
+        },
+        'image/jpeg',
+        quality
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
 export const StorageService = {
   async uploadPropertyImage(file: File, propertyId: string) {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${propertyId}/${Math.random()}.${fileExt}`;
+    const compressed = await compressImage(file);
+    const fileExt = compressed.name.split('.').pop();
+    const fileName = `${propertyId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
     const filePath = `properties/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('property-images')
-      .upload(filePath, file);
+      .upload(filePath, compressed, { contentType: compressed.type });
 
     if (error) throw error;
 
@@ -21,10 +50,10 @@ export const StorageService = {
 
   async uploadFile(file: File, bucket: string, folder: string = 'general') {
     const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
     const filePath = `${folder}/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from(bucket)
       .upload(filePath, file);
 
@@ -39,10 +68,10 @@ export const StorageService = {
 
   async uploadLeadDocument(file: File, leadId: string) {
     const fileExt = file.name.split('.').pop();
-    const fileName = `${leadId}/${Math.random()}.${fileExt}`;
+    const fileName = `${leadId}/${Date.now()}.${fileExt}`;
     const filePath = `leads/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('client-documents')
       .upload(filePath, file);
 
@@ -68,3 +97,4 @@ export const StorageService = {
     if (error) throw error;
   }
 };
+
