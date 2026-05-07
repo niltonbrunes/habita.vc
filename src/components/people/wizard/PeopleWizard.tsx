@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { PeopleService } from '@/services/people.service';
@@ -9,7 +9,6 @@ import { User, MapPin, Briefcase, FileCheck2, ChevronLeft, ChevronRight, Loader2
 import { BasicInfoStep } from './steps/BasicInfoStep';
 import { ContactsStep } from './steps/ContactsStep';
 import { ClassificationStep } from './steps/ClassificationStep';
-// import { DocumentsStep } from './steps/DocumentsStep'; // Will create soon
 
 export interface PeopleWizardData {
   person_type: PersonType;
@@ -60,7 +59,11 @@ const STEPS: WizardStep[] = [
   { id: 3, label: 'Documentos', icon: <FileCheck2 size={16} /> },
 ];
 
-export function PeopleWizard() {
+interface PeopleWizardProps {
+  initialData?: Person;
+}
+
+export function PeopleWizard({ initialData }: PeopleWizardProps) {
   const { user } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -68,6 +71,32 @@ export function PeopleWizard() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Load initial data if editing
+  useEffect(() => {
+    if (initialData) {
+      setData({
+        person_type: initialData.person_type,
+        name: initialData.name,
+        fantasy_name: initialData.fantasy_name || '',
+        document_id: initialData.document_id || '',
+        rg_ie: initialData.rg_ie || '',
+        im: initialData.im || '',
+        birth_date_or_foundation: initialData.birth_date_or_foundation || '',
+        marital_status: initialData.marital_status || '',
+        nationality: initialData.nationality || 'Brasileiro(a)',
+        profession: initialData.profession || '',
+        roles: initialData.roles || ['lead'],
+        relationship_status: initialData.relationship_status || 'novo',
+        commercial_info: initialData.commercial_info || {},
+        contacts: initialData.contacts || [],
+        addresses: initialData.addresses || [],
+        documents: initialData.documents || [],
+        responsibles: initialData.responsibles || [],
+        metadata: initialData.metadata || {},
+      });
+    }
+  }, [initialData]);
 
   const patch = (p: Partial<PeopleWizardData>) => setData(prev => ({ ...prev, ...p }));
 
@@ -84,20 +113,31 @@ export function PeopleWizard() {
 
     try {
       // Sanitização de campos para o PostgreSQL (strings vazias -> null)
-      const sanitizedData = {
+      const sanitizedData: any = {
         ...data,
         birth_date_or_foundation: data.birth_date_or_foundation || null,
         document_id: data.document_id || null,
         rg_ie: data.rg_ie || null,
         im: data.im || null,
-        registered_by_id: user.id,
-        assigned_to_id: user.id,
+        fantasy_name: data.fantasy_name || null,
+        marital_status: data.marital_status || null,
+        profession: data.profession || null,
+        updated_at: new Date().toISOString()
       };
 
-      const created = await PeopleService.create(sanitizedData);
+      let result;
+      if (initialData?.id) {
+        result = await PeopleService.update(initialData.id, sanitizedData);
+      } else {
+        result = await PeopleService.create({
+          ...sanitizedData,
+          registered_by_id: user.id,
+          assigned_to_id: user.id,
+        });
+      }
 
       setSaved(true);
-      setTimeout(() => router.push(`/crmhabita/pessoas/${created.id}`), 1500);
+      setTimeout(() => router.push(`/crmhabita/pessoas/${result.id}`), 1500);
     } catch (err: any) {
       console.error(err);
       setError(err?.message || 'Erro ao salvar a pessoa. Verifique se o CPF/CNPJ já existe.');
@@ -112,7 +152,9 @@ export function PeopleWizard() {
         <div className="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center">
           <CheckCircle2 size={48} />
         </div>
-        <h2 className="text-3xl font-black text-primary">Cadastro concluído!</h2>
+        <h2 className="text-3xl font-black text-primary">
+          {initialData ? 'Alterações salvas!' : 'Cadastro concluído!'}
+        </h2>
         <p className="text-muted-foreground font-medium">Redirecionando para a ficha do cliente...</p>
         <Loader2 className="animate-spin text-primary" size={24} />
       </div>
@@ -168,7 +210,7 @@ export function PeopleWizard() {
             disabled={saving}
             className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-accent text-white font-black hover:bg-yellow-600 transition-all shadow-luxury disabled:opacity-50"
           >
-            {saving ? <><Loader2 size={20} className="animate-spin" /> Salvando...</> : <><CheckCircle2 size={20} /> Concluir Cadastro</>}
+            {saving ? <><Loader2 size={20} className="animate-spin" /> Salvando...</> : <><CheckCircle2 size={20} /> {initialData ? 'Salvar Alterações' : 'Concluir Cadastro'}</>}
           </button>
         )}
       </div>

@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { PropertiesService } from '@/services/properties.service';
@@ -31,7 +31,7 @@ export interface WizardFormData {
   title: string;
   description: string;
   reference?: string;
-  status: 'available' | 'reserved' | 'sold';
+  status: 'available' | 'reserved' | 'sold' | 'inactive';
   pattern: 'economic' | 'medium' | 'high_end';
   // Address
   development_id?: string;
@@ -97,7 +97,11 @@ const STEPS: WizardStep[] = [
   { id: 7, label: 'SEO',            icon: <Globe size={16} /> },
 ];
 
-export function PropertyWizard() {
+interface PropertyWizardProps {
+  initialData?: any;
+}
+
+export function PropertyWizard({ initialData }: PropertyWizardProps) {
   const { user } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -108,6 +112,64 @@ export function PropertyWizard() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialData) {
+      setData({
+        type: initialData.type,
+        transaction_type: initialData.transaction_type || 'sale',
+        title: initialData.title,
+        description: initialData.description || '',
+        reference: initialData.reference || '',
+        status: initialData.status || 'available',
+        pattern: initialData.pattern || 'medium',
+        development_id: initialData.development_id,
+        address_street: initialData.address_street || '',
+        address_number: initialData.address_number || '',
+        address_complement: initialData.address_complement || '',
+        address_neighborhood: initialData.address_neighborhood || '',
+        address_city: initialData.address_city || '',
+        address_state: initialData.address_state || 'GO',
+        address_zip_code: initialData.address_zip_code || '',
+        price: initialData.price || 0,
+        price_condo: initialData.price_condo,
+        price_iptu: initialData.price_iptu,
+        price_rent: initialData.price_rent,
+        commission_estimated_percent: initialData.metadata?.commission_estimated_percent || 6,
+        accepts_financing: initialData.accepts_financing ?? true,
+        accepts_exchange: initialData.accepts_exchange ?? false,
+        rooms: initialData.rooms || initialData.metadata?.rooms || 0,
+        suites: initialData.suites || 0,
+        bathrooms: initialData.bathrooms || initialData.metadata?.bathrooms || 0,
+        parking_spaces: initialData.parking_spaces || initialData.metadata?.parking || 0,
+        area_useful: initialData.area_useful || initialData.metadata?.area || 0,
+        area_total: initialData.area_total,
+        metadata: initialData.metadata || {},
+        slug: initialData.slug,
+        meta_title: initialData.meta_title,
+        meta_description: initialData.meta_description,
+      });
+
+      if (initialData.images) {
+        setImages(initialData.images.map((url: string) => ({
+          url,
+          isCover: url === initialData.main_image
+        })));
+      }
+
+      if (initialData.owners) {
+        setOwners(initialData.owners.map((o: any) => ({
+          person_id: o.person_id,
+          name: o.name,
+          cpf_cnpj: o.cpf_cnpj,
+          phone: o.phone,
+          email: o.email,
+          ownership_percent: o.ownership_percent,
+          owner_type: o.owner_type
+        })));
+      }
+    }
+  }, [initialData]);
 
   const patch = (p: Partial<WizardFormData>) => setData(prev => ({ ...prev, ...p }));
 
@@ -124,9 +186,7 @@ export function PropertyWizard() {
     setError(null);
 
     try {
-      // 1. Build DB-safe payload — only columns that exist in the schema
       const {
-        // Extract wizard-only / non-DB fields
         commission_estimated_percent,
         meta_title,
         meta_description,
@@ -140,33 +200,20 @@ export function PropertyWizard() {
         ...dbFields
       } = data;
 
-      // Ensure slug uniqueness by appending a random short hash
-      const uniqueSlug = dbFields.slug 
-        ? `${dbFields.slug}-${Math.random().toString(36).substring(2, 8)}`
-        : null;
-
       const propertyPayload: any = {
         ...dbFields,
-        slug: uniqueSlug,
-        reference: dbFields.reference?.trim() || null, // FIX: Empty string violates unique constraint, force null
-        registered_by_id: user.id,
-        property_category: 'residential',
-        // Numeric feature columns (these DO exist in the schema)
+        reference: dbFields.reference?.trim() || null,
         rooms,
         suites,
         bathrooms,
         parking_spaces,
         area_useful,
         area_total: area_total || area_useful,
-        images: [],
-        main_image: null,
-        is_highlight: false,
         is_unit_of_development: !!data.development_id,
-        // Store commission + extras inside metadata JSON
+        updated_at: new Date().toISOString(),
         metadata: {
           ...rawMetadata,
           commission_estimated_percent,
-          // Mirror counters into metadata for legacy compatibility
           rooms,
           bathrooms,
           area: area_useful,
@@ -174,16 +221,29 @@ export function PropertyWizard() {
         },
       };
 
-      const created = await PropertiesService.create(propertyPayload);
+      let propertyId = initialData?.id;
 
+      if (propertyId) {
+        await PropertiesService.update(propertyId, propertyPayload);
+      } else {
+        const created = await PropertiesService.create({
+          ...propertyPayload,
+          registered_by_id: user.id,
+          property_category: 'residential',
+          images: [],
+          main_image: null,
+          is_highlight: false,
+        });
+        propertyId = created.id;
+      }
 
-      // 2. Upload images (non-blocking — fails gracefully if bucket doesn't exist)
+      // Handle images
       if (images.length > 0) {
         try {
           const uploadedUrls: string[] = [];
           for (const img of images) {
             if (img.file) {
-              const url = await StorageService.uploadPropertyImage(img.file, created.id);
+              const url = await StorageService.uploadPropertyImage(img.file, propertyId);
               uploadedUrls.push(url);
             } else if (img.url) {
               uploadedUrls.push(img.url);
@@ -191,31 +251,27 @@ export function PropertyWizard() {
           }
           const coverImg = images.find(i => i.isCover);
           const coverIdx = coverImg ? images.indexOf(coverImg) : 0;
-          await PropertiesService.update(created.id, {
+          await PropertiesService.update(propertyId, {
             images: uploadedUrls,
             main_image: uploadedUrls[coverIdx] || uploadedUrls[0],
           });
         } catch (imgErr: any) {
-          console.warn('Image upload skipped:', imgErr?.message);
-          setError(`⚠️ Imóvel salvo! Mas as fotos não foram enviadas: bucket "property-images" não encontrado no Supabase Storage. Crie-o manualmente e reenvie as fotos na ficha do imóvel.`);
+          console.warn('Image upload error:', imgErr);
         }
       }
 
+      // Sync owners
+      await PropertyOwnersService.replaceAll(propertyId, owners);
 
-      // 3. Save owners
-      if (owners.length > 0) {
-        await PropertyOwnersService.replaceAll(created.id, owners);
-      }
-
-      // 4. Upload documents
+      // Upload new documents
       for (const doc of documents) {
         if (doc.file) {
-          await PropertyDocumentsService.upload(created.id, doc.file, doc.doc_type as any);
+          await PropertyDocumentsService.upload(propertyId, doc.file, doc.doc_type as any);
         }
       }
 
       setSaved(true);
-      setTimeout(() => router.push(`/crmhabita/imoveis/${created.id}`), 1500);
+      setTimeout(() => router.push(`/crmhabita/imoveis/${propertyId}`), 1500);
     } catch (err: any) {
       console.error(err);
       setError(err?.message || 'Erro ao salvar o imóvel. Tente novamente.');
@@ -230,7 +286,7 @@ export function PropertyWizard() {
         <div className="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center">
           <CheckCircle2 size={48} />
         </div>
-        <h2 className="text-3xl font-black text-primary">Imóvel cadastrado!</h2>
+        <h2 className="text-3xl font-black text-primary">{initialData ? 'Imóvel atualizado!' : 'Imóvel cadastrado!'}</h2>
         <p className="text-muted-foreground font-medium">Redirecionando para a ficha do imóvel...</p>
         <Loader2 className="animate-spin text-primary" size={24} />
       </div>
@@ -241,7 +297,6 @@ export function PropertyWizard() {
     <div className="max-w-4xl mx-auto">
       <WizardStepper steps={STEPS} currentStep={step} onGoTo={setStep} />
 
-      {/* Step Content */}
       <div className="bg-white rounded-[2.5rem] border-2 border-border shadow-premium p-8 md:p-12 min-h-[500px]">
         {step === 0 && <BasicInfoStep data={data} onChange={patch} />}
         {step === 1 && <DevelopmentLinkStep data={data} onChange={patch} />}
@@ -253,14 +308,12 @@ export function PropertyWizard() {
         {step === 7 && <SeoStep data={data} onChange={patch} />}
       </div>
 
-      {/* Error */}
       {error && (
         <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-2xl text-red-600 text-sm font-bold text-center">
           {error}
         </div>
       )}
 
-      {/* Navigation */}
       <div className="flex items-center justify-between mt-8 gap-4">
         <button
           type="button"
@@ -293,7 +346,7 @@ export function PropertyWizard() {
             disabled={saving}
             className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-accent text-white font-black hover:bg-yellow-600 transition-all shadow-luxury disabled:opacity-50"
           >
-            {saving ? <><Loader2 size={20} className="animate-spin" /> Salvando...</> : <><CheckCircle2 size={20} /> Publicar Imóvel</>}
+            {saving ? <><Loader2 size={20} className="animate-spin" /> Salvando...</> : <><CheckCircle2 size={20} /> {initialData ? 'Salvar Alterações' : 'Publicar Imóvel'}</>}
           </button>
         )}
       </div>

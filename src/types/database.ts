@@ -1,5 +1,5 @@
 export type PropertyPattern = 'economic' | 'medium' | 'high_end';
-export type PropertyStatus = 'available' | 'reserved' | 'sold';
+export type PropertyStatus = 'available' | 'reserved' | 'sold' | 'inactive';
 export type LeadStatus = 'lead' | 'contact' | 'presentation' | 'visit' | 'proposal' | 'sale' | 'lost';
 export type UserRole = 'broker' | 'manager' | 'director' | 'admin';
 export type BrokerFocus = 'resale' | 'launch' | 'hybrid';
