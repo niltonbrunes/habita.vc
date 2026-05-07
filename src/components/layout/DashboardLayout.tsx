@@ -60,8 +60,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
           <SidebarItem icon={<Globe size={20} />} label="Publicação Portal" href="/crmhabita/publicacao" active={pathname === '/crmhabita/publicacao'} />
           <SidebarItem icon={<TrendingUp size={20} />} label="Comissões" href="/crmhabita/comissoes" active={pathname.startsWith('/crmhabita/comissoes')} />
           <SidebarItem icon={<Target size={20} />} label="BI & Metas" href="/crmhabita/metas" active={pathname.startsWith('/crmhabita/metas')} />
-          <SidebarItem icon={<Briefcase size={20} />} label="Equipe" href="/crmhabita/equipe" active={pathname.startsWith('/crmhabita/equipe')} />
-          <SidebarItem icon={<Settings size={20} />} label="Configurações" href="/crmhabita/settings" active={pathname.startsWith('/crmhabita/settings')} />
+          {isRole(['admin', 'manager', 'director']) && (
+            <SidebarItem icon={<Briefcase size={20} />} label="Equipe" href="/crmhabita/equipe" active={pathname.startsWith('/crmhabita/equipe')} />
+          )}
+          <SidebarItem icon={<Settings size={20} />} label="Meu Perfil" href="/crmhabita/configuracoes" active={pathname.startsWith('/crmhabita/configuracoes')} />
         </nav>
 
         <div className="p-4 border-t border-white/10">

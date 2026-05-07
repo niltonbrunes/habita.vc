@@ -23,7 +23,9 @@ export interface Profile {
   avatar_url?: string;
   slug?: string;
   whatsapp?: string;
-  instagram?: string;
+  phone?: string;
+  creci?: string;
+  status: 'active' | 'inactive';
   bio?: string;
   created_at: string;
 }
