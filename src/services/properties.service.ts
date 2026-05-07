@@ -38,13 +38,21 @@ export const PropertiesService = {
     return data;
   },
 
-  async getBySlug(city: string, slug: string) {
-    const { data, error } = await supabase
+  async getBySlug(city: string, slugOrId: string) {
+    // Check if it's a UUID to decide the query strategy
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+    
+    let query = supabase
       .from('properties')
-      .select('*, development:developments(*, developer:developers(*)), registered_by_profile:profiles(*)')
-      .ilike('address_city', city)
-      .eq('slug', slug)
-      .single();
+      .select('*, development:developments(*, developer:developers(*)), registered_by_profile:profiles(*)');
+
+    if (isUuid) {
+      query = query.eq('id', slugOrId);
+    } else {
+      query = query.eq('slug', slugOrId);
+    }
+
+    const { data, error } = await query.maybeSingle();
 
     if (error) throw error;
     return data;
