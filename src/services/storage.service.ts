@@ -89,13 +89,13 @@ export const StorageService = {
     };
   },
 
-  async uploadPersonAvatar(file: File, personId: string) {
+  async uploadAvatar(file: File, userId: string) {
     const compressed = await compressImage(file, 500, 0.8); // Smaller for avatars
     const fileExt = compressed.name.split('.').pop();
-    const filePath = `avatars/${personId}-${Date.now()}.${fileExt}`;
+    const filePath = `avatars/${userId}-${Date.now()}.${fileExt}`;
 
     const { error } = await supabase.storage
-      .from('property-images') // Reusing property-images for simplicity or use a generic 'public' bucket
+      .from('property-images') // Reusing property-images for simplicity
       .upload(filePath, compressed, { upsert: true });
 
     if (error) throw error;
