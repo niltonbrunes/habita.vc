@@ -17,6 +17,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
   const router = useRouter();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
+  const [relatedProperties, setRelatedProperties] = useState<Property[]>([]);
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [inactivating, setInactivating] = useState(false);
@@ -25,9 +26,13 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
   useEffect(() => {
     PropertiesService.getById(id)
-      .then(data => {
+      .then(async data => {
         setProperty(data);
         setActiveImage(data.main_image || data.images?.[0] || null);
+        
+        // Fetch related
+        const related = await PropertiesService.getRelated(data);
+        setRelatedProperties(related);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -291,6 +296,52 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
             </div>
           </div>
         </div>
+
+        {/* Related Properties Section */}
+        {relatedProperties.length > 0 && (
+          <div className="mt-20 space-y-8 animate-in slide-in-from-bottom duration-700">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-black text-primary tracking-tight">Também pode lhe interessar...</h2>
+              <Link href="/crmhabita/imoveis" className="text-sm font-bold text-accent hover:underline">Ver todos</Link>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {relatedProperties.map((rel) => (
+                <Link 
+                  key={rel.id} 
+                  href={`/crmhabita/imoveis/${rel.id}`}
+                  className="group bg-white rounded-[2rem] border-2 border-border p-4 shadow-sm hover:shadow-premium hover:border-primary/20 transition-all"
+                >
+                  <div className="aspect-[4/3] rounded-2xl bg-muted mb-4 overflow-hidden relative">
+                    {rel.main_image ? (
+                      <img src={rel.main_image} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-primary/10 font-black italic">HABITA.VC</div>
+                    )}
+                    <div className="absolute top-3 left-3 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-[8px] font-black uppercase tracking-wider text-primary">
+                      {rel.type}
+                    </div>
+                  </div>
+                  <h3 className="font-black text-primary truncate mb-1">{rel.title}</h3>
+                  <p className="text-xs text-muted-foreground font-medium flex items-center gap-1 mb-3">
+                    <MapPin size={12} /> {rel.address_city}
+                  </p>
+                  <div className="flex items-center justify-between border-t border-border pt-3">
+                    <p className="font-black text-primary text-sm">R$ {rel.price.toLocaleString()}</p>
+                    <div className="flex gap-2">
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground">
+                        <BedDouble size={12} /> {rel.rooms}
+                      </div>
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground">
+                        <Square size={12} /> {rel.area_useful}m²
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <ConfirmModal 

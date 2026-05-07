@@ -88,5 +88,23 @@ export const PropertiesService = {
       .eq('id', id);
 
     if (error) throw error;
+  },
+
+  async getRelated(property: Property, limit = 3) {
+    const minPrice = property.price * 0.7;
+    const maxPrice = property.price * 1.3;
+
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*')
+      .eq('type', property.type)
+      .eq('address_city', property.address_city)
+      .neq('id', property.id) // Excluir o atual
+      .gte('price', minPrice)
+      .lte('price', maxPrice)
+      .limit(limit);
+
+    if (error) return [];
+    return data as Property[];
   }
 };
