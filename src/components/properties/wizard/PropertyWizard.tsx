@@ -140,8 +140,14 @@ export function PropertyWizard() {
         ...dbFields
       } = data;
 
+      // Ensure slug uniqueness by appending a random short hash
+      const uniqueSlug = dbFields.slug 
+        ? `${dbFields.slug}-${Math.random().toString(36).substring(2, 8)}`
+        : null;
+
       const propertyPayload: any = {
         ...dbFields,
+        slug: uniqueSlug,
         registered_by_id: user.id,
         property_category: 'residential',
         // Numeric feature columns (these DO exist in the schema)
