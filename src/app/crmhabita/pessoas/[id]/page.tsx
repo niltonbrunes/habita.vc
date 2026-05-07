@@ -173,7 +173,7 @@ export default function PersonDetailPage({ params }: { params: { id: string } })
                   <div className="mb-6">
                     <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">Interesses</p>
                     <div className="flex gap-2">
-                      {person.commercial_info.interests.map((int: string) => (
+                      {person.commercial_info.interests?.map((int: string) => (
                         <span key={int} className="px-3 py-1.5 bg-accent/10 text-accent font-bold text-xs rounded-xl border border-accent/20">
                           {int === 'buy' ? 'Comprar' : int === 'rent' ? 'Alugar' : 'Vender'}
                         </span>
