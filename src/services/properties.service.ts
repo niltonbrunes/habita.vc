@@ -79,5 +79,14 @@ export const PropertiesService = {
 
     if (error) throw error;
     return data as Property;
+  },
+
+  async delete(id: string) {
+    const { error } = await supabase
+      .from('properties')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
   }
 };
