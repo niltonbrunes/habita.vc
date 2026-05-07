@@ -41,13 +41,14 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
   const handleInactivate = async () => {
     setInactivating(true);
+    const newStatus = person?.relationship_status === 'inativo' ? 'ativo' : 'inativo';
     try {
-      await PeopleService.update(id, { relationship_status: 'inativo' });
+      await PeopleService.update(id, { relationship_status: newStatus });
       const updated = await PeopleService.getById(id);
       setPerson(updated);
     } catch (err) {
       console.error(err);
-      alert('Erro ao inativar pessoa.');
+      alert('Erro ao mudar status da pessoa.');
     } finally {
       setInactivating(false);
       setShowInactivateModal(false);
@@ -114,7 +115,14 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
               <Pencil size={18} /> Editar
             </Link>
             
-            {person.relationship_status !== 'inativo' && (
+            {person.relationship_status === 'inativo' ? (
+              <button 
+                onClick={handleInactivate} // Reutiliza a lógica mas mudando para ativo
+                className="flex items-center gap-2 px-5 py-3 bg-green-500 text-white font-black rounded-2xl hover:bg-green-600 transition-all shadow-md"
+              >
+                <CheckCircle2 size={18} /> Reativar Pessoa
+              </button>
+            ) : (
               <button 
                 onClick={() => setShowInactivateModal(true)}
                 className="flex items-center gap-2 px-5 py-3 bg-white border-2 border-border text-muted-foreground font-black rounded-2xl hover:border-red-200 hover:bg-red-50 hover:text-red-600 transition-all shadow-sm"

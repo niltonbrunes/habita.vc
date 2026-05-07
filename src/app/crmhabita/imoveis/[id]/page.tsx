@@ -54,13 +54,14 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
   const handleInactivate = async () => {
     setInactivating(true);
+    const newStatus = property?.status === 'inactive' ? 'available' : 'inactive';
     try {
-      await PropertiesService.update(id, { status: 'inactive' });
+      await PropertiesService.update(id, { status: newStatus });
       const updated = await PropertiesService.getById(id);
       setProperty(updated);
     } catch (err) {
       console.error(err);
-      alert('Erro ao inativar imóvel.');
+      alert('Erro ao mudar status do imóvel.');
     } finally {
       setInactivating(false);
       setShowInactivateModal(false);
@@ -156,7 +157,14 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               <Pencil size={18} /> Editar
             </Link>
             
-            {property.status !== 'inactive' && (
+            {property.status === 'inactive' ? (
+              <button 
+                onClick={handleInactivate}
+                className="flex items-center gap-2 px-5 py-3 bg-green-500 text-white font-black rounded-2xl hover:bg-green-600 transition-all shadow-md"
+              >
+                <CheckCircle2 size={18} /> Reativar Imóvel
+              </button>
+            ) : (
               <button 
                 onClick={() => setShowInactivateModal(true)}
                 className="flex items-center gap-2 px-5 py-3 bg-white border-2 border-border text-muted-foreground font-black rounded-2xl hover:border-red-200 hover:bg-red-50 hover:text-red-600 transition-all shadow-sm"
