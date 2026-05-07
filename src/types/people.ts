@@ -59,15 +59,15 @@ export interface Person {
   
   // Basic Info (PF/PJ shared or specific)
   name: string;
-  fantasy_name?: string;
-  document_id?: string; // CPF or CNPJ
-  rg_ie?: string;
-  im?: string;
-  birth_date_or_foundation?: string;
-  marital_status?: string;
-  nationality?: string;
-  profession?: string;
-  avatar_url?: string;
+  fantasy_name?: string | null;
+  document_id?: string | null; // CPF or CNPJ
+  rg_ie?: string | null;
+  im?: string | null;
+  birth_date_or_foundation?: string | null;
+  marital_status?: string | null;
+  nationality?: string | null;
+  profession?: string | null;
+  avatar_url?: string | null;
   
   // Classification
   roles: PersonRole[];
