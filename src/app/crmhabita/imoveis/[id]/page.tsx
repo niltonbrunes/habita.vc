@@ -221,10 +221,10 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
             {/* Quick Specs */}
             <div className="grid grid-cols-4 gap-4 py-8 border-y border-border">
-              <SpecItem icon={<BedDouble />} label="Quartos" value={property.metadata?.rooms || 0} />
-              <SpecItem icon={<Bath />} label="Banheiros" value={property.metadata?.bathrooms || 0} />
-              <SpecItem icon={<Square />} label="Área" value={`${property.metadata?.area || 0}m²`} />
-              <SpecItem icon={<Car />} label="Vagas" value={property.metadata?.parking || 0} />
+              <SpecItem icon={BedDouble} label="Quartos" value={property.metadata?.rooms || 0} />
+              <SpecItem icon={Bath} label="Banheiros" value={property.metadata?.bathrooms || 0} />
+              <SpecItem icon={Square} label="Área" value={`${property.metadata?.area || 0}m²`} />
+              <SpecItem icon={Car} label="Vagas" value={property.metadata?.parking || 0} />
             </div>
 
             <div className="space-y-4">
@@ -316,10 +316,10 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   );
 }
 
-const SpecItem = ({ icon, label, value }: { icon: any, label: string, value: string | number }) => (
+const SpecItem = ({ icon: Icon, label, value }: { icon: any, label: string, value: string | number }) => (
   <div className="flex flex-col items-center justify-center text-center p-2">
     <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center text-primary mb-2">
-      {React.cloneElement(icon as React.ReactElement, { size: 20 })}
+      <Icon size={20} />
     </div>
     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
     <p className="text-sm font-black text-primary">{value}</p>
