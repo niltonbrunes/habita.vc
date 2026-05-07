@@ -139,6 +139,7 @@ export interface Task {
 export interface PropertyOwner {
   id: string;
   property_id: string;
+  person_id?: string;
   name: string;
   cpf_cnpj?: string;
   phone?: string;

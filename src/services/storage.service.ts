@@ -89,6 +89,47 @@ export const StorageService = {
     };
   },
 
+  async uploadPersonAvatar(file: File, personId: string) {
+    const compressed = await compressImage(file, 500, 0.8); // Smaller for avatars
+    const fileExt = compressed.name.split('.').pop();
+    const filePath = `avatars/${personId}-${Date.now()}.${fileExt}`;
+
+    const { error } = await supabase.storage
+      .from('property-images') // Reusing property-images for simplicity or use a generic 'public' bucket
+      .upload(filePath, compressed, { upsert: true });
+
+    if (error) throw error;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('property-images')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  },
+
+  async uploadPersonDocument(file: File, personId: string) {
+    const fileExt = file.name.split('.').pop();
+    const filePath = `people/${personId}/${Date.now()}.${fileExt}`;
+
+    const { error } = await supabase.storage
+      .from('client-documents')
+      .upload(filePath, file);
+
+    if (error) throw error;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('client-documents')
+      .getPublicUrl(filePath);
+
+    return {
+      name: file.name,
+      url: publicUrl,
+      doc_type: 'other',
+      file_size: file.size,
+      created_at: new Date().toISOString()
+    };
+  },
+
   async deleteFile(bucket: string, path: string) {
     const { error } = await supabase.storage
       .from(bucket)
