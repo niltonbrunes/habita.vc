@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background selection:bg-primary/10">
+    <div className="min-h-screen bg-white selection:bg-accent/20">
       <Navbar />
       
       <main>
@@ -28,23 +28,24 @@ export default function Home() {
         
         <Hero />
 
-        <section className="bg-white border-y border-border py-12">
+        {/* Benefits Section - Modern Minimalist */}
+        <section className="bg-white py-24 border-b border-border/40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
               <BenefitItem 
                 icon={<Star className="text-accent" />}
-                title="Curadoria Exclusiva"
-                desc="Apenas os melhores imóveis e lançamentos do mercado."
+                title="Curadoria"
+                desc="Apenas os melhores imóveis e lançamentos do mercado de Goiânia."
               />
               <BenefitItem 
                 icon={<TrendingUp className="text-accent" />}
-                title="Inteligência Comercial"
-                desc="Dados reais para decisões de investimento precisas."
+                title="Inteligência"
+                desc="Dados reais e análise de mercado para decisões de investimento precisas."
               />
               <BenefitItem 
                 icon={<Building2 className="text-accent" />}
-                title="Suporte Especializado"
-                desc="Consultores de alta performance em cada etapa."
+                title="Performance"
+                desc="Consultores especialistas em negociações de alto valor e complexidade."
               />
             </div>
           </div>
@@ -54,56 +55,58 @@ export default function Home() {
         
         <RegionSection />
 
-        <section className="py-24 bg-muted/30">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-[3rem] p-8 md:p-16 shadow-luxury border border-border relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-              <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
-                <div className="space-y-8">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-black uppercase tracking-widest">
-                    <HomeIcon size={16} />
-                    Para Proprietários
+        {/* Owners Section - High Contrast Luxury */}
+        <section className="py-32 bg-[#0a0a0a] relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20" />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="bg-white/5 backdrop-blur-2xl rounded-[4rem] p-10 md:p-20 border border-white/10 shadow-2xl">
+              <div className="grid lg:grid-cols-2 gap-20 items-center">
+                <div className="space-y-10">
+                  <div className="inline-flex items-center gap-3 px-5 py-2 bg-accent text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em]">
+                    Exclusive Service
                   </div>
-                  <h2 className="text-4xl font-black text-primary leading-tight">
-                    Venda ou Alugue seu imóvel mais <span className="text-accent">rápido</span>
+                  <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-tighter">
+                    Venda seu imóvel <br />
+                    com <span className="text-accent">Inteligência.</span>
                   </h2>
-                  <p className="text-lg text-muted-foreground font-medium leading-relaxed">
-                    Cadastre seu imóvel gratuitamente em nossa plataforma e conecte-se com nossa rede exclusiva de corretores de alta performance.
+                  <p className="text-xl text-white/60 font-medium leading-relaxed max-w-lg">
+                    Anuncie na maior vitrine de luxo de Goiânia e tenha seu imóvel trabalhado por especialistas em alta performance.
                   </p>
-                  <ul className="space-y-4">
-                    {['Anúncio gratuito na vitrine Habita.vc', 'Acesso a centenas de corretores parceiros', 'Venda mais rápida e sem burocracia'].map((benefit, i) => (
-                      <li key={i} className="flex items-center gap-3 text-primary font-bold">
-                        <CheckCircle2 className="text-green-500" size={24} />
+                  <ul className="space-y-6">
+                    {['Anúncio Premium na vitrine Habita.vc', 'Match inteligente com compradores qualificados', 'Gestão completa da jornada de venda'].map((benefit, i) => (
+                      <li key={i} className="flex items-center gap-4 text-white font-bold text-lg">
+                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center border border-accent/40">
+                          <CheckCircle2 className="text-accent" size={14} />
+                        </div>
                         {benefit}
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div className="bg-muted/30 p-8 rounded-[2rem] border border-border">
-                  <form className="space-y-4">
-                    <div>
-                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">Seu Nome</label>
-                      <input type="text" placeholder="Nome completo" className="w-full mt-1 px-4 py-4 rounded-xl bg-white border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold" />
+                
+                <div className="bg-white p-10 rounded-[3rem] shadow-2xl">
+                  <h3 className="text-2xl font-black text-primary mb-8">Cadastro de Imóvel</h3>
+                  <form className="space-y-5">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Seu Nome</label>
+                      <input type="text" placeholder="Como podemos te chamar?" className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-transparent focus:bg-white focus:border-accent/20 outline-none transition-all font-bold text-primary" />
                     </div>
-                    <div>
-                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">WhatsApp</label>
-                      <input type="text" placeholder="(00) 00000-0000" className="w-full mt-1 px-4 py-4 rounded-xl bg-white border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold" />
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">WhatsApp</label>
+                      <input type="text" placeholder="55 62 99999-9999" className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-transparent focus:bg-white focus:border-accent/20 outline-none transition-all font-bold text-primary" />
                     </div>
-                    <div>
-                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">Tipo de Imóvel</label>
-                      <select className="w-full mt-1 px-4 py-4 rounded-xl bg-white border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-bold text-primary">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Tipo do Imóvel</label>
+                      <select className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-transparent focus:bg-white focus:border-accent/20 outline-none transition-all font-bold text-primary appearance-none">
                         <option>Apartamento</option>
                         <option>Casa em Condomínio</option>
-                        <option>Lote/Terreno</option>
+                        <option>Lançamento</option>
                         <option>Comercial</option>
                       </select>
                     </div>
-                    <button type="button" className="w-full mt-4 bg-primary hover:bg-primary-light text-white py-4 rounded-xl font-black text-lg transition-all shadow-premium flex justify-center items-center gap-2">
-                      Cadastrar Imóvel Grátis
+                    <button type="button" className="w-full mt-6 bg-primary hover:bg-primary-light text-white py-5 rounded-[1.5rem] font-black text-lg transition-all shadow-xl flex justify-center items-center gap-3 active:scale-[0.98]">
+                      Enviar para Curadoria <ArrowRight size={20} />
                     </button>
-                    <p className="text-center text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-4">
-                      Limite de 2 imóveis por proprietário.
-                    </p>
                   </form>
                 </div>
               </div>
@@ -111,58 +114,83 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-24 bg-primary relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-accent rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl" />
-          </div>
-          
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-6">
-              Busca Personalizada
+        {/* Final CTA */}
+        <section className="py-32 bg-white text-center">
+          <div className="max-w-4xl mx-auto px-4">
+            <h2 className="text-5xl md:text-7xl font-black text-primary mb-8 tracking-tighter">
+              Ainda não encontrou <br />o seu <span className="text-accent italic font-serif font-light lowercase tracking-normal">lugar?</span>
             </h2>
-            <p className="text-white/70 text-lg mb-10 max-w-2xl mx-auto font-medium">
-              Não encontrou o imóvel ideal? Nossa equipe de concierge faz uma busca ativa no mercado para encontrar exatamente o que você deseja.
+            <p className="text-xl text-muted-foreground mb-12 font-medium">
+              Nossa equipe de concierge imobiliário está pronta para fazer uma busca personalizada no mercado off-market para você.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <button className="bg-accent hover:bg-accent-light text-white px-12 py-5 rounded-2xl font-black text-lg transition-all shadow-xl hover:-translate-y-1">
-                Falar com Consultor
-              </button>
-            </div>
+            <button className="bg-primary hover:bg-primary-light text-white px-16 py-6 rounded-[2rem] font-black text-xl transition-all shadow-luxury hover:-translate-y-1">
+              Falar com Concierge
+            </button>
           </div>
         </section>
       </main>
 
-      <footer className="bg-white py-20 border-t border-border">
+      <footer className="bg-[#f8fafc] py-24 border-t border-border/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-1 md:col-span-2 space-y-6">
-              <span className="text-3xl font-black text-primary">Habita<span className="text-accent">.vc</span></span>
-              <p className="text-muted-foreground max-w-sm font-medium leading-relaxed">
-                A plataforma definitiva para quem busca inteligência e exclusividade no mercado imobiliário de alta performance.
+          <div className="grid md:grid-cols-4 gap-20 mb-20">
+            <div className="col-span-1 md:col-span-2 space-y-8">
+              <span className="text-4xl font-black text-primary tracking-tighter">Habita<span className="text-accent">.vc</span></span>
+              <p className="text-muted-foreground max-w-sm font-medium leading-relaxed text-lg">
+                A inteligência de mercado que Goiânia precisava para conectar pessoas extraordinárias a lugares únicos.
               </p>
             </div>
             <div>
-              <h4 className="font-black text-primary mb-6 uppercase tracking-widest text-xs">Plataforma</h4>
-              <ul className="space-y-4 text-muted-foreground text-sm font-bold">
-                <li><Link href="/imoveis" className="hover:text-accent transition-colors">Catálogo de Imóveis</Link></li>
-                <li><Link href="/empreendimentos" className="hover:text-accent transition-colors">Novos Lançamentos</Link></li>
-                <li><Link href="/crmhabita" className="hover:text-accent transition-colors">Área do Corretor</Link></li>
+              <h4 className="font-black text-primary mb-8 uppercase tracking-[0.2em] text-[10px]">Navegação</h4>
+              <ul className="space-y-5 text-muted-foreground text-sm font-bold">
+                <li><Link href="/imoveis" className="hover:text-accent transition-colors">Imóveis</Link></li>
+                <li><Link href="/empreendimentos" className="hover:text-accent transition-colors">Lançamentos</Link></li>
+                <li><Link href="/blog" className="hover:text-accent transition-colors">Conteúdos</Link></li>
+                <li><Link href="/crmhabita" className="hover:text-accent transition-colors">Área Interna</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-black text-primary mb-6 uppercase tracking-widest text-xs">Atendimento</h4>
-              <ul className="space-y-4 text-muted-foreground text-sm font-bold">
-                <li>contato@habita.vc</li>
-                <li>(62) 99999-9999</li>
-                <li>Goiânia - GO</li>
+              <h4 className="font-black text-primary mb-8 uppercase tracking-[0.2em] text-[10px]">Contato</h4>
+              <ul className="space-y-5 text-muted-foreground text-sm font-bold">
+                <li className="flex flex-col">
+                  <span className="text-[9px] uppercase tracking-widest opacity-50 mb-1">E-mail</span>
+                  contato@habita.vc
+                </li>
+                <li className="flex flex-col">
+                  <span className="text-[9px] uppercase tracking-widest opacity-50 mb-1">WhatsApp</span>
+                  (62) 99999-9999
+                </li>
+                <li className="flex flex-col">
+                  <span className="text-[9px] uppercase tracking-widest opacity-50 mb-1">Local</span>
+                  Goiânia, GO - Brasil
+                </li>
               </ul>
             </div>
           </div>
-          <div className="pt-8 border-t border-border text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">
-            <p>© 2026 Habita.vc • Inteligência Imobiliária de Alta Performance</p>
+          <div className="pt-10 border-t border-border/60 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-[10px] font-black text-primary/30 uppercase tracking-[0.3em]">© 2026 Habita.vc • All Rights Reserved</p>
+            <div className="flex gap-8">
+               {['Instagram', 'LinkedIn', 'YouTube'].map(social => (
+                 <span key={social} className="text-[10px] font-black text-primary/40 uppercase tracking-widest cursor-pointer hover:text-accent transition-colors">{social}</span>
+               ))}
+            </div>
           </div>
         </div>
+      </footer>
+    </div>
+  );
+}
+
+const BenefitItem = ({ icon, title, desc }: any) => (
+  <div className="flex flex-col gap-6 p-2 group">
+    <div className="w-16 h-16 bg-accent/10 rounded-[1.5rem] flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-500">
+      {React.cloneElement(icon as React.ReactElement, { size: 28 })}
+    </div>
+    <div>
+      <h4 className="font-black text-primary text-2xl mb-2 tracking-tight">{title}</h4>
+      <p className="text-muted-foreground font-medium leading-relaxed">{desc}</p>
+    </div>
+  </div>
+);      </div>
       </footer>
     </div>
   );
