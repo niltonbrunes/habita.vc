@@ -17,6 +17,7 @@ export default function PublicPropertyDetailSlugPage({ params }: { params: Promi
   const [property, setProperty] = useState<Property | null>(null);
   const [similarProperties, setSimilarProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [submittingLead, setSubmittingLead] = useState(false);
   
   // Lightbox state
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -48,10 +49,40 @@ export default function PublicPropertyDetailSlugPage({ params }: { params: Promi
     fetch();
   }, [resolvedParams.city, resolvedParams.slug]);
 
-  const handleWhatsApp = (message?: string) => {
-    const brokerPhone = property?.registered_by_profile?.whatsapp || '5562999999999';
+  const handleWhatsApp = async (message?: string) => {
+    if (!property) return;
+
+    const brokerPhone = property.registered_by_profile?.whatsapp || '5562999999999';
     const cleanPhone = brokerPhone.replace(/\D/g, '');
-    const defaultMessage = `Olá! Meu nome é ${leadName || 'um cliente'}. Tenho interesse no imóvel "${property?.title}" (Ref: ${property?.reference || property?.id}).`;
+    const defaultMessage = `Olá! Meu nome é ${leadName || 'um cliente'}. Tenho interesse no imóvel "${property.title}" (Ref: ${property.reference || property.id}).`;
+    
+    // If we have lead data, save it to the CRM first
+    if (leadName && leadPhone) {
+      try {
+        setSubmittingLead(true);
+        const { LeadsService } = await import('@/services/leads.service');
+        await LeadsService.create({
+          name: leadName,
+          phone: leadPhone,
+          assigned_to_id: property.registered_by_id,
+          status: 'lead',
+          source: 'Portal Publico',
+          temperature: 'warm',
+          score: 60,
+          history: [{ 
+            type: 'creation', 
+            date: new Date().toISOString(), 
+            note: `Lead gerado via Portal Público no imóvel: ${property.title} (ID: ${property.id})` 
+          }]
+        });
+      } catch (error) {
+        console.error('Erro ao salvar lead no CRM:', error);
+        // We continue to WhatsApp even if CRM save fails to not lose the client
+      } finally {
+        setSubmittingLead(false);
+      }
+    }
+
     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(message || defaultMessage)}`, '_blank');
   };
 
@@ -274,8 +305,16 @@ export default function PublicPropertyDetailSlugPage({ params }: { params: Promi
                       required
                       className="w-full px-4 py-3 bg-white border border-border rounded-xl focus:border-primary focus:outline-none font-bold text-sm text-primary placeholder:text-muted-foreground/50"
                     />
-                    <button type="submit" className="w-full bg-primary text-white py-4 rounded-xl font-black text-sm flex items-center justify-center gap-2 hover:bg-primary-light transition-all shadow-md">
-                      Receber mais informações
+                    <button 
+                      type="submit" 
+                      disabled={submittingLead}
+                      className="w-full bg-primary text-white py-4 rounded-xl font-black text-sm flex items-center justify-center gap-2 hover:bg-primary-light transition-all shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      {submittingLead ? (
+                        <RefreshCw className="animate-spin" size={18} />
+                      ) : (
+                        'Receber mais informações'
+                      )}
                     </button>
                   </form>
                 </div>
