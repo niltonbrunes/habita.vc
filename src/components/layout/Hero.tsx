@@ -70,8 +70,8 @@ export const Hero = () => {
           >
             <div className="relative z-10 rounded-[4rem] overflow-hidden shadow-luxury border-[20px] border-white">
               <img 
-                src="/modern_luxury_apartment_exterior_1777989602281.png" 
-                alt="Luxury Mansion"
+                src="/hero_luxury.png" 
+                alt="Habita.vc - Luxury Real Estate"
                 className="w-full aspect-[4/5] object-cover"
               />
             </div>

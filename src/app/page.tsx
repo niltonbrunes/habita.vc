@@ -21,9 +21,6 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className="min-h-screen bg-background selection:bg-primary/10">
-      <div className="bg-red-600 text-white text-center py-2 font-bold text-xs uppercase tracking-[0.3em]">
-        DEBUG: Habita.vc V2 - Nova Home Ativa
-      </div>
       <Navbar />
       
       <main>
