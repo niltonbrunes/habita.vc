@@ -12,7 +12,8 @@ import {
 import Link from 'next/link';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
 
-export default function PropertyDetailPage({ params }: { params: { id: string } }) {
+export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
   const router = useRouter();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,19 +24,19 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   const [showInactivateModal, setShowInactivateModal] = useState(false);
 
   useEffect(() => {
-    PropertiesService.getById(params.id)
+    PropertiesService.getById(id)
       .then(data => {
         setProperty(data);
         setActiveImage(data.main_image || data.images?.[0] || null);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [params.id]);
+  }, [id]);
 
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await PropertiesService.delete(params.id);
+      await PropertiesService.delete(id);
       router.push('/crmhabita/imoveis');
     } catch (err) {
       console.error(err);
@@ -49,8 +50,8 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   const handleInactivate = async () => {
     setInactivating(true);
     try {
-      await PropertiesService.update(params.id, { status: 'inactive' });
-      const updated = await PropertiesService.getById(params.id);
+      await PropertiesService.update(id, { status: 'inactive' });
+      const updated = await PropertiesService.getById(id);
       setProperty(updated);
     } catch (err) {
       console.error(err);
@@ -144,7 +145,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
           <div className="flex items-center gap-2">
             <Link 
-              href={`/crmhabita/imoveis/${params.id}/editar`}
+              href={`/crmhabita/imoveis/${id}/editar`}
               className="flex items-center gap-2 px-5 py-3 bg-white border-2 border-border text-primary font-black rounded-2xl hover:border-primary/30 hover:bg-primary/5 transition-all shadow-sm"
             >
               <Pencil size={18} /> Editar

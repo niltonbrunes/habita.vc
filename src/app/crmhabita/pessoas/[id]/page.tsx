@@ -8,7 +8,8 @@ import { ArrowLeft, User, Building2, MapPin, Phone, Mail, Briefcase, Calendar, G
 import Link from 'next/link';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
 
-export default function PersonDetailPage({ params }: { params: { id: string } }) {
+export default function PersonDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
   const router = useRouter();
   const [person, setPerson] = useState<Person | null>(null);
   const [loading, setLoading] = useState(true);
@@ -18,16 +19,16 @@ export default function PersonDetailPage({ params }: { params: { id: string } })
   const [showInactivateModal, setShowInactivateModal] = useState(false);
 
   useEffect(() => {
-    PeopleService.getById(params.id)
+    PeopleService.getById(id)
       .then(setPerson)
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [params.id]);
+  }, [id]);
 
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await PeopleService.delete(params.id);
+      await PeopleService.delete(id);
       router.push('/crmhabita/pessoas');
     } catch (err) {
       console.error(err);
@@ -41,8 +42,8 @@ export default function PersonDetailPage({ params }: { params: { id: string } })
   const handleInactivate = async () => {
     setInactivating(true);
     try {
-      await PeopleService.update(params.id, { relationship_status: 'inativo' });
-      const updated = await PeopleService.getById(params.id);
+      await PeopleService.update(id, { relationship_status: 'inativo' });
+      const updated = await PeopleService.getById(id);
       setPerson(updated);
     } catch (err) {
       console.error(err);
@@ -107,7 +108,7 @@ export default function PersonDetailPage({ params }: { params: { id: string } })
 
           <div className="flex items-center gap-2">
             <Link 
-              href={`/crmhabita/pessoas/${params.id}/editar`}
+              href={`/crmhabita/pessoas/${id}/editar`}
               className="flex items-center gap-2 px-5 py-3 bg-white border-2 border-border text-primary font-black rounded-2xl hover:border-primary/30 hover:bg-primary/5 transition-all shadow-sm"
             >
               <Pencil size={18} /> Editar

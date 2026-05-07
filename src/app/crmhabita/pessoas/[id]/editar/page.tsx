@@ -7,8 +7,8 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function EditPersonPage() {
-  const { id } = useParams();
+export default function EditPersonPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
   const router = useRouter();
   const [person, setPerson] = useState<any>(null);
   const [loading, setLoading] = useState(true);
