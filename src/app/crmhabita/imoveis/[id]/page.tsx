@@ -16,6 +16,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   const router = useRouter();
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeImage, setActiveImage] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [inactivating, setInactivating] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -23,7 +24,10 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
   useEffect(() => {
     PropertiesService.getById(params.id)
-      .then(setProperty)
+      .then(data => {
+        setProperty(data);
+        setActiveImage(data.main_image || data.images?.[0] || null);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [params.id]);
@@ -171,9 +175,9 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             {/* Real Gallery */}
             <div className="space-y-4">
               <div className="aspect-video bg-muted rounded-[2.5rem] flex items-center justify-center overflow-hidden border-2 border-border shadow-premium relative group">
-                {(property.main_image || (property.images && property.images.length > 0)) ? (
+                {activeImage ? (
                   <img 
-                    src={property.main_image || property.images[0]} 
+                    src={activeImage} 
                     alt={property.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
@@ -197,7 +201,8 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                   {property.images.map((img: string, i: number) => (
                     <div 
                       key={i} 
-                      className={`w-24 h-24 rounded-2xl overflow-hidden border-2 shrink-0 cursor-pointer transition-all ${img === property.main_image ? 'border-primary shadow-md scale-95' : 'border-border hover:border-primary/40'}`}
+                      className={`w-24 h-24 rounded-2xl overflow-hidden border-2 shrink-0 cursor-pointer transition-all ${img === activeImage ? 'border-primary shadow-md scale-95' : 'border-border hover:border-primary/40'}`}
+                      onClick={() => setActiveImage(img)}
                     >
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </div>
