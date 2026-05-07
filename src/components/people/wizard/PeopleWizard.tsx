@@ -83,11 +83,18 @@ export function PeopleWizard() {
     setError(null);
 
     try {
-      const created = await PeopleService.create({
+      // Sanitização de campos para o PostgreSQL (strings vazias -> null)
+      const sanitizedData = {
         ...data,
+        birth_date_or_foundation: data.birth_date_or_foundation || null,
+        document_id: data.document_id || null,
+        rg_ie: data.rg_ie || null,
+        im: data.im || null,
         registered_by_id: user.id,
         assigned_to_id: user.id,
-      });
+      };
+
+      const created = await PeopleService.create(sanitizedData);
 
       setSaved(true);
       setTimeout(() => router.push(`/crmhabita/pessoas/${created.id}`), 1500);
