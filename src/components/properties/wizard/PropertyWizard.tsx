@@ -170,24 +170,30 @@ export function PropertyWizard() {
       const created = await PropertiesService.create(propertyPayload);
 
 
-      // 2. Upload images with compression
+      // 2. Upload images (non-blocking — fails gracefully if bucket doesn't exist)
       if (images.length > 0) {
-        const uploadedUrls: string[] = [];
-        for (const img of images) {
-          if (img.file) {
-            const url = await StorageService.uploadPropertyImage(img.file, created.id);
-            uploadedUrls.push(url);
-          } else if (img.url) {
-            uploadedUrls.push(img.url);
+        try {
+          const uploadedUrls: string[] = [];
+          for (const img of images) {
+            if (img.file) {
+              const url = await StorageService.uploadPropertyImage(img.file, created.id);
+              uploadedUrls.push(url);
+            } else if (img.url) {
+              uploadedUrls.push(img.url);
+            }
           }
+          const coverImg = images.find(i => i.isCover);
+          const coverIdx = coverImg ? images.indexOf(coverImg) : 0;
+          await PropertiesService.update(created.id, {
+            images: uploadedUrls,
+            main_image: uploadedUrls[coverIdx] || uploadedUrls[0],
+          });
+        } catch (imgErr: any) {
+          console.warn('Image upload skipped:', imgErr?.message);
+          setError(`⚠️ Imóvel salvo! Mas as fotos não foram enviadas: bucket "property-images" não encontrado no Supabase Storage. Crie-o manualmente e reenvie as fotos na ficha do imóvel.`);
         }
-        const coverImg = images.find(i => i.isCover);
-        const coverIdx = coverImg ? images.indexOf(coverImg) : 0;
-        await PropertiesService.update(created.id, {
-          images: uploadedUrls,
-          main_image: uploadedUrls[coverIdx] || uploadedUrls[0],
-        });
       }
+
 
       // 3. Save owners
       if (owners.length > 0) {
