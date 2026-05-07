@@ -38,7 +38,8 @@ export async function middleware(request: NextRequest) {
 
   // 3. Detect if it's a potential broker slug (root level, single segment)
   const segments = pathname.split('/').filter(Boolean);
-  const isPotentialBrokerSlug = segments.length === 1 && !reservedKeywords.includes(segments[0]);
+  const isFile = pathname.includes('.');
+  const isPotentialBrokerSlug = segments.length === 1 && !reservedKeywords.includes(segments[0]) && !isFile;
 
   // If it's a broker slug, we rewrite to the vitrine path internally
   if (isPotentialBrokerSlug) {
