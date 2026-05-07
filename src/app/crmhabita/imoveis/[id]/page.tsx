@@ -118,15 +118,44 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Gallery Placeholder */}
-            <div className="aspect-video bg-muted rounded-3xl flex items-center justify-center overflow-hidden border border-border shadow-premium">
-              <MapPin size={64} className="text-primary/5" />
-              <div className="absolute top-6 left-6 flex gap-2">
-                <span className="bg-primary text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">{property.type}</span>
-                {property.pattern === 'high_end' && (
-                  <span className="bg-luxury-gold text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Alto Padrão</span>
+            {/* Real Gallery */}
+            <div className="space-y-4">
+              <div className="aspect-video bg-muted rounded-[2.5rem] flex items-center justify-center overflow-hidden border-2 border-border shadow-premium relative group">
+                {(property.main_image || (property.images && property.images.length > 0)) ? (
+                  <img 
+                    src={property.main_image || property.images[0]} 
+                    alt={property.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                ) : (
+                  <MapPin size={64} className="text-primary/5" />
                 )}
+                
+                <div className="absolute top-6 left-6 flex gap-2">
+                  <span className="bg-primary/90 backdrop-blur-md text-white px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">{property.type}</span>
+                  {property.pattern === 'high_end' && (
+                    <span className="bg-luxury-gold text-white px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg">Alto Padrão</span>
+                  )}
+                </div>
               </div>
+
+              {/* Thumbnails */}
+              {property.images && property.images.length > 1 && (
+                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                  {property.images.map((img: string, i: number) => (
+                    <div 
+                      key={i} 
+                      className={`w-24 h-24 rounded-2xl overflow-hidden border-2 shrink-0 cursor-pointer transition-all ${img === property.main_image ? 'border-primary shadow-md scale-95' : 'border-border hover:border-primary/40'}`}
+                      onClick={() => {
+                        // In a real app we'd update a state 'selectedImage', 
+                        // for now we show them all.
+                      }}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="space-y-4">

@@ -152,8 +152,18 @@ const PropertyCard = ({ property }: { property: any }) => (
         }`}>
           {property.status}
         </span>
-        <div className="w-full h-full bg-primary/5 group-hover:scale-110 transition-transform duration-500 flex items-center justify-center">
-          <MapPin className="text-primary/10" size={48} />
+        <div className="w-full h-full bg-primary/5 group-hover:scale-110 transition-transform duration-500">
+          {(property.main_image || (property.images && property.images.length > 0)) ? (
+            <img 
+              src={property.main_image || property.images[0]} 
+              alt={property.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <MapPin className="text-primary/10" size={48} />
+            </div>
+          )}
         </div>
         
         {/* Estimated Commission Overlay */}
