@@ -37,7 +37,7 @@ export default function SettingsPage() {
     },
     slug: '',
     whatsapp: '',
-    instagram: '',
+    creci: '',
     bio: ''
   });
 
@@ -56,7 +56,7 @@ export default function SettingsPage() {
         },
         slug: profile.slug || '',
         whatsapp: profile.whatsapp || '',
-        instagram: profile.instagram || '',
+        creci: profile.creci || '',
         bio: profile.bio || ''
       });
     }
@@ -179,13 +179,13 @@ export default function SettingsPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Usuário Instagram (Sem @)</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">CRECI / Registro Profissional</label>
                 <input
                   type="text"
-                  value={formData.instagram}
-                  onChange={e => setFormData({ ...formData, instagram: e.target.value })}
+                  value={formData.creci}
+                  onChange={e => setFormData({ ...formData, creci: e.target.value })}
                   className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
-                  placeholder="seu.insta"
+                  placeholder="Ex: 00000-F"
                 />
               </div>
 
