@@ -163,13 +163,13 @@ export default function PersonDetailPage({ params }: { params: { id: string } })
             )}
 
             {/* Perfil Comercial (Interesses) */}
-            {(person.commercial_info?.notes || person.commercial_info?.interests?.length > 0) && (
+            {(person.commercial_info?.notes || (person.commercial_info?.interests?.length ?? 0) > 0) && (
               <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-border">
                 <h3 className="font-black text-primary text-lg mb-6 flex items-center gap-2">
                   <Briefcase size={20} /> Perfil Comercial
                 </h3>
                 
-                {person.commercial_info.interests && person.commercial_info.interests.length > 0 && (
+                {(person.commercial_info?.interests?.length ?? 0) > 0 && (
                   <div className="mb-6">
                     <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">Interesses</p>
                     <div className="flex gap-2">
