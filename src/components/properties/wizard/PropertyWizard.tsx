@@ -124,29 +124,51 @@ export function PropertyWizard() {
     setError(null);
 
     try {
-      // 1. Create property
+      // 1. Build DB-safe payload — only columns that exist in the schema
+      const {
+        // Extract wizard-only / non-DB fields
+        commission_estimated_percent,
+        meta_title,
+        meta_description,
+        rooms,
+        suites,
+        bathrooms,
+        parking_spaces,
+        area_useful,
+        area_total,
+        metadata: rawMetadata,
+        ...dbFields
+      } = data;
+
       const propertyPayload: any = {
-        ...data,
+        ...dbFields,
         registered_by_id: user.id,
         property_category: 'residential',
-        area_total: data.area_total || data.area_useful,
+        // Numeric feature columns (these DO exist in the schema)
+        rooms,
+        suites,
+        bathrooms,
+        parking_spaces,
+        area_useful,
+        area_total: area_total || area_useful,
         images: [],
         main_image: null,
         is_highlight: false,
         is_unit_of_development: !!data.development_id,
+        // Store commission + extras inside metadata JSON
         metadata: {
-          ...data.metadata,
-          rooms: data.rooms,
-          bathrooms: data.bathrooms,
-          area: data.area_useful,
-          parking: data.parking_spaces,
+          ...rawMetadata,
+          commission_estimated_percent,
+          // Mirror counters into metadata for legacy compatibility
+          rooms,
+          bathrooms,
+          area: area_useful,
+          parking: parking_spaces,
         },
       };
-      // Remove wizard-only fields not in DB schema
-      delete propertyPayload.meta_title;
-      delete propertyPayload.meta_description;
 
       const created = await PropertiesService.create(propertyPayload);
+
 
       // 2. Upload images with compression
       if (images.length > 0) {
