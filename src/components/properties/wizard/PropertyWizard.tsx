@@ -148,6 +148,7 @@ export function PropertyWizard() {
       const propertyPayload: any = {
         ...dbFields,
         slug: uniqueSlug,
+        reference: dbFields.reference?.trim() || null, // FIX: Empty string violates unique constraint, force null
         registered_by_id: user.id,
         property_category: 'residential',
         // Numeric feature columns (these DO exist in the schema)
