@@ -49,6 +49,15 @@ export default function LeadsPage() {
     }
   };
 
+  const handleMoveLead = async (id: string, newStatus: string) => {
+    try {
+      await LeadsService.update(id, { status: newStatus as any });
+      refresh();
+    } catch (err) {
+      console.error('Erro ao mover lead:', err);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="h-full flex flex-col space-y-6">
@@ -124,7 +133,7 @@ export default function LeadsPage() {
 
           <div className="mb-4 flex items-center gap-2">
              <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-               Total: {Object.values(filteredLeadsByStatus).flat().length} leads encontrados
+                Total: {Object.values(filteredLeadsByStatus).flat().length} leads encontrados
              </span>
           </div>
           
@@ -134,6 +143,7 @@ export default function LeadsPage() {
                 key={column.id} 
                 column={column} 
                 leads={filteredLeadsByStatus[column.id] || []} 
+                onMoveLead={handleMoveLead}
               />
             ))}
           </div>
