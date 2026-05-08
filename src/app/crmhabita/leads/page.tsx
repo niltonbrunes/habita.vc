@@ -115,14 +115,20 @@ export default function LeadsPage() {
         )}
 
         {/* Kanban Board Container */}
-        <div className="flex-1 overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-primary/10 relative">
+        <div className="flex-1 overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-primary/10 relative min-h-[600px]">
           {loading && (
             <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-20 flex items-center justify-center">
               <RefreshCw className="animate-spin text-primary" size={32} />
             </div>
           )}
+
+          <div className="mb-4 flex items-center gap-2">
+             <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+               Total: {Object.values(filteredLeadsByStatus).flat().length} leads encontrados
+             </span>
+          </div>
           
-          <div className="flex gap-6 h-full min-w-max">
+          <div className="flex gap-6 min-h-full min-w-max">
             {KANBAN_COLUMNS.map(column => (
               <KanbanColumnComponent 
                 key={column.id} 

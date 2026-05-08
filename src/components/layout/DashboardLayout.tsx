@@ -54,6 +54,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
           <SidebarItem icon={<Trophy size={20} />} label="Performance" href="/crmhabita/ranking" active={pathname === '/crmhabita/ranking'} />
           <SidebarItem icon={<Layers size={20} />} label="Empreendimentos" href="/crmhabita/empreendimentos" active={pathname.startsWith('/crmhabita/empreendimentos')} />
           <SidebarItem icon={<Calendar size={20} />} label="Agenda" href="/crmhabita/agenda" active={pathname === '/crmhabita/agenda'} />
+          <SidebarItem icon={<Target size={20} />} label="Gestão de Leads" href="/crmhabita/leads" active={pathname.startsWith('/crmhabita/leads')} />
           <SidebarItem icon={<Users size={20} />} label="Pessoas (Contatos)" href="/crmhabita/pessoas" active={pathname.startsWith('/crmhabita/pessoas')} />
           <SidebarItem icon={<Sparkles size={20} />} label="Prospecção IA" href="/crmhabita/prospeccao" active={pathname.startsWith('/crmhabita/prospeccao')} />
           <SidebarItem icon={<Home size={20} />} label="Meus Imóveis" href="/crmhabita/imoveis" active={pathname.startsWith('/crmhabita/imoveis')} />
