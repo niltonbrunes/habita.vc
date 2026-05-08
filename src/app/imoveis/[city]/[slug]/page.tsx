@@ -240,88 +240,106 @@ export default function PublicPropertyDetailSlugPage({ params }: { params: Promi
 
             </div>
 
-            {/* RIGHT COLUMN: Sticky Sidebar */}
-            <div className="lg:col-span-1 space-y-6">
-              <div className="sticky top-24 space-y-6">
+            {/* RIGHT COLUMN: Sticky Sidebar (Premium Design) */}
+            <div className="lg:col-span-1 space-y-8">
+              <div className="sticky top-28 space-y-8">
                 
-                {/* Main Conversion Card (Hidden on mobile, shown on desktop) */}
-                <div className="hidden lg:block bg-white p-8 rounded-[2.5rem] shadow-luxury border border-border">
-                  <p className="text-sm font-black text-muted-foreground uppercase tracking-widest mb-2">Valor de Investimento</p>
-                  <h2 className="text-5xl font-black text-primary mb-4 tracking-tighter">
-                    R$ {property.price.toLocaleString()}
+                {/* Main Price Card - High End Aesthetic */}
+                <div className="hidden lg:block bg-white p-10 rounded-[3rem] shadow-luxury border border-border/40 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-bl-[6rem] -z-10" />
+                  
+                  <p className="text-[10px] font-black text-accent uppercase tracking-[0.3em] mb-4">Valor de Investimento</p>
+                  <h2 className="text-5xl font-serif italic text-primary mb-6 tracking-tighter leading-none">
+                    R$ {property.price.toLocaleString('pt-BR')}
                   </h2>
-                  <h1 className="text-xl font-bold text-primary leading-tight mb-2">{property.title}</h1>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1.5 font-medium mb-8">
-                    <MapPin size={16} className="text-accent shrink-0" />
-                    {property.address_street}, {property.address_city}
-                  </p>
+                  
+                  <div className="space-y-4">
+                    <h1 className="text-xl font-black text-primary leading-tight tracking-tight">{property.title}</h1>
+                    <p className="text-xs text-muted-foreground flex items-center gap-2 font-bold uppercase tracking-wider">
+                      <MapPin size={14} className="text-accent shrink-0" />
+                      {property.address_neighborhood || property.address_city}
+                    </p>
+                  </div>
 
-                  <div className="space-y-3">
-                    <button onClick={() => handleWhatsApp()} className="w-full bg-[#25D366] text-white py-5 rounded-[1.5rem] font-black text-lg flex items-center justify-center gap-3 hover:bg-[#128C7E] transition-all shadow-premium group">
-                      <MessageCircle size={24} className="group-hover:rotate-12 transition-transform" />
+                  <div className="mt-10 space-y-4">
+                    <button onClick={() => handleWhatsApp()} className="w-full bg-[#25D366] text-white py-6 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-premium group">
+                      <Phone size={20} fill="currentColor" className="group-hover:rotate-12 transition-transform" />
                       Falar no WhatsApp
                     </button>
                     
-                    <button className="w-full bg-white border border-border text-primary py-4 rounded-[1.5rem] font-bold flex items-center justify-center gap-3 hover:bg-muted transition-all">
-                      <Calendar size={20} />
+                    <button className="w-full bg-white border border-primary/20 text-primary py-5 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-primary hover:text-white transition-all">
+                      <Calendar size={18} />
                       Agendar Visita
                     </button>
                   </div>
                 </div>
 
-                {/* Responsible Broker Card */}
-                <div className="bg-muted/10 p-8 rounded-[2.5rem] border border-border">
-                  <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-6">Responsável pelo anúncio</h3>
-                  <div className="flex items-center gap-4 mb-6">
-                    {property.registered_by_profile?.avatar_url ? (
-                      <img src={property.registered_by_profile.avatar_url} alt="Corretor" className="w-16 h-16 rounded-full object-cover shadow-md" />
-                    ) : (
-                      <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center font-black text-primary text-xl">
-                        {property.registered_by_profile?.full_name?.substring(0, 2).toUpperCase() || 'HB'}
-                      </div>
-                    )}
+                {/* Responsible Broker Card - Boutique Style */}
+                <div className="bg-primary text-white p-10 rounded-[3.5rem] shadow-luxury relative overflow-hidden">
+                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
+                  
+                  <h3 className="text-[10px] font-black text-accent uppercase tracking-[0.3em] mb-8 opacity-80 text-center">Consultor Exclusivo</h3>
+                  
+                  <div className="flex flex-col items-center text-center space-y-4 mb-10">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-accent rounded-full blur-md opacity-20" />
+                      {property.registered_by_profile?.avatar_url ? (
+                        <img src={property.registered_by_profile.avatar_url} alt="Corretor" className="w-24 h-24 rounded-full object-cover border-4 border-white/10 relative z-10" />
+                      ) : (
+                        <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center font-black text-white text-2xl border-4 border-white/10 relative z-10">
+                          {property.registered_by_profile?.full_name?.substring(0, 2).toUpperCase() || 'HB'}
+                        </div>
+                      )}
+                    </div>
                     <div>
-                      <p className="font-black text-primary text-lg">{property.registered_by_profile?.full_name || 'Equipe Habita.vc'}</p>
-                      <p className="text-xs font-bold text-muted-foreground">{property.registered_by_profile?.role === 'broker' ? 'Corretor Especialista' : 'Imobiliária'}</p>
+                      <p className="font-black text-xl tracking-tight leading-none">{property.registered_by_profile?.full_name || 'Equipe Habita.vc'}</p>
+                      <p className="text-[10px] font-bold text-accent uppercase tracking-widest mt-2">Especialista em Alto Padrão</p>
                     </div>
                   </div>
                   
-                  {/* Embedded Lead Capture Form */}
-                  <form onSubmit={(e) => { e.preventDefault(); handleWhatsApp(); }} className="space-y-3 mt-6 pt-6 border-t border-border">
-                    <p className="text-sm font-bold text-primary mb-2">Envie uma mensagem direta:</p>
-                    <input 
-                      type="text" 
-                      value={leadName}
-                      onChange={(e) => setLeadName(e.target.value)}
-                      placeholder="Seu Nome"
-                      required
-                      className="w-full px-4 py-3 bg-white border border-border rounded-xl focus:border-primary focus:outline-none font-bold text-sm text-primary placeholder:text-muted-foreground/50"
-                    />
-                    <input 
-                      type="tel" 
-                      value={leadPhone}
-                      onChange={(e) => setLeadPhone(e.target.value)}
-                      placeholder="Seu WhatsApp"
-                      required
-                      className="w-full px-4 py-3 bg-white border border-border rounded-xl focus:border-primary focus:outline-none font-bold text-sm text-primary placeholder:text-muted-foreground/50"
-                    />
+                  {/* Embedded Lead Capture Form - Dark Luxury */}
+                  <form onSubmit={(e) => { e.preventDefault(); handleWhatsApp(); }} className="space-y-4 pt-8 border-t border-white/10">
+                    <p className="text-[11px] font-black uppercase tracking-widest text-center text-white/40 mb-2">Gostaria de saber mais?</p>
+                    
+                    <div className="space-y-1">
+                      <input 
+                        type="text" 
+                        value={leadName}
+                        onChange={(e) => setLeadName(e.target.value)}
+                        placeholder="Nome completo"
+                        required
+                        className="w-full bg-white/10 border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-accent transition-all text-sm font-medium placeholder:text-white/20"
+                      />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <input 
+                        type="tel" 
+                        value={leadPhone}
+                        onChange={(e) => setLeadPhone(e.target.value)}
+                        placeholder="WhatsApp"
+                        required
+                        className="w-full bg-white/10 border border-white/5 rounded-2xl px-6 py-5 outline-none focus:border-accent transition-all text-sm font-medium placeholder:text-white/20"
+                      />
+                    </div>
+
                     <button 
                       type="submit" 
                       disabled={submittingLead}
-                      className="w-full bg-primary text-white py-4 rounded-xl font-black text-sm flex items-center justify-center gap-2 hover:bg-primary-light transition-all shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+                      className="w-full bg-accent text-white py-6 rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-white hover:text-primary transition-all shadow-xl disabled:opacity-50 mt-6"
                     >
                       {submittingLead ? (
                         <RefreshCw className="animate-spin" size={18} />
                       ) : (
-                        'Receber mais informações'
+                        'Solicitar Consultoria'
                       )}
                     </button>
                   </form>
                 </div>
 
                 {/* Legal Disclaimer */}
-                <p className="text-[10px] font-bold text-muted-foreground/60 text-center px-4">
-                  A plataforma apenas divulga os imóveis e seus anunciantes, não sendo responsável pela negociação. Valores sujeitos a alteração.
+                <p className="text-[9px] font-bold text-muted-foreground/40 text-center px-10 leading-relaxed uppercase tracking-tighter">
+                  Habita.vc • Plataforma de curadoria imobiliária. Sujeito a disponibilidade.
                 </p>
 
               </div>
