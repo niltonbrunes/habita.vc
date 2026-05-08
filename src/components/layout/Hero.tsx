@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Search, MapPin, ArrowRight, MousePointer2 } from 'lucide-react';
+import { Search, MapPin, ArrowRight, MousePointer2, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const Hero = () => {
