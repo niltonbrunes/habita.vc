@@ -37,75 +37,65 @@ export const PropertyCard = ({
 
   return (
     <Link href={`/imoveis/${city.toLowerCase()}/${slug}`} className="group block h-full">
-      <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-premium hover:shadow-luxury transition-all duration-700 flex flex-col h-full border border-border/40 hover:border-accent/20 relative group">
+      <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-premium hover:shadow-luxury transition-all duration-500 flex flex-col h-full border border-border/40 group relative">
         
-        {/* Image Container */}
-        <div className="relative aspect-[4/5] overflow-hidden">
+        {/* Image Section */}
+        <div className="relative aspect-[4/3] overflow-hidden">
           <img 
-            src={imageUrl || "/modern_luxury_apartment_exterior_1777989602281.png"} 
+            src={imageUrl || "/hero_luxury.png"} 
             alt={title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
           
-          {/* Overlay Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
-          
-          {/* Badges */}
-          <div className="absolute top-6 left-6 flex flex-col gap-2">
+          {/* Status Badges */}
+          <div className="absolute top-5 left-5 flex flex-wrap gap-2">
+            <span className="bg-accent text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-[0.2em] shadow-xl">
+              Novo
+            </span>
             <span className="bg-white/90 backdrop-blur-md text-primary text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-[0.2em] shadow-lg">
               {type}
             </span>
-            {price > 2000000 && (
-              <span className="bg-accent text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-[0.2em] shadow-lg">
-                High-End
-              </span>
-            )}
           </div>
-
-          {/* Price & Title on Image */}
-          <div className="absolute bottom-8 left-8 right-8">
-            <p className="text-accent text-sm font-black uppercase tracking-[0.2em] mb-2">Goiânia, GO</p>
-            <h3 className="text-white text-2xl font-black leading-tight tracking-tight mb-4 group-hover:text-accent transition-colors duration-500">
-              {title}
-            </h3>
-            <div className="flex items-end justify-between">
-              <p className="text-white text-3xl font-black tracking-tighter">
-                {formattedPrice}
-              </p>
-              <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white border border-white/20 group-hover:bg-accent group-hover:border-accent transition-all duration-500">
-                <ArrowUpRight size={24} />
-              </div>
-            </div>
+          
+          <div className="absolute bottom-5 left-5">
+             <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl flex items-center gap-2 shadow-lg">
+                <MapPin size={12} className="text-accent" />
+                <span className="text-[10px] font-black text-primary uppercase tracking-widest">{neighborhood}</span>
+             </div>
           </div>
         </div>
 
-        {/* Footer Info */}
-        <div className="p-8 space-y-6">
-          <div className="flex items-center justify-between border-b border-border/60 pb-6">
+        {/* Content Section - Portal Style */}
+        <div className="p-8 flex flex-col flex-1 space-y-6">
+          <div className="space-y-2">
+            <p className="text-3xl font-serif italic text-primary tracking-tighter">
+              {formattedPrice}
+            </p>
+            <h3 className="text-lg font-black text-primary leading-tight line-clamp-2 group-hover:text-accent transition-colors">
+              {title}
+            </h3>
+          </div>
+
+          <div className="flex items-center justify-between py-6 border-y border-border/50">
             <div className="flex flex-col items-center gap-1">
-              <BedDouble className="w-5 h-5 text-primary/30" />
-              <span className="text-[10px] font-black text-primary/60 uppercase tracking-widest">{bedrooms} Qtos</span>
+              <span className="text-lg font-black text-primary">{bedrooms}</span>
+              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Quartos</span>
             </div>
-            <div className="h-6 w-[1px] bg-border/60" />
+            <div className="w-px h-8 bg-border/50" />
             <div className="flex flex-col items-center gap-1">
-              <Bath className="w-5 h-5 text-primary/30" />
-              <span className="text-[10px] font-black text-primary/60 uppercase tracking-widest">{bathrooms} Suítes</span>
+              <span className="text-lg font-black text-primary">{bathrooms}</span>
+              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Suítes</span>
             </div>
-            <div className="h-6 w-[1px] bg-border/60" />
+            <div className="w-px h-8 bg-border/50" />
             <div className="flex flex-col items-center gap-1">
-              <Square className="w-5 h-5 text-primary/30" />
-              <span className="text-[10px] font-black text-primary/60 uppercase tracking-widest">{area}m²</span>
+              <span className="text-lg font-black text-primary">{area}m²</span>
+              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Área</span>
             </div>
           </div>
-          
-          <div className="flex items-center gap-3">
-             <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                <MapPin className="w-4 h-4 text-accent" />
-             </div>
-             <div>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Localização</p>
-                <p className="text-xs font-bold text-primary">{neighborhood}</p>
-             </div>
+
+          <div className="pt-2 flex items-center justify-between text-muted-foreground group-hover:text-primary transition-colors">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Ver detalhes</span>
+            <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           </div>
         </div>
       </div>

@@ -24,150 +24,160 @@ export default function Home() {
       <Navbar />
       
       <main>
-        <h1 className="sr-only">Habita.vc - Portal Imobiliário de Alta Performance em Goiânia</h1>
+        <h1 className="sr-only">Habita.vc - Portal Imobiliário Premium em Goiânia</h1>
         
+        {/* 1. HERO COM BUSCA DOMINANTE */}
         <Hero />
 
-        {/* Benefits Section - Modern Minimalist */}
-        <section className="bg-white py-24 border-b border-border/40">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-              <BenefitItem 
-                icon={<Star className="text-accent" />}
-                title="Curadoria"
-                desc="Apenas os melhores imóveis e lançamentos do mercado de Goiânia."
-              />
-              <BenefitItem 
-                icon={<TrendingUp className="text-accent" />}
-                title="Inteligência"
-                desc="Dados reais e análise de mercado para decisões de investimento precisas."
-              />
-              <BenefitItem 
-                icon={<Building2 className="text-accent" />}
-                title="Performance"
-                desc="Consultores especialistas em negociações de alto valor e complexidade."
-              />
-            </div>
-          </div>
-        </section>
-
+        {/* 2. IMÓVEIS EM DESTAQUE (Grid Visual Moderno) */}
         <PropertyHighlights />
         
-        <RegionSection />
-
-        {/* Owners Section - High Contrast Luxury */}
-        <section className="py-32 bg-[#0a0a0a] relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20" />
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="bg-white/5 backdrop-blur-2xl rounded-[4rem] p-10 md:p-20 border border-white/10 shadow-2xl">
-              <div className="grid lg:grid-cols-2 gap-20 items-center">
-                <div className="space-y-10">
-                  <div className="inline-flex items-center gap-3 px-5 py-2 bg-accent text-white rounded-full text-[10px] font-black uppercase tracking-[0.3em]">
-                    Exclusive Service
-                  </div>
-                  <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-tighter">
-                    Venda seu imóvel <br />
-                    com <span className="text-accent">Inteligência.</span>
+        {/* 3. LANÇAMENTOS (Seção de Novidades) */}
+        <section className="py-24 bg-[#fafafa] border-y border-border/40">
+           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                <div className="max-w-2xl">
+                  <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-primary leading-none">
+                    Lançamentos <br />
+                    <span className="text-accent italic font-serif font-light lowercase tracking-normal">Imperdíveis</span>
                   </h2>
-                  <p className="text-xl text-white/60 font-medium leading-relaxed max-w-lg">
-                    Anuncie na maior vitrine de luxo de Goiânia e tenha seu imóvel trabalhado por especialistas em alta performance.
+                  <p className="text-muted-foreground text-xl font-medium leading-relaxed">
+                    As maiores oportunidades de investimento e moradia que acabaram de chegar ao mercado.
                   </p>
-                  <ul className="space-y-6">
-                    {['Anúncio Premium na vitrine Habita.vc', 'Match inteligente com compradores qualificados', 'Gestão completa da jornada de venda'].map((benefit, i) => (
-                      <li key={i} className="flex items-center gap-4 text-white font-bold text-lg">
-                        <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center border border-accent/40">
-                          <CheckCircle2 className="text-accent" size={14} />
-                        </div>
-                        {benefit}
-                      </li>
-                    ))}
-                  </ul>
                 </div>
-                
-                <div className="bg-white p-10 rounded-[3rem] shadow-2xl">
-                  <h3 className="text-2xl font-black text-primary mb-8">Cadastro de Imóvel</h3>
-                  <form className="space-y-5">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Seu Nome</label>
-                      <input type="text" placeholder="Como podemos te chamar?" className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-transparent focus:bg-white focus:border-accent/20 outline-none transition-all font-bold text-primary" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">WhatsApp</label>
-                      <input type="text" placeholder="55 62 99999-9999" className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-transparent focus:bg-white focus:border-accent/20 outline-none transition-all font-bold text-primary" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Tipo do Imóvel</label>
-                      <select className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-transparent focus:bg-white focus:border-accent/20 outline-none transition-all font-bold text-primary appearance-none">
-                        <option>Apartamento</option>
-                        <option>Casa em Condomínio</option>
-                        <option>Lançamento</option>
-                        <option>Comercial</option>
-                      </select>
-                    </div>
-                    <button type="button" className="w-full mt-6 bg-primary hover:bg-primary-light text-white py-5 rounded-[1.5rem] font-black text-lg transition-all shadow-xl flex justify-center items-center gap-3 active:scale-[0.98]">
-                      Enviar para Curadoria <ArrowRight size={20} />
-                    </button>
-                  </form>
-                </div>
+                <button className="px-10 py-4 bg-white border-2 border-primary text-primary rounded-full font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm">
+                  Explorar Lançamentos
+                </button>
               </div>
-            </div>
-          </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[1,2,3,4].map(i => (
+                  <div key={i} className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-premium">
+                    <img src={`/katedral_hero_1778094352027.png`} alt="Launch" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary via-transparent opacity-80" />
+                    <div className="absolute inset-0 p-8 flex flex-col justify-end text-white">
+                      <span className="text-[9px] font-black uppercase tracking-[0.3em] text-accent mb-2">Exclusivo Habita.vc</span>
+                      <h3 className="text-2xl font-black leading-tight mb-4">Lançamento Marista Premium</h3>
+                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20 group-hover:bg-accent transition-colors">
+                        <ArrowRight size={20} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+           </div>
         </section>
 
-        {/* Final CTA */}
-        <section className="py-32 bg-white text-center">
-          <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-5xl md:text-7xl font-black text-primary mb-8 tracking-tighter">
-              Ainda não encontrou <br />o seu <span className="text-accent italic font-serif font-light lowercase tracking-normal">lugar?</span>
-            </h2>
-            <p className="text-xl text-muted-foreground mb-12 font-medium">
-              Nossa equipe de concierge imobiliário está pronta para fazer uma busca personalizada no mercado off-market para você.
-            </p>
-            <button className="bg-primary hover:bg-primary-light text-white px-16 py-6 rounded-[2rem] font-black text-xl transition-all shadow-luxury hover:-translate-y-1">
-              Falar com Concierge
-            </button>
-          </div>
+        {/* 4. BAIRROS MAIS BUSCADOS (Navegação Geográfica) */}
+        <RegionSection />
+
+        {/* 5. OPORTUNIDADES DO DIA (Layout Rápido) */}
+        <section className="py-24 bg-white">
+           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="bg-primary rounded-[4rem] p-12 md:p-24 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/10 -z-0 rounded-l-full blur-3xl" />
+                <div className="relative z-10 grid lg:grid-cols-2 gap-20 items-center">
+                  <div className="space-y-8">
+                    <h2 className="text-5xl md:text-7xl font-black text-white leading-none tracking-tighter">
+                      Oportunidade <br />
+                      <span className="text-accent italic font-serif font-light lowercase tracking-normal">do Dia.</span>
+                    </h2>
+                    <p className="text-xl text-white/60 font-medium leading-relaxed">
+                      Uma curadoria única de imóveis com valor abaixo de mercado, selecionada por nossa inteligência de dados.
+                    </p>
+                    <button className="bg-accent hover:bg-white hover:text-primary text-white px-12 py-5 rounded-full font-black text-sm uppercase tracking-widest transition-all shadow-xl">
+                      Ver Oportunidade
+                    </button>
+                  </div>
+                  <div className="hidden lg:block relative group">
+                    <div className="absolute -inset-4 bg-white/5 rounded-[3.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <img src="/hero_luxury.png" alt="Oportunidade" className="relative rounded-[3rem] shadow-2xl border-4 border-white/10" />
+                  </div>
+                </div>
+              </div>
+           </div>
+        </section>
+
+        {/* 6. CORRETORES VERIFICADOS (Credibilidade) */}
+        <section className="py-24 bg-white border-t border-border/40">
+           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <div className="max-w-2xl mx-auto mb-16 space-y-4">
+                <h2 className="text-4xl font-black text-primary tracking-tighter">Corretores Verificados</h2>
+                <p className="text-muted-foreground font-medium">Os melhores especialistas do mercado imobiliário prontos para te atender.</p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
+                {[1,2,3,4,5,6].map(i => (
+                  <div key={i} className="flex flex-col items-center space-y-4 group">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-accent rounded-full scale-110 blur-md opacity-0 group-hover:opacity-20 transition-opacity" />
+                      <img src={`https://i.pravatar.cc/150?u=${i+40}`} alt="Broker" className="w-24 h-24 rounded-full border-4 border-white shadow-lg relative z-10" />
+                      <div className="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 rounded-full border-4 border-white flex items-center justify-center text-white z-20">
+                         <CheckCircle2 size={12} fill="currentColor" />
+                      </div>
+                    </div>
+                    <div>
+                      <p className="font-black text-primary leading-none">Consultor {i}</p>
+                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Especialista Marista</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+           </div>
+        </section>
+
+        {/* 7. CTA PARA IMOBILIÁRIAS (Growth) */}
+        <section className="py-32 bg-[#0a0a0a] text-center relative overflow-hidden">
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent/20 via-transparent to-transparent opacity-40" />
+           <div className="max-w-4xl mx-auto px-4 relative z-10 space-y-10">
+              <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none">
+                É Corretor ou <br />
+                <span className="text-accent italic font-serif font-light lowercase tracking-normal">Imobiliária?</span>
+              </h2>
+              <p className="text-xl text-white/60 font-medium">
+                Anuncie seus imóveis no portal que mais cresce em Goiânia e conecte-se com clientes qualificados.
+              </p>
+              <div className="flex flex-col md:flex-row gap-4 justify-center">
+                <button className="bg-white text-primary px-12 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-accent hover:text-white transition-all">
+                  Anunciar Imóveis
+                </button>
+                <button className="bg-transparent border-2 border-white/20 text-white px-12 py-5 rounded-full font-black text-sm uppercase tracking-widest hover:bg-white/10 transition-all">
+                  Conhecer o CRM
+                </button>
+              </div>
+           </div>
         </section>
       </main>
 
-      <footer className="bg-[#f8fafc] py-24 border-t border-border/40">
+      <footer className="bg-[#f8f8f8] py-24 border-t border-border/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-20 mb-20">
             <div className="col-span-1 md:col-span-2 space-y-8">
               <span className="text-4xl font-black text-primary tracking-tighter">Habita<span className="text-accent">.vc</span></span>
               <p className="text-muted-foreground max-w-sm font-medium leading-relaxed text-lg">
-                A inteligência de mercado que Goiânia precisava para conectar pessoas extraordinárias a lugares únicos.
+                O marketplace imobiliário inteligente de Goiânia. Encontre casas, apartamentos e oportunidades únicas.
               </p>
             </div>
             <div>
-              <h4 className="font-black text-primary mb-8 uppercase tracking-[0.2em] text-[10px]">Navegação</h4>
+              <h4 className="font-black text-primary mb-8 uppercase tracking-[0.2em] text-[10px]">Portal</h4>
               <ul className="space-y-5 text-muted-foreground text-sm font-bold">
-                <li><Link href="/imoveis" className="hover:text-accent transition-colors">Imóveis</Link></li>
+                <li><Link href="/imoveis" className="hover:text-accent transition-colors">Buscar Imóveis</Link></li>
                 <li><Link href="/empreendimentos" className="hover:text-accent transition-colors">Lançamentos</Link></li>
-                <li><Link href="/blog" className="hover:text-accent transition-colors">Conteúdos</Link></li>
-                <li><Link href="/crmhabita" className="hover:text-accent transition-colors">Área Interna</Link></li>
+                <li><Link href="/blog" className="hover:text-accent transition-colors">Blog Imobiliário</Link></li>
+                <li><Link href="/login" className="hover:text-accent transition-colors">Entrar / Cadastrar</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-black text-primary mb-8 uppercase tracking-[0.2em] text-[10px]">Contato</h4>
+              <h4 className="font-black text-primary mb-8 uppercase tracking-[0.2em] text-[10px]">Cidades</h4>
               <ul className="space-y-5 text-muted-foreground text-sm font-bold">
-                <li className="flex flex-col">
-                  <span className="text-[9px] uppercase tracking-widest opacity-50 mb-1">E-mail</span>
-                  contato@habita.vc
-                </li>
-                <li className="flex flex-col">
-                  <span className="text-[9px] uppercase tracking-widest opacity-50 mb-1">WhatsApp</span>
-                  (62) 99999-9999
-                </li>
-                <li className="flex flex-col">
-                  <span className="text-[9px] uppercase tracking-widest opacity-50 mb-1">Local</span>
-                  Goiânia, GO - Brasil
-                </li>
+                <li>Goiânia</li>
+                <li>Aparecida de Goiânia</li>
+                <li>Anápolis</li>
+                <li>Senador Canedo</li>
               </ul>
             </div>
           </div>
           <div className="pt-10 border-t border-border/60 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-[10px] font-black text-primary/30 uppercase tracking-[0.3em]">© 2026 Habita.vc • All Rights Reserved</p>
+            <p className="text-[10px] font-black text-primary/30 uppercase tracking-[0.3em]">© 2026 Habita.vc • O Portal Imobiliário de Goiânia</p>
             <div className="flex gap-8">
                {['Instagram', 'LinkedIn', 'YouTube'].map(social => (
                  <span key={social} className="text-[10px] font-black text-primary/40 uppercase tracking-widest cursor-pointer hover:text-accent transition-colors">{social}</span>

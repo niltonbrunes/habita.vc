@@ -5,134 +5,105 @@ import { motion } from 'framer-motion';
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center pt-24 pb-32 bg-[#fdfdfc] overflow-x-hidden">
-      {/* Cinematic Background Elements */}
-      <div className="absolute top-0 right-0 w-[45%] h-full bg-[#f8f8f5] -z-10 hidden lg:block" />
-      <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[70%] bg-accent/5 rounded-full blur-[150px] -z-10" />
+  const [activeTab, setActiveTab] = React.useState('comprar');
+
+  return (
+    <section className="relative min-h-[85vh] lg:min-h-screen flex items-center pt-20 pb-20 bg-[#fdfdfc] overflow-x-hidden">
+      {/* Background - Soft Dynamic Mosaic Pattern */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+      <div className="absolute top-0 right-0 w-[40%] h-full bg-[#f8f8f5] -z-10 hidden lg:block" />
+      <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[50%] bg-accent/5 rounded-full blur-[120px] -z-10" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-20">
-        <div className="grid lg:grid-cols-12 gap-16 items-center">
-          
-          {/* Text Content - Aesthetic Layout */}
-          <div className="lg:col-span-7 space-y-12">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-6"
-            >
-              <div className="inline-flex items-center gap-3 px-4 py-2 bg-white rounded-full shadow-sm border border-border/40">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-                </span>
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/60">Curadoria Exclusiva Goiânia</span>
-              </div>
-              
-              <h1 className="text-7xl md:text-[100px] font-serif italic text-primary leading-[0.9] tracking-tighter">
-                O Luxo <br />
-                <span className="not-italic font-sans font-black text-accent">redefinido.</span>
-              </h1>
-              
-              <p className="text-xl text-muted-foreground font-medium max-w-xl leading-relaxed">
-                Conectamos investidores e famílias aos imóveis mais extraordinários de Goiânia através de inteligência comercial e curadoria de elite.
-              </p>
-            </motion.div>
+        <div className="flex flex-col items-center text-center space-y-12 mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-6 max-w-4xl"
+          >
+            <h1 className="text-5xl md:text-8xl font-black text-primary leading-[0.95] tracking-tighter">
+              Encontre o seu <br />
+              <span className="font-serif italic font-light text-accent">próximo momento.</span>
+            </h1>
+            <p className="text-lg md:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
+              Descubra as melhores casas, apartamentos e lançamentos em Goiânia com curadoria de especialistas.
+            </p>
+          </motion.div>
 
-            {/* Search Bar - Floating Glass Design */}
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="bg-white/80 backdrop-blur-2xl p-3 rounded-[3rem] shadow-luxury border border-white flex flex-col md:flex-row items-center gap-2 max-w-3xl group transition-all"
-            >
-              <div className="flex-[1.5] flex items-center px-8 gap-4 w-full">
-                <Search className="text-accent/40 group-focus-within:text-accent transition-colors" size={24} />
+          {/* MAIN SEARCH PORTAL - The QuintoAndar style */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="w-full max-w-5xl"
+          >
+            {/* Tabs Selection */}
+            <div className="flex items-center justify-center md:justify-start gap-2 mb-4 px-2">
+              {['comprar', 'alugar', 'lançamentos'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-8 py-3 rounded-t-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all ${
+                    activeTab === tab 
+                    ? 'bg-white text-primary shadow-[-10px_-10px_30px_rgba(0,0,0,0.05)] border-t border-x border-border/40' 
+                    : 'text-muted-foreground/60 hover:text-primary'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            {/* Search Bar - High Contrast & Premium */}
+            <div className="bg-white p-3 md:p-4 rounded-[2.5rem] md:rounded-full shadow-[0_30px_100px_-20px_rgba(0,0,0,0.12)] border border-border/40 flex flex-col md:flex-row items-center gap-2 group transition-all hover:border-accent/20">
+              <div className="flex-[1.8] flex items-center px-8 gap-4 w-full">
+                <Search className="text-accent shrink-0" size={24} />
                 <input 
                   type="text" 
-                  placeholder="Seu próximo destino em Goiânia..." 
-                  className="w-full py-5 bg-transparent outline-none font-bold text-primary placeholder:text-muted-foreground/30 text-lg"
+                  placeholder="Cidade, bairro ou condomínio" 
+                  className="w-full py-5 bg-transparent outline-none font-bold text-primary placeholder:text-muted-foreground/30 text-lg md:text-xl"
                 />
               </div>
-              <div className="hidden md:block w-px h-10 bg-border/40 mx-2" />
+              <div className="hidden md:block w-px h-12 bg-border/60 mx-2" />
               <div className="flex-1 flex items-center px-8 gap-4 w-full">
                 <MapPin className="text-accent/40" size={22} />
                 <select className="bg-transparent outline-none font-bold text-primary appearance-none cursor-pointer w-full text-lg">
-                  <option>Todos os tipos</option>
-                  <option>Penthouses</option>
-                  <option>Mansões</option>
-                  <option>Condomínios</option>
+                  <option>Tipo de imóvel</option>
+                  <option>Apartamento</option>
+                  <option>Casa de Condomínio</option>
+                  <option>Penthouse</option>
+                  <option>Lote</option>
                 </select>
               </div>
-              <button className="bg-primary hover:bg-primary-light text-white px-12 py-5 rounded-[2.5rem] font-black text-sm tracking-widest transition-all shadow-xl hover:shadow-luxury active:scale-95 flex items-center gap-3">
-                EXPLORAR <ArrowRight size={20} />
+              <div className="hidden md:block w-px h-12 bg-border/60 mx-2" />
+              <div className="flex-1 flex items-center px-8 gap-4 w-full">
+                <div className="bg-accent/10 p-2 rounded-lg">
+                   <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+                </div>
+                <select className="bg-transparent outline-none font-bold text-primary appearance-none cursor-pointer w-full text-lg">
+                  <option>Faixa de Preço</option>
+                  <option>Até R$ 500k</option>
+                  <option>R$ 500k - R$ 1.5M</option>
+                  <option>R$ 1.5M - R$ 5M</option>
+                  <option>Acima de R$ 5M</option>
+                </select>
+              </div>
+              <button className="bg-primary hover:bg-primary-light text-white w-full md:w-auto px-14 py-6 rounded-full font-black text-sm tracking-[0.2em] transition-all shadow-xl hover:shadow-luxury active:scale-95 flex items-center justify-center gap-3">
+                BUSCAR <ArrowRight size={20} />
               </button>
-            </motion.div>
-
-            {/* Social Proof */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="flex items-center gap-8 pt-4"
-            >
-              <div className="flex -space-x-4">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="w-12 h-12 rounded-full border-4 border-white overflow-hidden bg-muted shadow-sm">
-                    <img src={`https://i.pravatar.cc/150?u=${i+20}`} alt="Client" />
-                  </div>
-                ))}
-              </div>
-              <div>
-                <p className="text-sm font-black text-primary">+450 clientes</p>
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest leading-none mt-1">Satisfeitos este mês</p>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Right Visual - Large Framed Image */}
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="lg:col-span-5 relative"
-          >
-            <div className="relative z-10 rounded-[5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] border-[16px] border-white group">
-              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              <img 
-                src="/hero_luxury.png" 
-                alt="Luxury Real Estate" 
-                className="w-full aspect-[4/5] object-cover transition-transform duration-[3s] group-hover:scale-110"
-              />
             </div>
-            
-            {/* Artistic Floating Badges */}
-            <motion.div 
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-12 -right-12 bg-white p-8 rounded-[3rem] shadow-luxury z-20 hidden xl:block border border-border/20"
-            >
-              <p className="text-5xl font-serif italic text-primary leading-none mb-1">12%</p>
-              <p className="text-[10px] font-black text-accent uppercase tracking-widest">Valorização Anual</p>
-            </motion.div>
-
-            <motion.div 
-              animate={{ y: [0, 20, 0] }}
-              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute -bottom-10 -left-10 bg-primary text-white p-8 rounded-[3.5rem] shadow-luxury z-20 hidden xl:block"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-accent rounded-2xl flex items-center justify-center shadow-lg">
-                  <Star className="text-white" size={24} fill="currentColor" />
-                </div>
-                <div>
-                  <p className="font-black text-xl">Top Choice</p>
-                  <p className="text-[9px] text-white/50 font-bold uppercase tracking-widest">Curadoria 2026</p>
-                </div>
-              </div>
-            </motion.div>
           </motion.div>
+        </div>
 
+        {/* Quick Discovery Chips - Mobile Focus */}
+        <div className="flex flex-wrap justify-center gap-3 mt-8">
+          <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest w-full text-center mb-2">Bairros mais buscados</p>
+          {['Setor Marista', 'Setor Bueno', 'Jardim Goiás', 'Alphaville', 'Setor Oeste'].map(chip => (
+            <button key={chip} className="px-5 py-2.5 bg-white border border-border/60 rounded-full text-[11px] font-bold text-primary hover:border-accent hover:text-accent transition-all shadow-sm">
+              {chip}
+            </button>
+          ))}
         </div>
       </div>
     </section>
