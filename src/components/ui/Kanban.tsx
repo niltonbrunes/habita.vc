@@ -18,52 +18,56 @@ export const KanbanCard = ({ lead, onDragStart }: { lead: Lead, onDragStart: (e:
       layout
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      draggable
-      onDragStart={(e) => onDragStart(e, lead.id)}
-      className="bg-white p-5 rounded-[2rem] shadow-sm border border-border/40 hover:shadow-luxury transition-all cursor-grab active:cursor-grabbing group relative overflow-hidden"
+      className="w-full"
     >
-      {/* Quality indicator line */}
-      <div className={`absolute top-0 left-0 w-1.5 h-full ${lead.temperature === 'hot' ? 'bg-orange-500' : lead.temperature === 'warm' ? 'bg-blue-500' : 'bg-slate-300'}`} />
-      
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center gap-1.5">
-          <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-xl ${
-            lead.temperature === 'hot' ? 'bg-orange-500/10 text-orange-600' : 
-            lead.temperature === 'warm' ? 'bg-blue-500/10 text-blue-600' : 'bg-slate-100 text-slate-500'
-          }`}>
-            {lead.temperature === 'hot' ? '🔥 Quente' : lead.temperature === 'warm' ? '💧 Morno' : '❄️ Frio'}
-          </span>
-        </div>
-        <Link href={`/crmhabita/leads/${lead.id}`} className="text-muted-foreground hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-muted/50 rounded-lg">
-          <MoreVertical size={14} />
-        </Link>
-      </div>
-
-      <Link href={`/crmhabita/leads/${lead.id}`}>
-        <h4 className="font-black text-primary text-sm mb-1 leading-tight group-hover:text-accent transition-colors">{lead.name}</h4>
-      </Link>
-      
-      <p className="text-[10px] font-bold text-muted-foreground/60 mb-5 flex items-center gap-1 uppercase tracking-wider">
-        <Sparkles size={10} className="text-accent" />
-        {lead.source || 'Portal Habita'}
-      </p>
-
-      <div className="flex items-center justify-between pt-4 border-t border-border/40">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1 text-[10px] font-black text-muted-foreground/40 uppercase">
-            <Calendar size={10} />
-            {getDaysActive(lead.created_at)}d
-          </div>
-          <div className="flex items-center gap-1 text-[10px] font-black text-muted-foreground/40 uppercase">
-            <MessageSquare size={10} />
-            {lead.history?.length || 0}
-          </div>
-        </div>
+      <div 
+        draggable
+        onDragStart={(e) => onDragStart(e, lead.id)}
+        className="bg-white p-5 rounded-[2rem] shadow-sm border border-border/40 hover:shadow-luxury transition-all cursor-grab active:cursor-grabbing group relative overflow-hidden"
+      >
+        {/* Quality indicator line */}
+        <div className={`absolute top-0 left-0 w-1.5 h-full ${lead.temperature === 'hot' ? 'bg-orange-500' : lead.temperature === 'warm' ? 'bg-blue-500' : 'bg-slate-300'}`} />
         
-        <div className="flex items-center gap-2">
-          <div className="text-[10px] font-black text-primary">{lead.score}%</div>
-          <div className="w-10 h-1.5 bg-muted rounded-full overflow-hidden">
-            <div className={`h-full rounded-full ${lead.score > 80 ? 'bg-green-500' : 'bg-accent'}`} style={{ width: `${lead.score}%` }} />
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex items-center gap-1.5">
+            <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-xl ${
+              lead.temperature === 'hot' ? 'bg-orange-500/10 text-orange-600' : 
+              lead.temperature === 'warm' ? 'bg-blue-500/10 text-blue-600' : 'bg-slate-100 text-slate-500'
+            }`}>
+              {lead.temperature === 'hot' ? '🔥 Quente' : lead.temperature === 'warm' ? '💧 Morno' : '❄️ Frio'}
+            </span>
+          </div>
+          <Link href={`/crmhabita/leads/${lead.id}`} className="text-muted-foreground hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-muted/50 rounded-lg">
+            <MoreVertical size={14} />
+          </Link>
+        </div>
+
+        <Link href={`/crmhabita/leads/${lead.id}`}>
+          <h4 className="font-black text-primary text-sm mb-1 leading-tight group-hover:text-accent transition-colors">{lead.name}</h4>
+        </Link>
+        
+        <p className="text-[10px] font-bold text-muted-foreground/60 mb-5 flex items-center gap-1 uppercase tracking-wider">
+          <Sparkles size={10} className="text-accent" />
+          {lead.source || 'Portal Habita'}
+        </p>
+
+        <div className="flex items-center justify-between pt-4 border-t border-border/40">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 text-[10px] font-black text-muted-foreground/40 uppercase">
+              <Calendar size={10} />
+              {getDaysActive(lead.created_at)}d
+            </div>
+            <div className="flex items-center gap-1 text-[10px] font-black text-muted-foreground/40 uppercase">
+              <MessageSquare size={10} />
+              {lead.history?.length || 0}
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <div className="text-[10px] font-black text-primary">{lead.score}%</div>
+            <div className="w-10 h-1.5 bg-muted rounded-full overflow-hidden">
+              <div className={`h-full rounded-full ${lead.score > 80 ? 'bg-green-500' : 'bg-accent'}`} style={{ width: `${lead.score}%` }} />
+            </div>
           </div>
         </div>
       </div>
