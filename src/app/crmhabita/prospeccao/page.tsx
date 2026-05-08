@@ -22,6 +22,7 @@ import { PropertiesService } from '@/services/properties.service';
 import { LeadsService } from '@/services/leads.service';
 import { useAuth } from '@/context/AuthContext';
 import { useTheme } from '@/context/ThemeContext';
+import Link from 'next/link';
 
 export default function ProspeccaoPage() {
   const { user } = useAuth();
@@ -51,22 +52,58 @@ export default function ProspeccaoPage() {
     if (!selectedProperty) return;
     setAiState('analyzing');
     
-    // Simulação de processamento de IA (Tab.IA Style)
+    // Análise Dinâmica baseada no padrão do imóvel
     setTimeout(() => {
-      const mockAnalysis = {
-        persona: {
-          title: "Investidor de Alta Renda / Família Jovem",
-          description: "Público entre 35-50 anos, busca status, segurança e proximidade com centros gastronômicos.",
-          interests: ["Gastronomia Premium", "Design de Interiores", "Investimentos Imobiliários"]
-        },
-        strategy: [
-          "Focar em anúncios no Instagram com vídeo de drone (lifestyle).",
-          "Destacar a proximidade com o Parque Vaca Brava.",
-          "Abordar a valorização do metro quadrado na região nos últimos 24 meses."
-        ],
-        whatsappCopy: `Olá! Vi que você aprecia imóveis exclusivos. Acabo de receber uma unidade única no ${selectedProperty.title} que encaixa perfeitamente no seu perfil. Podemos conversar?`
-      };
-      setAnalysis(mockAnalysis);
+      const isHighEnd = selectedProperty.pattern === 'high_end' || selectedProperty.price > 1500000;
+      const isEconomic = selectedProperty.pattern === 'economic';
+      
+      let dynamicAnalysis;
+
+      if (isHighEnd) {
+        dynamicAnalysis = {
+          persona: {
+            title: "Ultra-High-Net-Worth / Elite Local",
+            description: "Empresários e profissionais liberais de sucesso que buscam exclusividade, segurança total e acabamentos de altíssimo padrão no Setor Marista ou Bueno.",
+            interests: ["Concierge Services", "Wine Tasting", "Investimentos Internacionais", "Arquitetura Assinada"]
+          },
+          strategy: [
+            "Focar em marketing de indicação e eventos fechados.",
+            "Destacar a exclusividade (poucas unidades no prédio).",
+            "Enfatizar a valorização imobiliária acima da média da região."
+          ],
+          whatsappCopy: `Prezado(a), analisei o perfil das suas últimas aquisições e este imóvel no ${selectedProperty.title} é uma oportunidade off-market que acredito ser do seu interesse. Podemos agendar uma visita exclusiva?`
+        };
+      } else if (isEconomic) {
+        dynamicAnalysis = {
+          persona: {
+            title: "Primeiro Imóvel / Família em Ascensão",
+            description: "Casais jovens ou pessoas saindo do aluguel, buscam facilidade de financiamento, lazer completo para os filhos e localização estratégica.",
+            interests: ["Programas de Financiamento", "Vida em Comunidade", "Dicas de Reforma", "Pets"]
+          },
+          strategy: [
+            "Explorar as facilidades do Minha Casa Minha Vida (se aplicável).",
+            "Destacar as áreas de lazer e segurança para crianças.",
+            "Mostrar comparativos de parcelas de financiamento vs aluguel."
+          ],
+          whatsappCopy: `Olá! Sabia que as parcelas para morar no ${selectedProperty.title} podem ser menores que um aluguel? Preparei uma simulação personalizada para você. Vamos conferir?`
+        };
+      } else {
+        dynamicAnalysis = {
+          persona: {
+            title: "Upgrade de Moradia / Família Consolidada",
+            description: "Público que busca mais espaço, conforto e uma localização que facilite a logística diária entre trabalho e escola dos filhos.",
+            interests: ["Educação de Qualidade", "Mobilidade Urbana", "Gastronomia Local"]
+          },
+          strategy: [
+            "Focar no custo-benefício e no tamanho das suítes.",
+            "Destacar a proximidade com as melhores escolas de Goiânia.",
+            "Oferecer avaliação gratuita do imóvel atual como parte do negócio."
+          ],
+          whatsappCopy: `Olá! Notei que você busca mais conforto para sua família. O ${selectedProperty.title} tem a planta ideal para o seu momento de vida. Que tal uma visita rápida amanhã?`
+        };
+      }
+
+      setAnalysis(dynamicAnalysis);
       setAiState('results');
     }, 2500);
   };
@@ -116,6 +153,13 @@ export default function ProspeccaoPage() {
         </div>
 
         <div className="flex gap-3">
+           <Link 
+            href="/crmhabita"
+            className="px-6 py-4 rounded-2xl font-black text-sm bg-white border border-border text-muted-foreground hover:text-primary transition-all flex items-center gap-2"
+           >
+            <Home size={18} />
+            VOLTAR AO INÍCIO
+           </Link>
            <button 
             onClick={generateAILeads}
             className="group relative px-6 py-4 rounded-2xl font-black text-sm overflow-hidden bg-primary text-white shadow-luxury hover:scale-[1.02] transition-all"
