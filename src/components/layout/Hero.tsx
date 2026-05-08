@@ -5,122 +5,129 @@ import { motion } from 'framer-motion';
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-[#fdfdfd]">
-      {/* Background elements */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-primary/5 rounded-full blur-[120px] opacity-60" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent/5 rounded-full blur-[100px] opacity-40" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03]" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-20">
-        <div className="grid lg:grid-cols-12 gap-12 items-center">
+    <section className="relative min-h-screen flex items-center pt-24 pb-32 bg-[#fdfdfc]">
+      {/* Cinematic Background Elements */}
+      <div className="absolute top-0 right-0 w-[45%] h-full bg-[#f8f8f5] -z-10" />
+      <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[70%] bg-accent/5 rounded-full blur-[150px] -z-10" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-20">
+        <div className="grid lg:grid-cols-12 gap-16 items-center">
           
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="lg:col-span-7 space-y-10"
-          >
-            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white shadow-premium border border-primary/5 text-primary text-[11px] font-black uppercase tracking-[0.3em]">
-              <span className="flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-              </span>
-              Curadoria Exclusiva Goiânia
-            </div>
-            
-            <h1 className="text-7xl md:text-[110px] font-black leading-[0.85] tracking-[-0.05em] text-primary">
-              O Luxo <br />
-              <span className="text-accent italic font-serif font-light lowercase tracking-normal">Redefinido.</span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-xl leading-relaxed font-medium">
-              Conectamos investidores e famílias aos imóveis mais extraordinários de Goiânia através de inteligência comercial.
-            </p>
-
-            {/* Search Bar - Premium Version */}
-            <div className="bg-white p-2 rounded-[3rem] shadow-luxury flex flex-col md:flex-row gap-2 max-w-3xl border border-border/50 group focus-within:border-accent/30 transition-all duration-500">
-              <div className="flex-[1.5] flex items-center gap-4 px-8 py-5">
-                <Search className="w-6 h-6 text-primary/20 group-focus-within:text-accent transition-colors" />
-                <input 
-                  type="text" 
-                  placeholder="Busque por bairro ou condomínio..."
-                  className="w-full bg-transparent border-none focus:outline-none text-primary font-bold placeholder:text-muted-foreground/40 text-lg"
-                />
+          {/* Text Content - Aesthetic Layout */}
+          <div className="lg:col-span-7 space-y-12">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="space-y-6"
+            >
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-white rounded-full shadow-sm border border-border/40">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/60">Curadoria Exclusiva Goiânia</span>
               </div>
               
-              <div className="h-10 w-[1px] bg-border/60 hidden md:block self-center" />
+              <h1 className="text-7xl md:text-[100px] font-serif italic text-primary leading-[0.9] tracking-tighter">
+                O Luxo <br />
+                <span className="not-italic font-sans font-black text-accent">redefinido.</span>
+              </h1>
               
-              <div className="flex-1 flex items-center gap-4 px-8 py-5">
-                <MapPin className="w-6 h-6 text-primary/20" />
-                <select className="w-full bg-transparent border-none focus:outline-none text-primary font-bold appearance-none cursor-pointer text-lg">
+              <p className="text-xl text-muted-foreground font-medium max-w-xl leading-relaxed">
+                Conectamos investidores e famílias aos imóveis mais extraordinários de Goiânia através de inteligência comercial e curadoria de elite.
+              </p>
+            </motion.div>
+
+            {/* Search Bar - Floating Glass Design */}
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="bg-white/80 backdrop-blur-2xl p-3 rounded-[3rem] shadow-luxury border border-white flex flex-col md:flex-row items-center gap-2 max-w-3xl group transition-all"
+            >
+              <div className="flex-[1.5] flex items-center px-8 gap-4 w-full">
+                <Search className="text-accent/40 group-focus-within:text-accent transition-colors" size={24} />
+                <input 
+                  type="text" 
+                  placeholder="Seu próximo destino em Goiânia..." 
+                  className="w-full py-5 bg-transparent outline-none font-bold text-primary placeholder:text-muted-foreground/30 text-lg"
+                />
+              </div>
+              <div className="hidden md:block w-px h-10 bg-border/40 mx-2" />
+              <div className="flex-1 flex items-center px-8 gap-4 w-full">
+                <MapPin className="text-accent/40" size={22} />
+                <select className="bg-transparent outline-none font-bold text-primary appearance-none cursor-pointer w-full text-lg">
                   <option>Todos os tipos</option>
                   <option>Penthouses</option>
                   <option>Mansões</option>
-                  <option>Lançamentos</option>
+                  <option>Condomínios</option>
                 </select>
               </div>
-              
-              <button className="bg-primary hover:bg-primary-light text-white px-12 py-5 rounded-[2.5rem] font-black text-lg transition-all shadow-premium hover:shadow-luxury active:scale-95 flex items-center justify-center gap-3">
-                Explorar <ArrowRight className="w-5 h-5" />
+              <button className="bg-primary hover:bg-primary-light text-white px-12 py-5 rounded-[2.5rem] font-black text-sm tracking-widest transition-all shadow-xl hover:shadow-luxury active:scale-95 flex items-center gap-3">
+                EXPLORAR <ArrowRight size={20} />
               </button>
-            </div>
+            </motion.div>
 
-            <div className="flex items-center gap-8 pt-4">
+            {/* Social Proof */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="flex items-center gap-8 pt-4"
+            >
               <div className="flex -space-x-4">
                 {[1,2,3,4].map(i => (
-                  <div key={i} className="w-12 h-12 rounded-full border-4 border-white bg-muted overflow-hidden shadow-sm">
-                    <img src={`https://i.pravatar.cc/100?u=${i+10}`} alt="Client" />
+                  <div key={i} className="w-12 h-12 rounded-full border-4 border-white overflow-hidden bg-muted shadow-sm">
+                    <img src={`https://i.pravatar.cc/150?u=${i+20}`} alt="Client" />
                   </div>
                 ))}
               </div>
-              <p className="text-sm font-bold text-primary/60">
-                <span className="text-primary font-black">+450 clientes</span> satisfeitos este mês
-              </p>
+              <div>
+                <p className="text-sm font-black text-primary">+450 clientes</p>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest leading-none mt-1">Satisfeitos este mês</p>
+              </div>
             </div>
           </motion.div>
 
+          {/* Right Visual - Large Framed Image */}
           <motion.div 
-            initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
-            className="lg:col-span-5 relative hidden lg:block"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="lg:col-span-5 relative"
           >
-            <div className="relative z-10 rounded-[5rem] overflow-hidden shadow-luxury border-[24px] border-white transform hover:scale-[1.02] transition-transform duration-700">
+            <div className="relative z-10 rounded-[5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] border-[16px] border-white group">
+              <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               <img 
-                src="/hero_luxury.png" 
-                alt="Habita.vc Luxury Experience"
-                className="w-full aspect-[4/5] object-cover"
+                src="/modern_luxury_apartment_exterior_1777989602281.png" 
+                alt="Luxury Real Estate" 
+                className="w-full aspect-[4/5] object-cover transition-transform duration-[3s] group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent opacity-60" />
             </div>
-
-            {/* Floating Element 1 */}
+            
+            {/* Artistic Floating Badges */}
             <motion.div 
-              animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -top-10 -right-10 bg-white/90 backdrop-blur-xl p-8 rounded-[3rem] shadow-luxury z-20 border border-white/50"
+              animate={{ y: [0, -20, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-12 -right-12 bg-white p-8 rounded-[3rem] shadow-luxury z-20 hidden xl:block border border-border/20"
             >
-              <div className="text-center">
-                <p className="text-[32px] font-black text-primary leading-none">R$ 1.2B</p>
-                <p className="text-[10px] text-accent font-black uppercase tracking-widest mt-1">Volume de Vendas</p>
-              </div>
+              <p className="text-5xl font-serif italic text-primary leading-none mb-1">12%</p>
+              <p className="text-[10px] font-black text-accent uppercase tracking-widest">Valorização Anual</p>
             </motion.div>
 
-            {/* Floating Element 2 */}
             <motion.div 
               animate={{ y: [0, 20, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute -bottom-8 -left-12 bg-primary p-8 rounded-[3rem] shadow-luxury z-20 text-white"
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+              className="absolute -bottom-10 -left-10 bg-primary text-white p-8 rounded-[3.5rem] shadow-luxury z-20 hidden xl:block"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-accent rounded-2xl flex items-center justify-center">
-                  <MousePointer2 className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-accent rounded-2xl flex items-center justify-center shadow-lg">
+                  <Star className="text-white" size={24} fill="currentColor" />
                 </div>
                 <div>
-                  <p className="font-black text-xl">Visita 360°</p>
-                  <p className="text-[10px] text-white/60 font-bold uppercase tracking-widest">Disponível em 80% do estoque</p>
+                  <p className="font-black text-xl">Top Choice</p>
+                  <p className="text-[9px] text-white/50 font-bold uppercase tracking-widest">Curadoria 2026</p>
                 </div>
               </div>
             </motion.div>
