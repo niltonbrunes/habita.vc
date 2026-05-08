@@ -10,26 +10,43 @@ import { LeadFormModal } from '@/components/leads/LeadFormModal';
 import { ImportLeadsModal } from '@/components/leads/ImportLeadsModal';
 import { LeadsService } from '@/services/leads.service';
 
+import { KanbanHeader } from '@/components/ui/KanbanHeader';
+import { useAuth } from '@/context/AuthContext';
+
 export default function LeadsPage() {
-  const { leadsByStatus, loading, error, refresh } = useLeads();
+  const { leadsByStatus, leads, loading, error, refresh } = useLeads();
+  const { profile, isRole } = useAuth();
   const [isLeadModalOpen, setIsLeadModalOpen] = React.useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
 
-  const filteredLeadsByStatus = React.useMemo(() => {
-    if (!search.trim()) return leadsByStatus;
+  // 1. Role-based Visibility Filtering
+  const visibleLeads = React.useMemo(() => {
+    if (!profile) return [];
+    if (isRole(['admin', 'manager', 'director'])) return leads;
+    // Brokers see only their assigned leads
+    return leads.filter(l => l.assigned_to_id === profile.id);
+  }, [leads, profile, isRole]);
+
+  // 2. Search & Search Filtering
+  const filteredLeads = React.useMemo(() => {
+    if (!search.trim()) return visibleLeads;
     const q = search.toLowerCase();
-    return Object.fromEntries(
-      Object.entries(leadsByStatus).map(([status, leads]) => [
-        status,
-        leads.filter(l =>
-          (l.name ?? '').toLowerCase().includes(q) ||
-          (l.email ?? '').toLowerCase().includes(q) ||
-          (l.phone ?? '').includes(q)
-        )
-      ])
+    return visibleLeads.filter(l =>
+      (l.name ?? '').toLowerCase().includes(q) ||
+      (l.email ?? '').toLowerCase().includes(q) ||
+      (l.phone ?? '').includes(q)
     );
-  }, [leadsByStatus, search]);
+  }, [visibleLeads, search]);
+
+  // 3. Group by Status for Kanban
+  const groupedLeads = React.useMemo(() => {
+    return filteredLeads.reduce((acc, lead) => {
+      if (!acc[lead.status]) acc[lead.status] = [];
+      acc[lead.status].push(lead);
+      return acc;
+    }, {} as Record<string, typeof leads>);
+  }, [filteredLeads]);
 
   const handleExport = async () => {
     try {
@@ -60,46 +77,43 @@ export default function LeadsPage() {
 
   return (
     <DashboardLayout>
-      <div className="h-full flex flex-col space-y-6">
-        {/* Actions Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center gap-3 w-full md:w-auto">
-            <div className="relative flex-1 md:w-80">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-              <input 
-                type="text" 
-                placeholder="Buscar lead..." 
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-white rounded-2xl border border-border focus:border-primary/20 transition-all outline-none text-sm font-medium"
-              />
-            </div>
-            <button className="p-3 bg-white border border-border rounded-2xl text-muted-foreground hover:text-primary hover:bg-muted/50 transition-all">
-              <Filter size={20} />
-            </button>
+      <div className="h-full flex flex-col">
+        {/* Page Header Area */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+          <div>
+            <h1 className="text-4xl font-black text-primary tracking-tighter mb-2">Gestão de Leads</h1>
+            <p className="text-muted-foreground font-medium">Pipeline de vendas e conversão em tempo real.</p>
           </div>
 
-          <div className="flex items-center gap-2 w-full md:w-auto">
+          <div className="flex items-center gap-3 w-full md:w-auto">
             <button 
               onClick={handleExport}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-white border border-border rounded-2xl text-sm font-bold text-muted-foreground hover:text-primary transition-all"
+              className="flex-1 md:flex-none p-4 bg-white border border-border/40 rounded-2xl text-muted-foreground hover:text-primary transition-all shadow-sm"
+              title="Exportar CSV"
             >
-              <Download size={18} /> Exportar
+              <Download size={20} />
             </button>
             <button 
               onClick={() => setIsImportModalOpen(true)}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 bg-white border border-border rounded-2xl text-sm font-bold text-muted-foreground hover:text-primary transition-all"
+              className="flex-1 md:flex-none px-6 py-4 bg-white border border-border/40 rounded-2xl text-sm font-black text-muted-foreground hover:text-primary transition-all shadow-sm flex items-center gap-2"
             >
               <Upload size={18} /> Importar
             </button>
             <button 
               onClick={() => setIsLeadModalOpen(true)}
-              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl text-sm font-black hover:bg-primary-light transition-all shadow-premium"
+              className="flex-1 md:flex-none px-8 py-4 bg-primary text-white rounded-2xl text-sm font-black hover:bg-primary-light transition-all shadow-premium flex items-center gap-2"
             >
               <Plus size={20} /> Novo Lead
             </button>
           </div>
         </div>
+
+        {/* Financial Header & Search */}
+        <KanbanHeader 
+          leads={visibleLeads} 
+          search={search} 
+          onSearchChange={setSearch} 
+        />
 
         {/* Modals */}
         <LeadFormModal 
@@ -124,25 +138,19 @@ export default function LeadsPage() {
         )}
 
         {/* Kanban Board Container */}
-        <div className="flex-1 overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-primary/10 relative min-h-[600px]">
+        <div className="flex-1 overflow-x-auto pb-10 scrollbar-thin scrollbar-thumb-primary/10 relative min-h-[600px] -mx-8 px-8">
           {loading && (
             <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-20 flex items-center justify-center">
               <RefreshCw className="animate-spin text-primary" size={32} />
             </div>
           )}
-
-          <div className="mb-4 flex items-center gap-2">
-             <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                Total: {Object.values(filteredLeadsByStatus).flat().length} leads encontrados
-             </span>
-          </div>
           
-          <div className="flex gap-6 min-h-full min-w-max">
+          <div className="flex gap-8 min-h-full min-w-max pb-4">
             {KANBAN_COLUMNS.map(column => (
               <KanbanColumnComponent 
                 key={column.id} 
                 column={column} 
-                leads={filteredLeadsByStatus[column.id] || []} 
+                leads={groupedLeads[column.id] || []} 
                 onMoveLead={handleMoveLead}
               />
             ))}

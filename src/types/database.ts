@@ -86,6 +86,8 @@ export interface Lead {
   status: LeadStatus;
   score: number;
   temperature: 'cold' | 'warm' | 'hot';
+  value?: number;
+  probability?: number;
   source?: string;
   history: any[];
   documents: any[];
