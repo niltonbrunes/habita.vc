@@ -147,7 +147,10 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
               <input 
                 type="file" 
                 accept=".csv"
-                onChange={handleFileChange}
+                onChange={(e) => {
+                  setMapping({ name: '', email: '', phone: '', source: '' });
+                  handleFileChange(e);
+                }}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
               <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
@@ -170,7 +173,15 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                     <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{(file.size / 1024).toFixed(1)} KB • Separador: {delimiter}</p>
                   </div>
                 </div>
-                <button onClick={() => setFile(null)} className="text-xs font-bold text-red-500 hover:underline">Remover e trocar arquivo</button>
+                <button 
+                  onClick={() => {
+                    setFile(null);
+                    setMapping({ name: '', email: '', phone: '', source: '' });
+                  }} 
+                  className="text-xs font-bold text-red-500 hover:underline"
+                >
+                  Remover e trocar arquivo
+                </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -256,12 +267,18 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           <button
             onClick={handleImport}
             disabled={!file || !isMappingValid || loading}
-            className="bg-primary text-white px-12 py-4 rounded-2xl font-black text-sm hover:bg-primary-light transition-all shadow-premium disabled:opacity-50 disabled:grayscale flex items-center gap-2"
+            className={`
+              px-12 py-4 rounded-2xl font-black text-sm transition-all shadow-premium flex items-center gap-2
+              ${!isMappingValid 
+                ? 'bg-muted text-muted-foreground cursor-not-allowed grayscale' 
+                : 'bg-primary text-white hover:bg-primary-light'}
+              ${loading ? 'opacity-70' : ''}
+            `}
           >
             {loading ? <Loader2 className="animate-spin" size={18} /> : (
               <>
                 <CheckCircle2 size={18} />
-                Confirmar e Importar
+                {!isMappingValid ? 'Aguardando Mapeamento' : 'Confirmar e Importar'}
               </>
             )}
           </button>
