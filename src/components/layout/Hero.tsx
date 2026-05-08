@@ -2,9 +2,23 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Search, MapPin, ArrowRight, Star } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export const Hero = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = React.useState('comprar');
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [propertyType, setPropertyType] = React.useState('');
+  const [priceRange, setPriceRange] = React.useState('');
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.append('q', searchQuery);
+    if (propertyType && propertyType !== 'Tipo de imóvel') params.append('tipo', propertyType.toLowerCase());
+    if (activeTab) params.append('modalidade', activeTab);
+    
+    router.push(`/imoveis?${params.toString()}`);
+  };
 
   return (
     <section className="relative min-h-[85vh] lg:min-h-screen flex items-center pt-20 pb-20 bg-[#fdfdfc] overflow-x-hidden">
@@ -60,6 +74,9 @@ export const Hero = () => {
                 <Search className="text-accent shrink-0" size={24} />
                 <input 
                   type="text" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                   placeholder="Cidade, bairro ou condomínio" 
                   className="w-full py-5 bg-transparent outline-none font-bold text-primary placeholder:text-muted-foreground/30 text-lg md:text-xl"
                 />
@@ -67,7 +84,11 @@ export const Hero = () => {
               <div className="hidden md:block w-px h-12 bg-border/60 mx-2" />
               <div className="flex-1 flex items-center px-8 gap-4 w-full">
                 <MapPin className="text-accent/40" size={22} />
-                <select className="bg-transparent outline-none font-bold text-primary appearance-none cursor-pointer w-full text-lg">
+                <select 
+                  value={propertyType}
+                  onChange={(e) => setPropertyType(e.target.value)}
+                  className="bg-transparent outline-none font-bold text-primary appearance-none cursor-pointer w-full text-lg"
+                >
                   <option>Tipo de imóvel</option>
                   <option>Apartamento</option>
                   <option>Casa de Condomínio</option>
@@ -80,7 +101,11 @@ export const Hero = () => {
                 <div className="bg-accent/10 p-2 rounded-lg">
                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
                 </div>
-                <select className="bg-transparent outline-none font-bold text-primary appearance-none cursor-pointer w-full text-lg">
+                <select 
+                  value={priceRange}
+                  onChange={(e) => setPriceRange(e.target.value)}
+                  className="bg-transparent outline-none font-bold text-primary appearance-none cursor-pointer w-full text-lg"
+                >
                   <option>Faixa de Preço</option>
                   <option>Até R$ 500k</option>
                   <option>R$ 500k - R$ 1.5M</option>
@@ -88,7 +113,10 @@ export const Hero = () => {
                   <option>Acima de R$ 5M</option>
                 </select>
               </div>
-              <button className="bg-primary hover:bg-primary-light text-white w-full md:w-auto px-14 py-6 rounded-full font-black text-sm tracking-[0.2em] transition-all shadow-xl hover:shadow-luxury active:scale-95 flex items-center justify-center gap-3">
+              <button 
+                onClick={handleSearch}
+                className="bg-primary hover:bg-primary-light text-white w-full md:w-auto px-14 py-6 rounded-full font-black text-sm tracking-[0.2em] transition-all shadow-xl hover:shadow-luxury active:scale-95 flex items-center justify-center gap-3"
+              >
                 BUSCAR <ArrowRight size={20} />
               </button>
             </div>
