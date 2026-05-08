@@ -190,22 +190,6 @@ const BenefitItem = ({ icon, title, desc }: any) => (
       <p className="text-muted-foreground font-medium leading-relaxed">{desc}</p>
     </div>
   </div>
-);      </div>
-      </footer>
-    </div>
-  );
-}
-
-const BenefitItem = ({ icon, title, desc }: any) => (
-  <div className="flex items-start gap-4 p-6 hover:bg-muted/50 rounded-3xl transition-all">
-    <div className="bg-accent/10 p-3 rounded-2xl">
-      {icon}
-    </div>
-    <div>
-      <h4 className="font-black text-primary text-lg mb-1">{title}</h4>
-      <p className="text-sm text-muted-foreground font-medium">{desc}</p>
-    </div>
-  </div>
 );
 
 const StatBox = ({ value, label }: any) => (
