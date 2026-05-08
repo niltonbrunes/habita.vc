@@ -69,43 +69,56 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
   };
 
   const handleImport = async () => {
-    if (!file || !user || !mapping.name) return;
+    if (!file || !user || !mapping.name) {
+      console.warn('Importação abortada: arquivos ou mapeamentos ausentes', { file: !!file, user: !!user, mappingName: mapping.name });
+      return;
+    }
 
     setLoading(true);
     try {
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        const text = event.target?.result as string;
-        const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
-        const fileHeaders = lines[0].split(delimiter).map(h => h.trim());
-        
-        const leadsToInsert = lines.slice(1).map(line => {
-          const values = line.split(delimiter).map(v => v.trim());
-          const lead: any = {
-            assigned_to_id: user.id,
-            status: 'lead',
-            temperature: 'warm',
-            score: 50,
-            history: [{ type: 'import', date: new Date().toISOString(), note: 'Importado via CSV.' }]
-          };
-          
-          Object.entries(mapping).forEach(([field, mappedHeader]) => {
-            if (mappedHeader) {
-              const index = fileHeaders.indexOf(mappedHeader);
-              if (index !== -1) lead[field] = values[index];
-            }
-          });
-          
-          return lead;
-        });
+      const text = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = (e) => reject(new Error('Erro ao ler arquivo'));
+        reader.readAsText(file);
+      });
 
-        await LeadsService.bulkCreate(leadsToInsert);
-        onSuccess();
-        onClose();
-      };
-      reader.readAsText(file);
+      const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+      if (lines.length < 2) throw new Error('O arquivo está vazio ou contém apenas o cabeçalho.');
+
+      const fileHeaders = lines[0].split(delimiter).map(h => h.trim());
+      
+      const leadsToInsert = lines.slice(1).map((line, lineIdx) => {
+        const values = line.split(delimiter).map(v => v.trim());
+        const lead: any = {
+          assigned_to_id: user.id,
+          status: 'lead',
+          temperature: 'warm',
+          score: 50,
+          history: [{ type: 'import', date: new Date().toISOString(), note: 'Importado via CSV.' }]
+        };
+        
+        Object.entries(mapping).forEach(([field, mappedHeader]) => {
+          if (mappedHeader) {
+            const index = fileHeaders.indexOf(mappedHeader);
+            if (index !== -1 && values[index] !== undefined) {
+              lead[field] = values[index];
+            }
+          }
+        });
+        
+        return lead;
+      });
+
+      console.log(`Tentando importar ${leadsToInsert.length} leads...`);
+      await LeadsService.bulkCreate(leadsToInsert);
+      
+      console.log('Importação concluída com sucesso!');
+      onSuccess();
+      onClose();
     } catch (error) {
       console.error('Erro na importação:', error);
+      alert('Erro na importação: Verifique se o arquivo está no formato correto.');
     } finally {
       setLoading(false);
     }
