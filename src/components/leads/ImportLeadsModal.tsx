@@ -15,38 +15,72 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<any[]>([]);
+  const [headers, setHeaders] = useState<string[]>([]);
+  const [rows, setRows] = useState<string[][]>([]);
+  const [mapping, setMapping] = useState<Record<string, string>>({
+    name: '',
+    email: '',
+    phone: '',
+    source: ''
+  });
+  const [delimiter, setDelimiter] = useState(',');
 
   if (!isOpen) return null;
+
+  const detectDelimiter = (text: string) => {
+    const firstLine = text.split('\n')[0];
+    const commas = (firstLine.match(/,/g) || []).length;
+    const semicolons = (firstLine.match(/;/g) || []).length;
+    return semicolons > commas ? ';' : ',';
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
-      // Simple CSV Preview logic
       const reader = new FileReader();
       reader.onload = (event) => {
         const text = event.target?.result as string;
-        const lines = text.split('\n').slice(0, 6); // Header + 5 lines
-        setPreview(lines.map(line => line.split(',')));
+        const d = detectDelimiter(text);
+        setDelimiter(d);
+        
+        const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+        if (lines.length > 0) {
+          const parsedHeaders = lines[0].split(d).map(h => h.trim());
+          const parsedRows = lines.slice(1, 6).map(line => line.split(d).map(c => c.trim()));
+          
+          setHeaders(parsedHeaders);
+          setRows(parsedRows);
+
+          // Auto-mapping logic
+          const newMapping: any = { name: '', email: '', phone: '', source: '' };
+          parsedHeaders.forEach((h, i) => {
+            const lowH = h.toLowerCase();
+            if (lowH.includes('nome') || lowH.includes('name')) newMapping.name = h;
+            if (lowH.includes('email')) newMapping.email = h;
+            if (lowH.includes('tel') || lowH.includes('phone') || lowH.includes('whatsapp') || lowH.includes('cel')) newMapping.phone = h;
+            if (lowH.includes('origem') || lowH.includes('source')) newMapping.source = h;
+          });
+          setMapping(newMapping);
+        }
       };
       reader.readAsText(selectedFile);
     }
   };
 
   const handleImport = async () => {
-    if (!file || !user) return;
+    if (!file || !user || !mapping.name) return;
 
     setLoading(true);
     try {
       const reader = new FileReader();
       reader.onload = async (event) => {
         const text = event.target?.result as string;
-        const lines = text.split('\n');
-        const header = lines[0].split(',').map(h => h.trim().toLowerCase());
+        const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+        const fileHeaders = lines[0].split(delimiter).map(h => h.trim());
         
-        const leadsToInsert = lines.slice(1).filter(l => l.trim() !== '').map(line => {
-          const values = line.split(',');
+        const leadsToInsert = lines.slice(1).map(line => {
+          const values = line.split(delimiter).map(v => v.trim());
           const lead: any = {
             assigned_to_id: user.id,
             status: 'lead',
@@ -55,11 +89,11 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
             history: [{ type: 'import', date: new Date().toISOString(), note: 'Importado via CSV.' }]
           };
           
-          header.forEach((h, i) => {
-            if (h.includes('nome') || h.includes('name')) lead.name = values[i];
-            if (h.includes('email')) lead.email = values[i];
-            if (h.includes('tel') || h.includes('phone') || h.includes('whatsapp')) lead.phone = values[i];
-            if (h.includes('origem') || h.includes('source')) lead.source = values[i];
+          Object.entries(mapping).forEach(([field, mappedHeader]) => {
+            if (mappedHeader) {
+              const index = fileHeaders.indexOf(mappedHeader);
+              if (index !== -1) lead[field] = values[index];
+            }
           });
           
           return lead;
@@ -77,11 +111,13 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
     }
   };
 
+  const isMappingValid = mapping.name !== '';
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-primary/20 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-luxury border border-border relative overflow-hidden">
+      <div className="bg-white w-full max-w-3xl rounded-[2.5rem] shadow-luxury border border-border relative overflow-hidden flex flex-col max-h-[90vh]">
         <div className="p-8 border-b border-border flex justify-between items-center bg-muted/30">
           <div>
             <h2 className="text-2xl font-black text-primary mb-1">Importar Leads</h2>
@@ -92,7 +128,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           </button>
         </div>
 
-        <div className="p-8 space-y-8">
+        <div className="p-8 space-y-8 overflow-y-auto">
           {!file ? (
             <div className="border-4 border-dashed border-muted rounded-[2rem] p-12 text-center group hover:border-primary/20 hover:bg-muted/30 transition-all cursor-pointer relative">
               <input 
@@ -106,11 +142,11 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
               </div>
               <h3 className="text-xl font-bold text-primary mb-2">Selecione seu arquivo CSV</h3>
               <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                Certifique-se de que o arquivo tenha colunas como "Nome", "Email" e "WhatsApp".
+                O sistema aceita arquivos com delimitador vírgula (,) ou ponto-e-vírgula (;).
               </p>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div className="flex items-center justify-between p-4 bg-primary/5 rounded-2xl border border-primary/10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
@@ -118,29 +154,66 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                   </div>
                   <div>
                     <p className="font-bold text-primary">{file.name}</p>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{(file.size / 1024).toFixed(1)} KB</p>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{(file.size / 1024).toFixed(1)} KB • Separador: {delimiter}</p>
                   </div>
                 </div>
-                <button onClick={() => setFile(null)} className="text-xs font-bold text-red-500 hover:underline">Remover</button>
+                <button onClick={() => setFile(null)} className="text-xs font-bold text-red-500 hover:underline">Remover e trocar arquivo</button>
               </div>
 
-              {preview.length > 0 && (
-                <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Mapping Section */}
+                <div className="space-y-4">
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Mapeamento de Campos (De/Para)</p>
+                  <div className="space-y-3">
+                    <MappingField 
+                      label="Nome do Lead" 
+                      field="name" 
+                      value={mapping.name} 
+                      headers={headers} 
+                      onChange={(val) => setMapping(prev => ({...prev, name: val}))}
+                      required
+                    />
+                    <MappingField 
+                      label="E-mail" 
+                      field="email" 
+                      value={mapping.email} 
+                      headers={headers} 
+                      onChange={(val) => setMapping(prev => ({...prev, email: val}))}
+                    />
+                    <MappingField 
+                      label="Telefone / WhatsApp" 
+                      field="phone" 
+                      value={mapping.phone} 
+                      headers={headers} 
+                      onChange={(val) => setMapping(prev => ({...prev, phone: val}))}
+                    />
+                    <MappingField 
+                      label="Origem do Lead" 
+                      field="source" 
+                      value={mapping.source} 
+                      headers={headers} 
+                      onChange={(val) => setMapping(prev => ({...prev, source: val}))}
+                    />
+                  </div>
+                </div>
+
+                {/* Preview Section */}
+                <div className="space-y-4">
                   <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Prévia dos Dados</p>
-                  <div className="bg-muted/50 rounded-2xl p-4 overflow-hidden border border-border">
-                    <table className="w-full text-xs">
+                  <div className="bg-muted/30 rounded-3xl p-4 overflow-x-auto border border-border/50 max-h-[300px]">
+                    <table className="w-full text-[10px]">
                       <thead>
                         <tr className="text-left border-b border-border/50">
-                          {preview[0].map((h: string, i: number) => (
-                            <th key={i} className="pb-2 font-black text-primary px-2">{h}</th>
+                          {headers.map((h, i) => (
+                            <th key={i} className="pb-2 font-black text-primary px-2 whitespace-nowrap">{h}</th>
                           ))}
                         </tr>
                       </thead>
-                      <tbody className="text-muted-foreground">
-                        {preview.slice(1).map((row, i) => (
+                      <tbody className="text-muted-foreground font-medium">
+                        {rows.map((row, i) => (
                           <tr key={i} className="border-b border-border/10 last:border-0">
-                            {row.map((cell: string, j: number) => (
-                              <th key={j} className="py-2 px-2 font-medium truncate max-w-[100px]">{cell}</th>
+                            {row.map((cell, j) => (
+                              <td key={j} className="py-2 px-2 whitespace-nowrap max-w-[150px] truncate">{cell}</td>
                             ))}
                           </tr>
                         ))}
@@ -148,39 +221,57 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                     </table>
                   </div>
                 </div>
-              )}
+              </div>
 
-              <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-start gap-3">
-                <AlertCircle size={18} className="text-blue-500 shrink-0 mt-0.5" />
-                <p className="text-xs font-medium text-blue-700 leading-relaxed">
-                  O sistema tentará mapear automaticamente as colunas. Revise os dados acima antes de processar a importação final.
+              <div className="bg-blue-50 p-5 rounded-3xl border border-blue-100 flex items-start gap-4">
+                <AlertCircle size={20} className="text-blue-500 shrink-0 mt-0.5" />
+                <p className="text-xs font-bold text-blue-700 leading-relaxed">
+                  Vincule as colunas da sua planilha aos campos do sistema à esquerda. <br/>O campo <span className="underline">Nome</span> é obrigatório para processar a importação.
                 </p>
               </div>
             </div>
           )}
+        </div>
 
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={onClose}
-              className="px-6 py-3 rounded-2xl font-bold text-sm text-muted-foreground hover:bg-muted transition-all"
-            >
-              Fechar
-            </button>
-            <button
-              onClick={handleImport}
-              disabled={!file || loading}
-              className="bg-primary text-white px-10 py-3 rounded-2xl font-black text-sm hover:bg-primary-light transition-all shadow-premium disabled:opacity-50 flex items-center gap-2"
-            >
-              {loading ? <Loader2 className="animate-spin" size={18} /> : (
-                <>
-                  <CheckCircle2 size={18} />
-                  Processar Importação
-                </>
-              )}
-            </button>
-          </div>
+        <div className="p-8 border-t border-border bg-muted/10 flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-8 py-4 rounded-2xl font-bold text-sm text-muted-foreground hover:bg-muted transition-all"
+          >
+            Fechar
+          </button>
+          <button
+            onClick={handleImport}
+            disabled={!file || !isMappingValid || loading}
+            className="bg-primary text-white px-12 py-4 rounded-2xl font-black text-sm hover:bg-primary-light transition-all shadow-premium disabled:opacity-50 disabled:grayscale flex items-center gap-2"
+          >
+            {loading ? <Loader2 className="animate-spin" size={18} /> : (
+              <>
+                <CheckCircle2 size={18} />
+                Confirmar e Importar
+              </>
+            )}
+          </button>
         </div>
       </div>
     </div>
   );
 };
+
+const MappingField = ({ label, value, headers, onChange, required }: any) => (
+  <div className="space-y-1.5">
+    <label className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-1">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <select 
+      value={value} 
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full bg-white border border-border/60 rounded-xl px-4 py-3 text-xs font-bold text-primary outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
+    >
+      <option value="">Não importar / Ignorar</option>
+      {headers.map((h: string, i: number) => (
+        <option key={i} value={h}>{h}</option>
+      ))}
+    </select>
+  </div>
+);
