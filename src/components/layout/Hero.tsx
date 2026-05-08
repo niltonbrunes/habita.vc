@@ -87,8 +87,8 @@ export const Hero = () => {
                 <p className="text-sm font-black text-primary">+450 clientes</p>
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest leading-none mt-1">Satisfeitos este mês</p>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
 
           {/* Right Visual - Large Framed Image */}
           <motion.div 
