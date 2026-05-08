@@ -170,7 +170,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                       field="name" 
                       value={mapping.name} 
                       headers={headers} 
-                      onChange={(val) => setMapping(prev => ({...prev, name: val}))}
+                      onChange={(val: string) => setMapping(prev => ({...prev, name: val}))}
                       required
                     />
                     <MappingField 
@@ -178,21 +178,21 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                       field="email" 
                       value={mapping.email} 
                       headers={headers} 
-                      onChange={(val) => setMapping(prev => ({...prev, email: val}))}
+                      onChange={(val: string) => setMapping(prev => ({...prev, email: val}))}
                     />
                     <MappingField 
                       label="Telefone / WhatsApp" 
                       field="phone" 
                       value={mapping.phone} 
                       headers={headers} 
-                      onChange={(val) => setMapping(prev => ({...prev, phone: val}))}
+                      onChange={(val: string) => setMapping(prev => ({...prev, phone: val}))}
                     />
                     <MappingField 
                       label="Origem do Lead" 
                       field="source" 
                       value={mapping.source} 
                       headers={headers} 
-                      onChange={(val) => setMapping(prev => ({...prev, source: val}))}
+                      onChange={(val: string) => setMapping(prev => ({...prev, source: val}))}
                     />
                   </div>
                 </div>
@@ -258,7 +258,16 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
   );
 };
 
-const MappingField = ({ label, value, headers, onChange, required }: any) => (
+interface MappingFieldProps {
+  label: string;
+  field: string;
+  value: string;
+  headers: string[];
+  onChange: (val: string) => void;
+  required?: boolean;
+}
+
+const MappingField = ({ label, value, headers, onChange, required }: MappingFieldProps) => (
   <div className="space-y-1.5">
     <label className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-1">
       {label} {required && <span className="text-red-500">*</span>}
