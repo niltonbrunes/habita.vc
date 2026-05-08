@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MoreVertical, Calendar, MessageSquare, Flame } from 'lucide-react';
+import { MoreVertical, Calendar, MessageSquare, Flame, Sparkles, Plus } from 'lucide-react';
 import { Lead } from '@/types/database';
 import { KanbanColumn } from '@/lib/constants/kanban';
 import { motion } from 'framer-motion';
