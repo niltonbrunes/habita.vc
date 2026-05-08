@@ -1,10 +1,9 @@
 'use client';
 import React from 'react';
-import { Search, MapPin, ArrowRight, MousePointer2, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Search, MapPin, ArrowRight, Star } from 'lucide-react';
 
 export const Hero = () => {
-  return (
   const [activeTab, setActiveTab] = React.useState('comprar');
 
   return (
