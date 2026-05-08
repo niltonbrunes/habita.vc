@@ -183,7 +183,7 @@ export default function Home() {
 const BenefitItem = ({ icon, title, desc }: any) => (
   <div className="flex flex-col gap-6 p-2 group">
     <div className="w-16 h-16 bg-accent/10 rounded-[1.5rem] flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-500">
-      {React.cloneElement(icon as React.ReactElement, { size: 28 })}
+      {React.cloneElement(icon as React.ReactElement<any>, { size: 28 })}
     </div>
     <div>
       <h4 className="font-black text-primary text-2xl mb-2 tracking-tight">{title}</h4>
