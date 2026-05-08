@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center pt-24 pb-32 bg-[#fdfdfc]">
+    <section className="relative min-h-screen flex items-center pt-24 pb-32 bg-[#fdfdfc] overflow-x-hidden">
       {/* Cinematic Background Elements */}
-      <div className="absolute top-0 right-0 w-[45%] h-full bg-[#f8f8f5] -z-10" />
+      <div className="absolute top-0 right-0 w-[45%] h-full bg-[#f8f8f5] -z-10 hidden lg:block" />
       <div className="absolute top-[-15%] left-[-10%] w-[50%] h-[70%] bg-accent/5 rounded-full blur-[150px] -z-10" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-20">
@@ -100,7 +100,7 @@ export const Hero = () => {
             <div className="relative z-10 rounded-[5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] border-[16px] border-white group">
               <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               <img 
-                src="/modern_luxury_apartment_exterior_1777989602281.png" 
+                src="/hero_luxury.png" 
                 alt="Luxury Real Estate" 
                 className="w-full aspect-[4/5] object-cover transition-transform duration-[3s] group-hover:scale-110"
               />
