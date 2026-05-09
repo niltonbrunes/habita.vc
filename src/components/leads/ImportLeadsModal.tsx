@@ -141,8 +141,8 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           name: raw.name,
           email: raw.email,
           phone: raw.phone,
-          status: 'lead',
-          temperature: 'warm',
+          status: 'lead' as any,
+          temperature: 'warm' as any,
           score: 50,
           source: raw.source || 'Importação CSV',
           history: [{ type: 'import', date: new Date().toISOString(), note: 'Importado e vinculado à base de Pessoas.' }]
