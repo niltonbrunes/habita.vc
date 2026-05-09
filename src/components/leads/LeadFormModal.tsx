@@ -46,9 +46,12 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
     if (preSelectedPropertyId) {
       setPropertyMode('base');
       setSelectedPropertyId(preSelectedPropertyId);
-      // Busca detalhes do imóvel para mostrar o título
+      // Busca detalhes do imóvel para mostrar o título e o valor
       PropertiesService.getById(preSelectedPropertyId).then(prop => {
-        if (prop) setSelectedPropertyTitle(prop.title);
+        if (prop) {
+          setSelectedPropertyTitle(prop.title);
+          setFormData(prev => ({ ...prev, value: prop.price }));
+        }
       });
     }
   }, [preSelectedPropertyId]);
@@ -302,6 +305,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                                 setSelectedPropertyId(p.id);
                                 setSelectedPropertyTitle(p.title);
                                 setPropertyResults([]);
+                                setFormData(prev => ({ ...prev, value: p.price }));
                               }}
                               className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0"
                             >
