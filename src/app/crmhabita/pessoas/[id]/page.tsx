@@ -81,49 +81,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
   const primaryContact = person.contacts?.find(c => c.is_primary) || person.contacts?.[0];
   return (
-    <DashboardLayout
-      actions={
-        <div className="flex items-center gap-2">
-          <button 
-            onClick={() => setIsLeadModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-[10px] font-black rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/10 uppercase tracking-widest"
-          >
-            <Sparkles size={14} /> Criar Oportunidade
-          </button>
-
-          <Link 
-            href={`/crmhabita/pessoas/${id}/editar`}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-border text-primary text-[10px] font-black rounded-xl hover:border-primary/30 transition-all uppercase tracking-widest"
-          >
-            <Pencil size={14} /> Editar
-          </Link>
-          
-          {person.relationship_status === 'inativo' ? (
-            <button 
-              onClick={handleInactivate}
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white text-[10px] font-black rounded-xl hover:bg-green-600 transition-all shadow-md uppercase tracking-widest"
-            >
-              <CheckCircle2 size={14} /> Reativar
-            </button>
-          ) : (
-            <button 
-              onClick={() => setShowInactivateModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-border text-muted-foreground text-[10px] font-black rounded-xl hover:border-red-200 hover:text-red-600 transition-all uppercase tracking-widest"
-            >
-              <Ban size={14} /> Inativar
-            </button>
-          )}
-
-          <button 
-            onClick={() => setShowDeleteModal(true)}
-            className="p-2 bg-white border border-border text-red-400 rounded-xl hover:border-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
-            title="Excluir Definitivamente"
-          >
-            <Trash2 size={14} />
-          </button>
-        </div>
-      }
-    >
+    <DashboardLayout>
       <div className="max-w-5xl mx-auto space-y-8 pb-20">
         
         {/* Header with Title (Clean) */}
@@ -216,6 +174,52 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
           {/* Coluna Direita: Conteúdo Principal */}
           <div className="lg:col-span-2 space-y-8">
+            
+            {/* Quick Actions Card */}
+            <div className="bg-white p-6 rounded-[2.5rem] shadow-luxury border border-border flex items-center justify-between gap-4">
+              <button 
+                onClick={() => setIsLeadModalOpen(true)}
+                className="flex-1 flex items-center justify-center gap-3 px-6 py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 uppercase tracking-widest text-xs"
+              >
+                <Sparkles size={18} /> Criar Oportunidade
+              </button>
+
+              <div className="flex items-center gap-3">
+                <Link 
+                  href={`/crmhabita/pessoas/${id}/editar`}
+                  className="p-3 bg-white border-2 border-border text-primary rounded-2xl hover:border-primary/30 transition-all shadow-sm"
+                  title="Editar Pessoa"
+                >
+                  <Pencil size={20} />
+                </Link>
+                
+                {person.relationship_status === 'inativo' ? (
+                  <button 
+                    onClick={handleInactivate}
+                    className="p-3 bg-green-500 text-white rounded-2xl hover:bg-green-600 transition-all shadow-md"
+                    title="Reativar Pessoa"
+                  >
+                    <CheckCircle2 size={20} />
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => setShowInactivateModal(true)}
+                    className="p-3 bg-white border-2 border-border text-muted-foreground rounded-2xl hover:border-red-200 hover:text-red-600 transition-all shadow-sm"
+                    title="Inativar Pessoa"
+                  >
+                    <Ban size={20} />
+                  </button>
+                )}
+
+                <button 
+                  onClick={() => setShowDeleteModal(true)}
+                  className="p-3 bg-white border-2 border-border text-red-400 rounded-2xl hover:border-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                  title="Excluir Definitivamente"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            </div>
             
             {/* Informações Detalhadas */}
             <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-border">
