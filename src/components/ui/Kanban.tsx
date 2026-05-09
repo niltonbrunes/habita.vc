@@ -138,7 +138,7 @@ export const KanbanCard = ({ lead, onDragStart }: { lead: Lead, onDragStart: (e:
   );
 };
 
-export const KanbanColumnComponent = ({ column, leads, onMoveLead }: { column: KanbanColumn, leads: Lead[], onMoveLead: (id: string, status: string) => void }) => {
+export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead }: { column: KanbanColumn, leads: Lead[], onMoveLead: (id: string, status: string) => void, onAddLead: () => void }) => {
   const [isOver, setIsOver] = React.useState(false);
   
   const columnTotalValue = leads.reduce((acc, lead) => acc + (lead.value || 0), 0);
@@ -185,7 +185,10 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead }: { column: K
               <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">{leads.length} leads ativos</p>
             </div>
           </div>
-          <button className="w-9 h-9 flex items-center justify-center bg-white border border-border/40 rounded-xl text-muted-foreground/40 hover:text-primary transition-all">
+          <button 
+            onClick={onAddLead}
+            className="w-9 h-9 flex items-center justify-center bg-white border border-border/40 rounded-xl text-muted-foreground/40 hover:text-primary transition-all"
+          >
              <Plus size={18} />
           </button>
         </div>
@@ -218,7 +221,10 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead }: { column: K
           </div>
         )}
         
-        <button className="w-full py-6 border-2 border-dashed border-primary/5 rounded-[2.5rem] text-[10px] font-black uppercase tracking-widest text-primary/20 hover:bg-white hover:border-accent/30 hover:text-accent transition-all">
+        <button 
+          onClick={onAddLead}
+          className="w-full py-6 border-2 border-dashed border-primary/5 rounded-[2.5rem] text-[10px] font-black uppercase tracking-widest text-primary/20 hover:bg-white hover:border-accent/30 hover:text-accent transition-all"
+        >
           + Adicionar Oportunidade
         </button>
       </div>

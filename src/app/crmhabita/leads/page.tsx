@@ -152,6 +152,7 @@ export default function LeadsPage() {
                 column={column} 
                 leads={groupedLeads[column.id] || []} 
                 onMoveLead={handleMoveLead}
+                onAddLead={() => setIsLeadModalOpen(true)}
               />
             ))}
           </div>
