@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import { X, Upload, FileText, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { LeadsService } from '@/services/leads.service';
 import { PeopleService } from '@/services/people.service';
+import { PropertiesService } from '@/services/properties.service';
 import { useAuth } from '@/context/AuthContext';
+import { Building, MapPin, Search as SearchIcon } from 'lucide-react';
 
 interface ImportLeadsModalProps {
   isOpen: boolean;
@@ -25,6 +27,13 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
     source: ''
   });
   const [delimiter, setDelimiter] = useState(',');
+  
+  // Produto Vinculado (Opcional)
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
+  const [selectedPropertyTitle, setSelectedPropertyTitle] = useState('');
+  const [propertySearch, setPropertySearch] = useState('');
+  const [propertyResults, setPropertyResults] = useState<any[]>([]);
+  const [isSearchingProperty, setIsSearchingProperty] = useState(false);
 
   if (!isOpen) return null;
 
@@ -145,7 +154,14 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           temperature: 'warm' as any,
           score: 50,
           source: raw.source || 'Importação CSV',
-          history: [{ type: 'import', date: new Date().toISOString(), note: 'Importado e vinculado à base de Pessoas.' }]
+          property_id: selectedPropertyId, // VÍNCULO AO PRODUTO (OPCIONAL)
+          history: [{ 
+            type: 'import', 
+            date: new Date().toISOString(), 
+            note: selectedPropertyId 
+              ? `Importado e vinculado ao imóvel: ${selectedPropertyTitle}` 
+              : 'Importado e vinculado à base de Pessoas.' 
+          }]
         });
       }
 
@@ -180,6 +196,80 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
         </div>
 
         <div className="p-8 space-y-8 overflow-y-auto">
+          {/* Seletor de Produto (Opcional) */}
+          <div className="space-y-4">
+            <p className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">Vincular a um Produto (Opcional)</p>
+            {!selectedPropertyId ? (
+              <div className="relative">
+                <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                <input 
+                  type="text"
+                  placeholder="Pesquise por nome do imóvel ou empreendimento..."
+                  value={propertySearch}
+                  onChange={async (e) => {
+                    setPropertySearch(e.target.value);
+                    if (e.target.value.length > 2) {
+                      setIsSearchingProperty(true);
+                      const results = await PropertiesService.search(e.target.value);
+                      setPropertyResults(results);
+                      setIsSearchingProperty(false);
+                    } else {
+                      setPropertyResults([]);
+                    }
+                  }}
+                  className="w-full pl-12 pr-4 py-4 bg-muted/30 border border-border rounded-2xl font-bold text-primary focus:border-primary focus:bg-white transition-all outline-none"
+                />
+                
+                {propertyResults.length > 0 && (
+                  <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl shadow-luxury border border-border overflow-hidden">
+                    {propertyResults.map(p => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedPropertyId(p.id);
+                          setSelectedPropertyTitle(p.title);
+                          setPropertyResults([]);
+                          setPropertySearch('');
+                        }}
+                        className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0"
+                      >
+                        <p className="font-bold text-primary text-sm">{p.title}</p>
+                        <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center justify-between p-4 bg-primary/5 border-2 border-primary/10 rounded-2xl animate-in fade-in slide-in-from-top-2">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                    <Building className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-primary/50 uppercase tracking-widest mb-0.5">Produto Vinculado</p>
+                    <p className="text-sm font-black text-primary uppercase">{selectedPropertyTitle}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => {
+                    setSelectedPropertyId(null);
+                    setSelectedPropertyTitle('');
+                  }}
+                  className="text-[10px] font-black text-red-500 uppercase hover:underline"
+                >
+                  Remover Vínculo
+                </button>
+              </div>
+            )}
+            <p className="text-[9px] font-medium text-muted-foreground leading-relaxed italic">
+              Ao selecionar um produto, todos os leads desta planilha serão automaticamente vinculados a ele. Deixe em branco se for uma lista geral.
+            </p>
+          </div>
+
+          <div className="w-full h-px bg-border/40" />
+
           {!file ? (
             <div className="border-4 border-dashed border-muted rounded-[2rem] p-12 text-center group hover:border-primary/20 hover:bg-muted/30 transition-all cursor-pointer relative">
               <input 
