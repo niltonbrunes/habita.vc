@@ -154,7 +154,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           temperature: 'warm' as any,
           score: 50,
           source: raw.source || 'Importação CSV',
-          property_id: selectedPropertyId, // VÍNCULO AO PRODUTO (OPCIONAL)
+          property_id: selectedPropertyId || undefined, // VÍNCULO AO PRODUTO (OPCIONAL)
           history: [{ 
             type: 'import', 
             date: new Date().toISOString(), 
