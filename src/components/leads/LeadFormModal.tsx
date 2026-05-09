@@ -305,12 +305,21 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                                 setSelectedPropertyId(p.id);
                                 setSelectedPropertyTitle(p.title);
                                 setPropertyResults([]);
-                                setFormData(prev => ({ ...prev, value: p.price }));
+                                if (p.price) {
+                                  setFormData(prev => ({ ...prev, value: p.price }));
+                                }
                               }}
-                              className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0"
+                              className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0 flex items-center justify-between"
                             >
-                              <p className="font-bold text-primary text-sm">{p.title}</p>
-                              <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
+                              <div>
+                                <p className="font-bold text-primary text-sm">{p.title}</p>
+                                <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
+                              </div>
+                              <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider ${
+                                p._type === 'development' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
+                              }`}>
+                                {p._type === 'development' ? 'Empreendimento' : 'Imóvel'}
+                              </span>
                             </button>
                           ))}
                         </div>

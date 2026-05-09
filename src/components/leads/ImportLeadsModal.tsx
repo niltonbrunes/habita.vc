@@ -155,7 +155,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           temperature: 'warm' as any,
           score: 50,
           source: raw.source || 'Importação CSV',
-          value: selectedPropertyPrice || 0, // VALOR DO NEGÓCIO HERDADO DO PRODUTO
+          value: selectedPropertyId ? selectedPropertyPrice : undefined, // VALOR DO NEGÓCIO HERDADO APENAS SE HOUVER SELEÇÃO
           property_id: selectedPropertyId || undefined, // VÍNCULO AO PRODUTO (OPCIONAL)
           history: [{ 
             type: 'import', 
