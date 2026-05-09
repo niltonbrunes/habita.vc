@@ -192,8 +192,6 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               </p>
             </div>
           </div>
-        </div>   </button>
-          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-12">
