@@ -142,8 +142,9 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Person Search / Name */}
             {!preSelectedPersonId ? (
-              <div className="space-y-2 col-span-full">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Vincular a uma Pessoa (Opcional)</label>
+              <>
+                <div className="space-y-2 col-span-full">
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Vincular a uma Pessoa (Opcional)</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
