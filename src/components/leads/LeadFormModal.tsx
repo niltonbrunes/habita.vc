@@ -269,45 +269,47 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
 
                   {/* Base Property Selection */}
                   {propertyMode === 'base' && (
-                    <div className="relative group animate-in slide-in-from-top-2 duration-300">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Pesquisar nos meus imóveis..."
-                        className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
-                        value={selectedPropertyTitle}
-                        onChange={async (e) => {
-                          setSelectedPropertyTitle(e.target.value);
-                          if (e.target.value.length > 2) {
-                            const results = await PropertiesService.search(e.target.value);
-                            setPropertyResults(results);
-                          } else {
-                            setPropertyResults([]);
-                          }
-                        }}
-                      />
-                    </div>
-                    {propertyResults.length > 0 && (
-                      <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl shadow-luxury border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
-                        {propertyResults.map(p => (
-                          <button
-                            key={p.id}
-                            type="button"
-                            onClick={() => {
-                              setSelectedPropertyId(p.id);
-                              setSelectedPropertyTitle(p.title);
+                    <>
+                      <div className="relative group animate-in slide-in-from-top-2 duration-300">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="Pesquisar nos meus imóveis..."
+                          className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+                          value={selectedPropertyTitle}
+                          onChange={async (e) => {
+                            setSelectedPropertyTitle(e.target.value);
+                            if (e.target.value.length > 2) {
+                              const results = await PropertiesService.search(e.target.value);
+                              setPropertyResults(results);
+                            } else {
                               setPropertyResults([]);
-                            }}
-                            className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0"
-                          >
-                            <p className="font-bold text-primary text-sm">{p.title}</p>
-                            <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
-                          </button>
-                        ))}
+                            }
+                          }}
+                        />
                       </div>
-                    )}
+                      {propertyResults.length > 0 && (
+                        <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl shadow-luxury border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
+                          {propertyResults.map(p => (
+                            <button
+                              key={p.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedPropertyId(p.id);
+                                setSelectedPropertyTitle(p.title);
+                                setPropertyResults([]);
+                              }}
+                              className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0"
+                            >
+                              <p className="font-bold text-primary text-sm">{p.title}</p>
+                              <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   )}
                 </>
               ) : (
