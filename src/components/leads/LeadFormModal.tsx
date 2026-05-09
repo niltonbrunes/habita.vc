@@ -85,7 +85,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess }: LeadFormModalProps
       await LeadsService.create({
         ...formData,
         person_id: personId as string, 
-        property_id: propertyMode === 'base' ? selectedPropertyId : undefined,
+        property_id: propertyMode === 'base' ? (selectedPropertyId || undefined) : undefined,
         interest_description: propertyMode === 'market' ? formData.interest_description : undefined,
         assigned_to_id: user.id,
         status: 'lead' as any,
