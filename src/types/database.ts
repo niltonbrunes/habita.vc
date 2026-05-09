@@ -94,6 +94,9 @@ export interface Lead {
   documents: any[];
   created_at: string;
   person?: any; // Dados da pessoa vinculada (carregados via join)
+  property_id?: string; // Link para imóvel da base (opcional)
+  interest_description?: string; // Descrição de imóvel externo/mercado
+  property?: any; // Dados do imóvel (carregados via join)
 }
 
 export interface Developer {

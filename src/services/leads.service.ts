@@ -4,24 +4,23 @@ import { Lead, LeadStatus } from '@/types/database';
 export const LeadsService = {
   async getAll() {
     try {
-      // Tenta buscar com o vínculo mestre (Join)
+      // Tenta buscar com o vínculo mestre (Join triplo: Lead + Pessoa + Imóvel)
       const { data, error } = await supabase
         .from('leads')
-        .select('*, person:people(*)')
+        .select('*, person:people(*), property:properties(*)')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       
       const enrichedData = (data || []).map(lead => ({
         ...lead,
-        value: lead.value || Math.floor(Math.random() * (1500000 - 350000) + 350000),
-        probability: lead.probability || Math.floor(Math.random() * 90) + 10
+        value: lead.value || 0,
+        probability: lead.probability || 0
       }));
 
       return enrichedData as Lead[];
     } catch (err) {
       console.warn('Erro ao carregar com join, tentando busca simples:', err);
-      // Fallback: Busca simples caso o vínculo no banco ainda não exista
       const { data, error } = await supabase
         .from('leads')
         .select('*')
@@ -41,7 +40,7 @@ export const LeadsService = {
     try {
       const { data, error } = await supabase
         .from('leads')
-        .select('*, person:people(*)')
+        .select('*, person:people(*), property:properties(*)')
         .eq('id', id)
         .single();
 
@@ -62,7 +61,7 @@ export const LeadsService = {
     try {
       const { data, error } = await supabase
         .from('leads')
-        .select('*, person:people(*)')
+        .select('*, person:people(*), property:properties(*)')
         .eq('status', status)
         .order('created_at', { ascending: false });
 

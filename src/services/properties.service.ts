@@ -114,5 +114,16 @@ export const PropertiesService = {
 
     if (error) return [];
     return data as Property[];
+  },
+
+  async search(term: string) {
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*')
+      .or(`title.ilike.%${term}%,reference.ilike.%${term}%`)
+      .limit(5);
+
+    if (error) throw error;
+    return data as Property[];
   }
 };
