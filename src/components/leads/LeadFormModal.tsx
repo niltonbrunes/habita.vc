@@ -14,6 +14,7 @@ interface LeadFormModalProps {
 }
 
 export const LeadFormModal = ({ isOpen, onClose, onSuccess }: LeadFormModalProps) => {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [propertyResults, setPropertyResults] = useState<any[]>([]);
