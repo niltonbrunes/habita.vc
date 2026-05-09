@@ -53,7 +53,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
         try {
           const person = await PeopleService.getById(lead.person_id);
           if (person && !person.roles.includes('client')) {
-            const newRoles = [...person.roles, 'client'];
+            const newRoles = [...person.roles, 'client'] as any[];
             await PeopleService.update(lead.person_id, { 
               roles: newRoles,
               relationship_status: 'ativo'
