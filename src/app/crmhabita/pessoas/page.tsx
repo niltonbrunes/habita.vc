@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PeopleService } from '@/services/people.service';
 import { Person } from '@/types/people';
-import { Search, Plus, User, Building2, Phone, Mail, MapPin } from 'lucide-react';
+import { Search, Plus, User, Building2, Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PeopleListPage() {
@@ -79,43 +79,81 @@ export default function PeopleListPage() {
         ) : people.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {people.map(person => {
+              const whatsapp = person.contacts?.find(c => (c.type as string) === 'whatsapp')?.value;
+              const phone = person.contacts?.find(c => (c.type as string) === 'phone' || (c.type as string) === 'whatsapp')?.value;
+              const email = person.contacts?.find(c => (c.type as string) === 'email')?.value;
               const primaryContact = person.contacts?.find(c => c.is_primary) || person.contacts?.[0];
               
               return (
-                <Link key={person.id} href={`/crmhabita/pessoas/${person.id}`} className="group block bg-white p-6 rounded-[2rem] border-2 border-border hover:border-primary/50 transition-all shadow-sm hover:shadow-premium">
-                  <div className="flex items-start gap-4">
-                    <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center shrink-0 border border-border group-hover:bg-primary/5 transition-colors">
-                      {person.person_type === 'PJ' ? <Building2 className="text-primary" size={24} /> : <User className="text-primary" size={24} />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-black text-primary text-lg truncate group-hover:text-accent transition-colors">
-                        {person.fantasy_name || person.name}
-                      </h3>
-                      <div className="flex gap-2 mt-2 flex-wrap">
-                        {person.roles?.slice(0,3).map(r => (
-                          <span key={r} className="px-2 py-0.5 bg-muted text-muted-foreground text-[10px] font-black uppercase tracking-wider rounded-md">
-                            {r}
-                          </span>
-                        ))}
+                <div key={person.id} className="relative group">
+                  <Link href={`/crmhabita/pessoas/${person.id}`} className="block bg-white p-6 rounded-[2rem] border-2 border-border hover:border-primary transition-all shadow-sm hover:shadow-premium min-h-[180px]">
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center shrink-0 border border-border group-hover:bg-primary/5 transition-colors">
+                        {person.person_type === 'PJ' ? <Building2 className="text-primary" size={24} /> : <User className="text-primary" size={24} />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-black text-primary text-lg truncate group-hover:text-accent transition-colors">
+                          {person.fantasy_name || person.name}
+                        </h3>
+                        <div className="flex gap-2 mt-2 flex-wrap">
+                          {person.roles?.slice(0,3).map(r => (
+                            <span key={r} className="px-2 py-0.5 bg-muted text-muted-foreground text-[10px] font-black uppercase tracking-wider rounded-md">
+                              {r}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="mt-6 pt-6 border-t border-border space-y-3">
-                    {primaryContact && (
-                      <div className="flex items-center gap-3 text-sm font-medium text-muted-foreground">
-                        {primaryContact.type === 'email' ? <Mail size={16} /> : <Phone size={16} />}
-                        <span className="truncate">{primaryContact.value}</span>
+
+                    <div className="pt-4 border-t border-border">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          {primaryContact && (
+                            <p className="text-xs font-bold text-muted-foreground truncate flex items-center gap-2">
+                              {primaryContact.type === 'email' ? <Mail size={12} /> : <Phone size={12} />}
+                              {primaryContact.value}
+                            </p>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          {whatsapp && (
+                            <a 
+                              href={`https://wa.me/55${whatsapp.replace(/\D/g, '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center hover:bg-green-600 hover:text-white transition-all shadow-sm"
+                              title="WhatsApp"
+                            >
+                              <MessageCircle size={18} />
+                            </a>
+                          )}
+                          {phone && (
+                            <a 
+                              href={`tel:${phone.replace(/\D/g, '')}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+                              title="Ligar"
+                            >
+                              <Phone size={18} />
+                            </a>
+                          )}
+                          {email && (
+                            <a 
+                              href={`mailto:${email}`}
+                              onClick={(e) => e.stopPropagation()}
+                              className="w-10 h-10 bg-primary/5 text-primary rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm"
+                              title="E-mail"
+                            >
+                              <Mail size={18} />
+                            </a>
+                          )}
+                        </div>
                       </div>
-                    )}
-                    {person.document_id && (
-                      <div className="flex items-center gap-3 text-sm font-medium text-muted-foreground">
-                        <div className="w-4 flex justify-center font-bold text-[10px]">ID</div>
-                        <span className="truncate">{person.document_id}</span>
-                      </div>
-                    )}
-                  </div>
-                </Link>
+                    </div>
+                  </Link>
+                </div>
               );
             })}
           </div>
