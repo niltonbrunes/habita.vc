@@ -25,6 +25,18 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId 
   React.useEffect(() => {
     if (preSelectedPersonId) {
       setSelectedPersonId(preSelectedPersonId);
+      // Busca os dados da pessoa para preencher o formulário
+      PeopleService.getById(preSelectedPersonId).then(p => {
+        if (p) {
+          const primaryContact = p.contacts?.find(c => c.is_primary) || p.contacts?.[0];
+          setFormData(prev => ({
+            ...prev,
+            name: p.name,
+            email: p.contacts?.find(c => c.type === 'email')?.value || '',
+            phone: p.contacts?.find(c => c.type === 'whatsapp' || c.type === 'telefone')?.value || ''
+          }));
+        }
+      });
     }
   }, [preSelectedPersonId]);
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
@@ -129,8 +141,9 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId 
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Person Search / Name */}
-            <div className="space-y-2 col-span-full">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Vincular a uma Pessoa (Opcional)</label>
+            {!preSelectedPersonId ? (
+              <div className="space-y-2 col-span-full">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Vincular a uma Pessoa (Opcional)</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -196,6 +209,20 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId 
                 />
               </div>
             </div>
+          </>
+        ) : (
+          <div className="col-span-full mb-4">
+            <div className="flex items-center gap-4 p-5 bg-primary/5 border-2 border-primary/10 rounded-[2rem] shadow-sm animate-in fade-in slide-in-from-top-2">
+              <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
+                <ShieldCheck className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-primary/50 uppercase tracking-[0.2em] mb-0.5">Oportunidade Vinculada</p>
+                <p className="text-lg font-black text-primary uppercase tracking-tight leading-tight">{formData.name}</p>
+              </div>
+            </div>
+          </div>
+        )}
 
             {/* Property Interest Section */}
             <div className="col-span-full space-y-4">
