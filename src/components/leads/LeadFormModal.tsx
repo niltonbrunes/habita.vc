@@ -289,6 +289,25 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                         }}
                       />
                     </div>
+                    {propertyResults.length > 0 && (
+                      <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl shadow-luxury border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
+                        {propertyResults.map(p => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedPropertyId(p.id);
+                              setSelectedPropertyTitle(p.title);
+                              setPropertyResults([]);
+                            }}
+                            className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0"
+                          >
+                            <p className="font-bold text-primary text-sm">{p.title}</p>
+                            <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   )}
                 </>
               ) : (
@@ -300,27 +319,6 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                     <p className="text-[10px] font-black text-primary/50 uppercase tracking-widest mb-0.5">Imóvel Vinculado</p>
                     <p className="text-sm font-black text-primary uppercase">{selectedPropertyTitle}</p>
                   </div>
-                </div>
-              )}
-                  {propertyResults.length > 0 && (
-                    <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl shadow-luxury border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
-                      {propertyResults.map(p => (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedPropertyId(p.id);
-                            setSelectedPropertyTitle(p.title);
-                            setPropertyResults([]);
-                          }}
-                          className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0"
-                        >
-                          <p className="font-bold text-primary text-sm">{p.title}</p>
-                          <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
-                        </button>
-                      ))}
-                    </div>
-                  )}
                 </div>
               )}
 
