@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { X, Mail, Phone, User, Tag, ShieldCheck, Loader2 } from 'lucide-react';
 import { LeadsService } from '@/services/leads.service';
+import { PeopleService } from '@/services/people.service';
 import { useAuth } from '@/context/AuthContext';
 
 interface LeadFormModalProps {
@@ -38,16 +39,47 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess }: LeadFormModalProps
 
     setLoading(true);
     try {
+      // 1. Unificação com a base de Pessoas: Buscar se já existe
+      let personId = null;
+      const existingPerson = await PeopleService.findByContact(formData.email || formData.phone);
+      
+      if (existingPerson) {
+        personId = existingPerson.id;
+        console.log('Pessoa existente encontrada, vinculando ao Lead:', personId);
+      } else {
+        // 2. Criar nova pessoa se for um contato inédito
+        console.log('Criando nova pessoa para o lead...');
+        const newPerson = await PeopleService.create({
+          name: formData.name,
+          person_type: 'PF',
+          roles: ['lead'],
+          relationship_status: 'novo',
+          contacts: [
+            ...(formData.email ? [{ id: crypto.randomUUID(), type: 'email', value: formData.email, is_primary: true }] : []),
+            ...(formData.phone ? [{ id: crypto.randomUUID(), type: 'whatsapp', value: formData.phone, is_primary: !formData.email }] : [])
+          ],
+          assigned_to_id: user.id,
+          commercial_info: {
+            lead_source: formData.source,
+            notes: 'Criado via cadastro manual de lead.'
+          }
+        } as any);
+        personId = newPerson.id;
+      }
+
+      // 3. Criar o lead vinculado
       await LeadsService.create({
         ...formData,
+        person_id: personId, // O Elo de comunicação
         assigned_to_id: user.id,
         status: 'lead',
-        history: [{ type: 'creation', date: new Date().toISOString(), note: 'Lead criado manualmente.' }]
+        history: [{ type: 'creation', date: new Date().toISOString(), note: `Lead criado e vinculado à Pessoa ID: ${personId}` }]
       });
+
       onSuccess();
       onClose();
     } catch (error: any) {
-      console.error('Erro detalhado ao criar lead:', error.message || error);
+      console.error('Erro detalhado ao criar lead unificado:', error.message || error);
       alert('Erro ao criar lead: ' + (error.message || 'Verifique as permissões no banco.'));
     } finally {
       setLoading(false);

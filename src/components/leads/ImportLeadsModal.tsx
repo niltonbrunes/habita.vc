@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { X, Upload, FileText, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { LeadsService } from '@/services/leads.service';
+import { PeopleService } from '@/services/people.service';
 import { useAuth } from '@/context/AuthContext';
 
 interface ImportLeadsModalProps {
@@ -88,37 +89,74 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
 
       const fileHeaders = lines[0].split(delimiter).map(h => h.trim());
       
-      const leadsToInsert = lines.slice(1).map((line, lineIdx) => {
+      const leadsToProcess = lines.slice(1).map(line => {
         const values = line.split(delimiter).map(v => v.trim());
-        const lead: any = {
-          assigned_to_id: user.id,
-          status: 'lead',
-          temperature: 'warm',
-          score: 50,
-          history: [{ type: 'import', date: new Date().toISOString(), note: 'Importado via CSV.' }]
-        };
-        
+        const rawLead: any = {};
         Object.entries(mapping).forEach(([field, mappedHeader]) => {
           if (mappedHeader) {
             const index = fileHeaders.indexOf(mappedHeader);
             if (index !== -1 && values[index] !== undefined) {
-              lead[field] = values[index];
+              rawLead[field] = values[index];
             }
           }
         });
-        
-        return lead;
+        return rawLead;
       });
 
-      console.log(`Tentando importar ${leadsToInsert.length} leads...`);
+      console.log(`Processando ${leadsToProcess.length} leads com vínculo à base de Pessoas...`);
+      
+      const leadsToInsert = [];
+      
+      for (const raw of leadsToProcess) {
+        // 1. Verificar se a pessoa já existe
+        let personId = null;
+        const existingPerson = await PeopleService.findByContact(raw.email || raw.phone);
+        
+        if (existingPerson) {
+          personId = existingPerson.id;
+        } else {
+          // 2. Criar nova pessoa se não existir
+          const newPerson = await PeopleService.create({
+            name: raw.name,
+            person_type: 'PF',
+            roles: ['lead'],
+            relationship_status: 'novo',
+            contacts: [
+              ...(raw.email ? [{ id: crypto.randomUUID(), type: 'email', value: raw.email, is_primary: true }] : []),
+              ...(raw.phone ? [{ id: crypto.randomUUID(), type: 'whatsapp', value: raw.phone, is_primary: !raw.email }] : [])
+            ],
+            assigned_to_id: user.id,
+            commercial_info: {
+              lead_source: raw.source || 'Importação CSV',
+              notes: 'Criado automaticamente via importação de leads.'
+            }
+          } as any);
+          personId = newPerson.id;
+        }
+
+        // 3. Montar o lead vinculado
+        leadsToInsert.push({
+          assigned_to_id: user.id,
+          person_id: personId, // O VÍNCULO MÁGICO
+          name: raw.name,
+          email: raw.email,
+          phone: raw.phone,
+          status: 'lead',
+          temperature: 'warm',
+          score: 50,
+          source: raw.source || 'Importação CSV',
+          history: [{ type: 'import', date: new Date().toISOString(), note: 'Importado e vinculado à base de Pessoas.' }]
+        });
+      }
+
       await LeadsService.bulkCreate(leadsToInsert);
       
-      console.log('Importação concluída com sucesso!');
+      console.log('Importação e Vínculo concluídos com sucesso!');
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Erro na importação:', error);
-      alert('Erro na importação: Verifique se o arquivo está no formato correto.');
+      console.error('Erro na importação unificada:', error);
+      alert('Erro na importação: Verifique se o arquivo está no formato correto e se você tem permissão para criar contatos.');
     } finally {
       setLoading(false);
     }

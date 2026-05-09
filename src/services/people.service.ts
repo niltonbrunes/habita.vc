@@ -51,6 +51,26 @@ export const PeopleService = {
     return data && data.length > 0 ? data[0] : null;
   },
 
+  async findByContact(contact: string) {
+    if (!contact) return null;
+    const { data, error } = await supabase
+      .from('people')
+      .select('id, name, contacts')
+      .or(`contacts.cs.[{"value":"${contact}"}]`) // Busca dentro do JSONB de contatos
+      .limit(1);
+
+    if (error) {
+      // Fallback para busca mais simples se o contains falhar (depende da config do postgres)
+      const { data: fallbackData } = await supabase
+        .from('people')
+        .select('id, name')
+        .ilike('name', `%${contact}%`)
+        .limit(1);
+      return fallbackData?.[0] || null;
+    }
+    return data?.[0] || null;
+  },
+
   async create(personData: Partial<Person>) {
     const { data, error } = await supabase
       .from('people')

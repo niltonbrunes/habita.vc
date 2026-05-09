@@ -46,9 +46,17 @@ export const KanbanCard = ({ lead, onDragStart }: { lead: Lead, onDragStart: (e:
             </div>
             <div>
               <Link href={`/crmhabita/leads/${lead.id}`}>
-                <h4 className="font-black text-primary text-sm leading-tight hover:text-accent transition-colors">{lead.name}</h4>
+              <h4 className="font-black text-primary text-sm leading-tight hover:text-accent transition-colors">{lead.name}</h4>
               </Link>
-              <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">{lead.source || 'Portal'}</p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">{lead.source || 'Portal'}</p>
+                {lead.person_id && (
+                  <div className="flex items-center gap-1 px-1.5 py-0.5 bg-green-500/10 text-green-600 rounded-md" title="Contato Verificado na Base">
+                    <Sparkles size={8} className="fill-green-600" />
+                    <span className="text-[7px] font-black uppercase tracking-tighter">Verificado</span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <Link href={`/crmhabita/leads/${lead.id}`} className="p-2 bg-muted/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">

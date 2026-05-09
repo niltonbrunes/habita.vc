@@ -80,6 +80,7 @@ export interface Property {
 export interface Lead {
   id: string;
   assigned_to_id: string;
+  person_id?: string; // Link para a base central de Pessoas
   name: string;
   email?: string;
   phone?: string;
