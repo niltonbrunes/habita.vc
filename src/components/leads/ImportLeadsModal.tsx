@@ -147,7 +147,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
         // 3. Montar o lead vinculado
         leadsToInsert.push({
           assigned_to_id: user.id,
-          person_id: personId, // O VÍNCULO MÁGICO
+          person_id: personId || undefined, // O VÍNCULO MÁGICO (undefined é melhor que null para o Supabase)
           name: raw.name,
           email: raw.email,
           phone: raw.phone,
@@ -172,9 +172,10 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
       console.log('Importação e Vínculo concluídos com sucesso!');
       onSuccess();
       onClose();
-    } catch (error) {
-      console.error('Erro na importação unificada:', error);
-      alert('Erro na importação: Verifique se o arquivo está no formato correto e se você tem permissão para criar contatos.');
+    } catch (error: any) {
+      console.error('Erro detalhado na importação:', error);
+      const errorMessage = error.message || 'Erro desconhecido';
+      alert(`Erro na importação: ${errorMessage}\n\nVerifique se o arquivo está no formato correto (UTF-8) e se os dados são válidos.`);
     } finally {
       setLoading(false);
     }
