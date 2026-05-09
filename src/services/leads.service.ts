@@ -3,43 +3,80 @@ import { Lead, LeadStatus } from '@/types/database';
 
 export const LeadsService = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('leads')
-      .select('*, person:people(*)') // Join mestre com a base de Pessoas
-      .order('created_at', { ascending: false });
+    try {
+      // Tenta buscar com o vínculo mestre (Join)
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*, person:people(*)')
+        .order('created_at', { ascending: false });
 
-    if (error) throw error;
-    
-    // Fallback logic for demo/pipeline presentation
-    const enrichedData = (data || []).map(lead => ({
-      ...lead,
-      value: lead.value || Math.floor(Math.random() * (1500000 - 350000) + 350000),
-      probability: lead.probability || Math.floor(Math.random() * 90) + 10
-    }));
+      if (error) throw error;
+      
+      const enrichedData = (data || []).map(lead => ({
+        ...lead,
+        value: lead.value || Math.floor(Math.random() * (1500000 - 350000) + 350000),
+        probability: lead.probability || Math.floor(Math.random() * 90) + 10
+      }));
 
-    return enrichedData as (Lead & { person?: any })[];
+      return enrichedData as Lead[];
+    } catch (err) {
+      console.warn('Erro ao carregar com join, tentando busca simples:', err);
+      // Fallback: Busca simples caso o vínculo no banco ainda não exista
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      return (data || []).map(lead => ({
+        ...lead,
+        value: lead.value || 0,
+        probability: lead.probability || 0
+      })) as Lead[];
+    }
   },
 
   async getById(id: string) {
-    const { data, error } = await supabase
-      .from('leads')
-      .select('*, person:people(*)')
-      .eq('id', id)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*, person:people(*)')
+        .eq('id', id)
+        .single();
 
-    if (error) throw error;
-    return data as (Lead & { person?: any });
+      if (error) throw error;
+      return data as Lead;
+    } catch (err) {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('id', id)
+        .single();
+      if (error) throw error;
+      return data as Lead;
+    }
   },
 
   async getByStatus(status: LeadStatus) {
-    const { data, error } = await supabase
-      .from('leads')
-      .select('*, person:people(*)')
-      .eq('status', status)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*, person:people(*)')
+        .eq('status', status)
+        .order('created_at', { ascending: false });
 
-    if (error) throw error;
-    return data as (Lead & { person?: any })[];
+      if (error) throw error;
+      return data as Lead[];
+    } catch (err) {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .eq('status', status)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as Lead[];
+    }
   },
 
   async updateStatus(id: string, status: LeadStatus) {

@@ -47,7 +47,7 @@ export const KanbanCard = ({ lead, onDragStart }: { lead: Lead, onDragStart: (e:
               {getInitials(displayName)}
             </div>
             <div>
-              <Link href={`/crmhabita/leads/${lead.id}`}>
+              <Link href={lead.person_id ? `/crmhabita/pessoas/${lead.person_id}` : `/crmhabita/leads/${lead.id}`}>
                 <h4 className="font-black text-primary text-sm leading-tight hover:text-accent transition-colors">{displayName}</h4>
               </Link>
               <div className="flex items-center gap-1.5 mt-0.5">
