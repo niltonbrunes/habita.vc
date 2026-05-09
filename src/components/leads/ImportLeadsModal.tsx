@@ -31,6 +31,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
   // Produto Vinculado (Opcional)
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [selectedPropertyTitle, setSelectedPropertyTitle] = useState('');
+  const [selectedPropertyPrice, setSelectedPropertyPrice] = useState<number>(0);
   const [propertySearch, setPropertySearch] = useState('');
   const [propertyResults, setPropertyResults] = useState<any[]>([]);
   const [isSearchingProperty, setIsSearchingProperty] = useState(false);
@@ -154,6 +155,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           temperature: 'warm' as any,
           score: 50,
           source: raw.source || 'Importação CSV',
+          value: selectedPropertyPrice || 0, // VALOR DO NEGÓCIO HERDADO DO PRODUTO
           property_id: selectedPropertyId || undefined, // VÍNCULO AO PRODUTO (OPCIONAL)
           history: [{ 
             type: 'import', 
@@ -229,13 +231,21 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                         onClick={() => {
                           setSelectedPropertyId(p.id);
                           setSelectedPropertyTitle(p.title);
+                          setSelectedPropertyPrice(p.price || 0);
                           setPropertyResults([]);
                           setPropertySearch('');
                         }}
-                        className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0"
+                        className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0 flex items-center justify-between"
                       >
-                        <p className="font-bold text-primary text-sm">{p.title}</p>
-                        <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
+                        <div>
+                          <p className="font-bold text-primary text-sm">{p.title}</p>
+                          <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
+                        </div>
+                        <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider ${
+                          p._type === 'development' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
+                        }`}>
+                          {p._type === 'development' ? 'Empreendimento' : 'Imóvel'}
+                        </span>
                       </button>
                     ))}
                   </div>

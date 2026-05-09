@@ -117,13 +117,28 @@ export const PropertiesService = {
   },
 
   async search(term: string) {
-    const { data, error } = await supabase
+    // Busca em Imóveis
+    const { data: properties, error: pError } = await supabase
       .from('properties')
       .select('*')
       .or(`title.ilike.%${term}%,reference.ilike.%${term}%`)
       .limit(5);
 
-    if (error) throw error;
-    return data as Property[];
+    // Busca em Empreendimentos
+    const { data: developments, error: dError } = await supabase
+      .from('developments')
+      .select('*')
+      .ilike('name', `%${term}%`)
+      .limit(3);
+
+    if (pError || dError) throw pError || dError;
+
+    // Normaliza os resultados para o componente de busca
+    const results = [
+      ...(properties || []).map(p => ({ ...p, _type: 'property' })),
+      ...(developments || []).map(d => ({ ...d, title: d.name, _type: 'development', price: d.price_starting_at }))
+    ];
+
+    return results;
   }
 };
