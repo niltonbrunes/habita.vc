@@ -87,23 +87,6 @@ export default function LeadsPage() {
 
           <div className="flex items-center gap-3 w-full md:w-auto">
             <button 
-              onClick={async () => {
-                if (window.confirm('TEM CERTEZA? Isso excluirá TODOS os leads permanentemente para reiniciar a base.')) {
-                  try {
-                    await LeadsService.deleteAll();
-                    refresh();
-                    alert('Base de leads limpa com sucesso!');
-                  } catch (err) {
-                    console.error('Erro ao limpar base:', err);
-                    alert('Erro ao limpar base. Verifique as permissões.');
-                  }
-                }
-              }}
-              className="flex-1 md:flex-none px-4 py-4 bg-red-50 border border-red-100 rounded-2xl text-[10px] font-black text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm uppercase tracking-widest"
-            >
-              Limpar Base
-            </button>
-            <button 
               onClick={handleExport}
               className="flex-1 md:flex-none p-4 bg-white border border-border/40 rounded-2xl text-muted-foreground hover:text-primary transition-all shadow-sm"
               title="Exportar CSV"
