@@ -32,8 +32,8 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId 
           setFormData(prev => ({
             ...prev,
             name: p.name,
-            email: p.contacts?.find(c => c.type === 'email')?.value || '',
-            phone: p.contacts?.find(c => c.type === 'whatsapp' || c.type === 'telefone')?.value || ''
+            email: p.contacts?.find(c => (c.type as string) === 'email')?.value || '',
+            phone: p.contacts?.find(c => (c.type as string) === 'whatsapp' || (c.type as string) === 'phone')?.value || ''
           }));
         }
       });
