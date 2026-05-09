@@ -22,6 +22,8 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
   const [propertyResults, setPropertyResults] = useState<any[]>([]);
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(preSelectedPersonId || null);
   const [propertyMode, setPropertyMode] = useState<'none' | 'base' | 'market'>('none');
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
+  const [selectedPropertyTitle, setSelectedPropertyTitle] = useState('');
 
   React.useEffect(() => {
     if (preSelectedPersonId) {
