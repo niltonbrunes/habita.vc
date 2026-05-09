@@ -75,6 +75,16 @@ export default function LeadsPage() {
     }
   };
 
+  const handleDeleteLead = async (id: string) => {
+    try {
+      await LeadsService.delete(id);
+      refresh();
+    } catch (err) {
+      console.error('Erro ao excluir lead:', err);
+      alert('Erro ao excluir oportunidade.');
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="h-full flex flex-col">
@@ -153,6 +163,7 @@ export default function LeadsPage() {
                 leads={groupedLeads[column.id] || []} 
                 onMoveLead={handleMoveLead}
                 onAddLead={() => setIsLeadModalOpen(true)}
+                onDeleteLead={handleDeleteLead}
               />
             ))}
           </div>

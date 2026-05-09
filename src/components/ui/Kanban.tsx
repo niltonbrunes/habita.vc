@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MoreVertical, Calendar, MessageSquare, Flame, Sparkles, Plus, Building, MapPin } from 'lucide-react';
+import { MoreVertical, Calendar, MessageSquare, Flame, Sparkles, Plus, Building, MapPin, Trash2 } from 'lucide-react';
 import { Lead } from '@/types/database';
 import { KanbanColumn } from '@/lib/constants/kanban';
 import { motion } from 'framer-motion';
@@ -16,7 +16,7 @@ const AVATAR_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#
 const getAvatarBg = (name: string) => AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
 const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
-export const KanbanCard = ({ lead, onDragStart }: { lead: Lead, onDragStart: (e: React.DragEvent, id: string) => void }) => {
+export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, onDragStart: (e: React.DragEvent, id: string) => void, onDeleteLead: (id: string) => void }) => {
   const displayName = lead.person?.name || lead.name;
   
   const formattedValue = new Intl.NumberFormat('pt-BR', {
@@ -61,9 +61,22 @@ export const KanbanCard = ({ lead, onDragStart }: { lead: Lead, onDragStart: (e:
               </div>
             </div>
           </div>
-          <button className="p-2 bg-muted/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
-            <MoreVertical size={14} className="text-muted-foreground" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button 
+              onClick={() => {
+                if (window.confirm('Excluir esta oportunidade? O contato da pessoa continuará salvo.')) {
+                  onDeleteLead(lead.id);
+                }
+              }}
+              className="p-2 text-muted-foreground/30 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+              title="Excluir Oportunidade"
+            >
+              <Trash2 size={14} />
+            </button>
+            <button className="p-2 bg-muted/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
+              <MoreVertical size={14} className="text-muted-foreground" />
+            </button>
+          </div>
         </div>
 
         {/* Property Interest Section */}
@@ -138,7 +151,7 @@ export const KanbanCard = ({ lead, onDragStart }: { lead: Lead, onDragStart: (e:
   );
 };
 
-export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead }: { column: KanbanColumn, leads: Lead[], onMoveLead: (id: string, status: string) => void, onAddLead: () => void }) => {
+export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, onDeleteLead }: { column: KanbanColumn, leads: Lead[], onMoveLead: (id: string, status: string) => void, onAddLead: () => void, onDeleteLead: (id: string) => void }) => {
   const [isOver, setIsOver] = React.useState(false);
   
   const columnTotalValue = leads.reduce((acc, lead) => acc + (lead.value || 0), 0);
@@ -212,7 +225,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead }: 
       >
         {leads.length > 0 ? (
           leads.map(lead => (
-            <KanbanCard key={lead.id} lead={lead} onDragStart={handleDragStart} />
+            <KanbanCard key={lead.id} lead={lead} onDragStart={handleDragStart} onDeleteLead={onDeleteLead} />
           ))
         ) : (
           <div className="h-48 flex flex-col items-center justify-center border-2 border-dashed border-border/30 rounded-[3rem] opacity-30 gap-3">
