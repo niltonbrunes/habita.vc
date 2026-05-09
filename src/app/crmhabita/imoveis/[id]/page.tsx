@@ -134,10 +134,52 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
   );
 
   return (
-    <DashboardLayout>
+    <DashboardLayout
+      actions={
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setIsLeadModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-[10px] font-black rounded-xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/10 uppercase tracking-widest"
+          >
+            <Sparkles size={14} /> Criar Oportunidade
+          </button>
+
+          <Link 
+            href={`/crmhabita/imoveis/${id}/editar`}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-border text-primary text-[10px] font-black rounded-xl hover:border-primary/30 transition-all uppercase tracking-widest"
+          >
+            <Pencil size={14} /> Editar
+          </Link>
+          
+          {property.status === 'inactive' ? (
+            <button 
+              onClick={handleInactivate}
+              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white text-[10px] font-black rounded-xl hover:bg-green-600 transition-all shadow-md uppercase tracking-widest"
+            >
+              <CheckCircle2 size={14} /> Reativar
+            </button>
+          ) : (
+            <button 
+              onClick={() => setShowInactivateModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-border text-muted-foreground text-[10px] font-black rounded-xl hover:border-red-200 hover:text-red-600 transition-all uppercase tracking-widest"
+            >
+              <Ban size={14} /> Inativar
+            </button>
+          )}
+
+          <button 
+            onClick={() => setShowDeleteModal(true)}
+            className="p-2 bg-white border border-border text-red-400 rounded-xl hover:border-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+            title="Excluir Definitivamente"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      }
+    >
       <div className="max-w-6xl mx-auto space-y-8 pb-20">
         
-        {/* Header with Actions */}
+        {/* Header with Title (Clean) */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <Link href="/crmhabita/imoveis" className="p-3 rounded-2xl border border-border hover:bg-muted transition-all text-primary">
@@ -150,38 +192,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               </p>
             </div>
           </div>
-
-          <div className="flex items-center gap-2">
-            <Link 
-              href={`/crmhabita/imoveis/${id}/editar`}
-              className="flex items-center gap-2 px-5 py-3 bg-white border-2 border-border text-primary font-black rounded-2xl hover:border-primary/30 hover:bg-primary/5 transition-all shadow-sm"
-            >
-              <Pencil size={18} /> Editar
-            </Link>
-            
-            {property.status === 'inactive' ? (
-              <button 
-                onClick={handleInactivate}
-                className="flex items-center gap-2 px-5 py-3 bg-green-500 text-white font-black rounded-2xl hover:bg-green-600 transition-all shadow-md"
-              >
-                <CheckCircle2 size={18} /> Reativar Imóvel
-              </button>
-            ) : (
-              <button 
-                onClick={() => setShowInactivateModal(true)}
-                className="flex items-center gap-2 px-5 py-3 bg-white border-2 border-border text-muted-foreground font-black rounded-2xl hover:border-red-200 hover:bg-red-50 hover:text-red-600 transition-all shadow-sm"
-              >
-                <Ban size={18} /> Inativar
-              </button>
-            )}
-
-            <button 
-              onClick={() => setShowDeleteModal(true)}
-              className="p-3 bg-white border-2 border-border text-red-400 font-black rounded-2xl hover:border-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
-              title="Excluir Definitivamente"
-            >
-              <Trash2 size={18} />
-            </button>
+        </div>   </button>
           </div>
         </div>
 
@@ -304,31 +315,6 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 </button>
               </div>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={() => setIsLeadModalOpen(true)}
-              className="flex items-center gap-2 px-6 py-3 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
-            >
-              <Sparkles size={18} /> Criar Oportunidade
-            </button>
-
-            <Link 
-              href={`/crmhabita/imoveis/${id}/editar`}
-              className="p-3 bg-white border-2 border-border text-primary rounded-2xl hover:border-primary/30 transition-all"
-              title="Editar Imóvel"
-            >
-              <Pencil size={18} />
-            </Link>
-            
-            <button 
-              onClick={() => setShowDeleteModal(true)}
-              className="p-3 bg-white border-2 border-border text-red-400 rounded-2xl hover:border-red-500 hover:bg-red-500 hover:text-white transition-all"
-              title="Excluir Imóvel"
-            >
-              <Trash2 size={18} />
-            </button>
           </div>
         </div>
 

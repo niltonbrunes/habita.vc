@@ -24,6 +24,7 @@ import {
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
+  actions?: React.ReactNode;
 }
 
 import { useTheme } from '@/context/ThemeContext';
@@ -31,7 +32,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/context/NotificationContext';
 import { useState } from 'react';
 
-export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, actions }) => {
   const { isLuxury, toggleLuxury } = useTheme();
   const { profile, signOut, isRole } = useAuth();
   const { notifications, unreadCount, markAsRead } = useNotifications();
@@ -87,10 +88,15 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
       <main className="flex-1 flex flex-col overflow-hidden">
         <header className={`h-16 border-b flex items-center justify-between px-8 z-50 transition-colors duration-500 ${isLuxury ? 'bg-black/80 backdrop-blur-md border-white/10' : 'bg-white border-border'}`}>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-1">
             <h2 className={`text-lg font-bold ${isLuxury ? 'text-white' : 'text-primary'}`}>
               {isRole(['director', 'manager']) ? 'Painel de Gestão' : 'Dashboard Corretor'}
             </h2>
+            {actions && (
+              <div className="hidden md:flex items-center gap-2 ml-4 px-4 border-l border-border/50 h-8">
+                {actions}
+              </div>
+            )}
           </div>
           
           <div className="flex items-center gap-6">
