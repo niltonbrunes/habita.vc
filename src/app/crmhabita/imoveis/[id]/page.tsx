@@ -7,10 +7,11 @@ import { Property } from '@/types/database';
 import { 
   ArrowLeft, MapPin, BedDouble, Bath, Square, Car, 
   TrendingUp, Download, MessageCircle, CheckCircle2,
-  RefreshCw, Pencil, Trash2, Ban
+  RefreshCw, Pencil, Trash2, Ban, Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
+import { LeadFormModal } from '@/components/leads/LeadFormModal';
 
 export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
@@ -23,6 +24,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
   const [inactivating, setInactivating] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showInactivateModal, setShowInactivateModal] = useState(false);
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
 
   useEffect(() => {
     PropertiesService.getById(id)
@@ -303,6 +305,31 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               </div>
             </div>
           </div>
+          
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setIsLeadModalOpen(true)}
+              className="flex items-center gap-2 px-6 py-3 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+            >
+              <Sparkles size={18} /> Criar Oportunidade
+            </button>
+
+            <Link 
+              href={`/crmhabita/imoveis/${id}/editar`}
+              className="p-3 bg-white border-2 border-border text-primary rounded-2xl hover:border-primary/30 transition-all"
+              title="Editar Imóvel"
+            >
+              <Pencil size={18} />
+            </Link>
+            
+            <button 
+              onClick={() => setShowDeleteModal(true)}
+              className="p-3 bg-white border-2 border-border text-red-400 rounded-2xl hover:border-red-500 hover:bg-red-500 hover:text-white transition-all"
+              title="Excluir Imóvel"
+            >
+              <Trash2 size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Related Properties Section */}
@@ -371,6 +398,15 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
         title="Inativar Imóvel?"
         message={`O imóvel "${property.title}" ficará oculto no portal público, mas os dados internos serão preservados.`}
         confirmLabel="Sim, Inativar"
+      />
+
+      <LeadFormModal 
+        isOpen={isLeadModalOpen}
+        onClose={() => setIsLeadModalOpen(false)}
+        onSuccess={() => {
+          setIsLeadModalOpen(false);
+        }}
+        preSelectedPropertyId={id}
       />
     </DashboardLayout>
   );
