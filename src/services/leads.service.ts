@@ -131,5 +131,14 @@ export const LeadsService = {
     
     if (error) throw error;
     return data;
+  },
+
+  async deleteAll() {
+    const { error } = await supabase
+      .from('leads')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000'); // Deleta tudo que não for esse ID inexistente
+    
+    if (error) throw error;
   }
 };
