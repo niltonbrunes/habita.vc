@@ -79,43 +79,40 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
           </div>
         </div>
 
-        {/* Quick Contact Actions */}
-        <div className="flex items-center gap-2 mb-6 p-2 bg-muted/10 rounded-2xl border border-border/20">
+        {/* Quick Contact Actions (Icon Only) */}
+        <div className="flex items-center gap-2 mb-6">
           {lead.phone && (
             <a 
               href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-white text-green-600 rounded-xl hover:bg-green-600 hover:text-white transition-all shadow-sm border border-border/10"
+              className="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center hover:bg-green-600 hover:text-white transition-all shadow-sm border border-border/10"
               title="WhatsApp"
             >
-              <MessageCircle size={14} />
-              <span className="text-[10px] font-black uppercase tracking-widest">WhatsApp</span>
+              <MessageCircle size={18} />
             </a>
           )}
-          <div className="flex items-center gap-2 px-1">
-            {lead.phone && (
-              <a 
-                href={`tel:${lead.phone.replace(/\D/g, '')}`}
-                onClick={(e) => e.stopPropagation()}
-                className="w-9 h-9 bg-white text-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-border/10"
-                title="Ligar"
-              >
-                <Phone size={14} />
-              </a>
-            )}
-            {lead.email && (
-              <a 
-                href={`mailto:${lead.email}`}
-                onClick={(e) => e.stopPropagation()}
-                className="w-9 h-9 bg-white text-primary rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm border border-border/10"
-                title="E-mail"
-              >
-                <Mail size={14} />
-              </a>
-            )}
-          </div>
+          {lead.phone && (
+            <a 
+              href={`tel:${lead.phone.replace(/\D/g, '')}`}
+              onClick={(e) => e.stopPropagation()}
+              className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-border/10"
+              title="Ligar"
+            >
+              <Phone size={18} />
+            </a>
+          )}
+          {lead.email && (
+            <a 
+              href={`mailto:${lead.email}`}
+              onClick={(e) => e.stopPropagation()}
+              className="w-10 h-10 bg-primary/5 text-primary rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm border border-border/10"
+              title="E-mail"
+            >
+              <Mail size={18} />
+            </a>
+          )}
         </div>
 
         {/* Property Interest Section */}
