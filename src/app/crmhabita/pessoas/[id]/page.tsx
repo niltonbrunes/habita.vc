@@ -4,9 +4,10 @@ import { useRouter } from 'next/navigation';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PeopleService } from '@/services/people.service';
 import { Person } from '@/types/people';
-import { ArrowLeft, User, Building2, MapPin, Phone, Mail, Briefcase, Calendar, Globe, FileText, Pencil, Trash2, Ban, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, User, Building2, MapPin, Phone, Mail, Briefcase, Calendar, Globe, FileText, Pencil, Trash2, Ban, CheckCircle2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
+import { LeadFormModal } from '@/components/leads/LeadFormModal';
 
 export default function PersonDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
@@ -17,6 +18,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [inactivating, setInactivating] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showInactivateModal, setShowInactivateModal] = useState(false);
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
 
   useEffect(() => {
     PeopleService.getById(id)
@@ -137,6 +139,13 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
               title="Excluir Definitivamente"
             >
               <Trash2 size={18} />
+            </button>
+
+            <button 
+              onClick={() => setIsLeadModalOpen(true)}
+              className="flex items-center gap-2 px-6 py-3 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+            >
+              <Sparkles size={18} /> Criar Oportunidade
             </button>
           </div>
         </div>
@@ -307,6 +316,16 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         title="Inativar Pessoa?"
         message={`O cadastro de ${person.name} ficará oculto na maioria das buscas, mas os dados históricos e documentos serão preservados.`}
         confirmLabel="Sim, Inativar"
+      />
+
+      <LeadFormModal 
+        isOpen={isLeadModalOpen}
+        onClose={() => setIsLeadModalOpen(false)}
+        onSuccess={() => {
+          setIsLeadModalOpen(false);
+          // Opcional: Recarregar timeline no futuro
+        }}
+        preSelectedPersonId={id}
       />
     </DashboardLayout>
   );

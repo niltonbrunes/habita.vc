@@ -11,15 +11,22 @@ interface LeadFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  preSelectedPersonId?: string;
 }
 
-export const LeadFormModal = ({ isOpen, onClose, onSuccess }: LeadFormModalProps) => {
+export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId }: LeadFormModalProps) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [propertyResults, setPropertyResults] = useState<any[]>([]);
-  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
+  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(preSelectedPersonId || null);
   const [propertyMode, setPropertyMode] = useState<'none' | 'base' | 'market'>('none');
+
+  React.useEffect(() => {
+    if (preSelectedPersonId) {
+      setSelectedPersonId(preSelectedPersonId);
+    }
+  }, [preSelectedPersonId]);
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [selectedPropertyTitle, setSelectedPropertyTitle] = useState('');
   
