@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Mail, Phone, User, Tag, ShieldCheck, Loader2 } from 'lucide-react';
+import { X, Mail, Phone, User, Tag, ShieldCheck, Loader2, Search } from 'lucide-react';
 import { LeadsService } from '@/services/leads.service';
 import { PeopleService } from '@/services/people.service';
 import { useAuth } from '@/context/AuthContext';
@@ -15,6 +15,8 @@ interface LeadFormModalProps {
 export const LeadFormModal = ({ isOpen, onClose, onSuccess }: LeadFormModalProps) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
   const [formData, setFormData] = useState<{
     name: string;
     email: string;
@@ -39,40 +41,40 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess }: LeadFormModalProps
 
     setLoading(true);
     try {
-      // 1. Unificação com a base de Pessoas: Buscar se já existe
-      let personId = null;
-      const existingPerson = await PeopleService.findByContact(formData.email || formData.phone);
+      // 1. Unificação com a base de Pessoas: Usar selecionada ou buscar por contato
+      let personId = selectedPersonId;
       
-      if (existingPerson) {
-        personId = existingPerson.id;
-        console.log('Pessoa existente encontrada, vinculando ao Lead:', personId);
-      } else {
-        // 2. Criar nova pessoa se for um contato inédito
-        console.log('Criando nova pessoa para o lead...');
-        const newPerson = await PeopleService.create({
-          name: formData.name,
-          person_type: 'PF',
-          roles: ['lead'],
-          relationship_status: 'novo',
-          contacts: [
-            ...(formData.email ? [{ id: crypto.randomUUID(), type: 'email', value: formData.email, is_primary: true }] : []),
-            ...(formData.phone ? [{ id: crypto.randomUUID(), type: 'whatsapp', value: formData.phone, is_primary: !formData.email }] : [])
-          ],
-          assigned_to_id: user.id,
-          commercial_info: {
-            lead_source: formData.source,
-            notes: 'Criado via cadastro manual de lead.'
-          }
-        } as any);
-        personId = newPerson.id;
+      if (!personId) {
+        const existingPerson = await PeopleService.findByContact(formData.email || formData.phone);
+        if (existingPerson) {
+          personId = existingPerson.id;
+        } else {
+          // 2. Criar nova pessoa se for um contato inédito e não selecionado
+          const newPerson = await PeopleService.create({
+            name: formData.name,
+            person_type: 'PF',
+            roles: ['lead'],
+            relationship_status: 'novo',
+            contacts: [
+              ...(formData.email ? [{ id: crypto.randomUUID(), type: 'email', value: formData.email, is_primary: true }] : []),
+              ...(formData.phone ? [{ id: crypto.randomUUID(), type: 'whatsapp', value: formData.phone, is_primary: !formData.email }] : [])
+            ],
+            assigned_to_id: user.id,
+            commercial_info: {
+              lead_source: formData.source,
+              notes: 'Criado via cadastro manual de lead.'
+            }
+          } as any);
+          personId = newPerson.id;
+        }
       }
 
       // 3. Criar o lead vinculado
       await LeadsService.create({
         ...formData,
-        person_id: personId, // O Elo de comunicação
+        person_id: personId as string, 
         assigned_to_id: user.id,
-        status: 'lead',
+        status: 'lead' as any,
         history: [{ type: 'creation', date: new Date().toISOString(), note: `Lead criado e vinculado à Pessoa ID: ${personId}` }]
       });
 
@@ -105,9 +107,60 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess }: LeadFormModalProps
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Person Search / Name */}
+            <div className="space-y-2 col-span-full">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Vincular a uma Pessoa (Opcional)</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Search className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Pesquisar por nome ou documento..."
+                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+                  onChange={async (e) => {
+                    const term = e.target.value;
+                    if (term.length > 2) {
+                      const results = await PeopleService.searchForOwners(term);
+                      setSearchResults(results as any[]);
+                    } else {
+                      setSearchResults([]);
+                    }
+                  }}
+                />
+                
+                {searchResults.length > 0 && (
+                  <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl shadow-luxury border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
+                    {searchResults.map(p => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ 
+                            ...formData, 
+                            name: p.name, 
+                            email: p.contacts?.find((c: any) => c.type === 'email')?.value || '',
+                            phone: p.contacts?.find((c: any) => c.type === 'whatsapp' || c.type === 'phone')?.value || '',
+                          });
+                          setSelectedPersonId(p.id);
+                          setSearchResults([]);
+                        }}
+                        className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0"
+                      >
+                        <p className="font-bold text-primary text-sm">{p.name}</p>
+                        <p className="text-[10px] text-muted-foreground font-medium">{p.document_id || 'Sem documento'}</p>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="w-full h-px bg-border/40 col-span-full my-2" />
+
             {/* Name */}
             <div className="space-y-2 col-span-full">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nome Completo</label>
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nome do Prospecto</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <User className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />

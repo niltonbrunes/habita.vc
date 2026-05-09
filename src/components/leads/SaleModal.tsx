@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { X, DollarSign, Percent, ShieldCheck, Loader2, CheckCircle2 } from 'lucide-react';
 import { SalesService } from '@/services/sales.service';
+import { PeopleService } from '@/services/people.service';
 import { Lead, Property } from '@/types/database';
 
 interface SaleModalProps {
@@ -31,6 +32,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
     e.preventDefault();
     setLoading(true);
     try {
+      // 1. Criar o registro da venda
       await SalesService.create({
         lead_id: lead.id,
         property_id: formData.property_id,
@@ -45,6 +47,24 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
           broker_percent: formData.broker_split_percent
         }
       });
+
+      // 2. Unificação Master Person: Promover para 'client'
+      if (lead.person_id) {
+        try {
+          const person = await PeopleService.getById(lead.person_id);
+          if (person && !person.roles.includes('client')) {
+            const newRoles = [...person.roles, 'client'];
+            await PeopleService.update(lead.person_id, { 
+              roles: newRoles,
+              relationship_status: 'ativo'
+            });
+            console.log('Pessoa promovida a Cliente com sucesso!');
+          }
+        } catch (pErr) {
+          console.error('Erro ao promover pessoa a cliente:', pErr);
+        }
+      }
+
       onSuccess();
       onClose();
     } catch (error) {

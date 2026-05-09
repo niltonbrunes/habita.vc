@@ -17,6 +17,8 @@ const getAvatarBg = (name: string) => AVATAR_COLORS[name.charCodeAt(0) % AVATAR_
 const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
 export const KanbanCard = ({ lead, onDragStart }: { lead: Lead, onDragStart: (e: React.DragEvent, id: string) => void }) => {
+  const displayName = lead.person?.name || lead.name;
+  
   const formattedValue = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -40,13 +42,13 @@ export const KanbanCard = ({ lead, onDragStart }: { lead: Lead, onDragStart: (e:
           <div className="flex items-center gap-2">
             <div 
               className="w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-black text-white shadow-lg border-2 border-white"
-              style={{ backgroundColor: getAvatarBg(lead.name) }}
+              style={{ backgroundColor: getAvatarBg(displayName) }}
             >
-              {getInitials(lead.name)}
+              {getInitials(displayName)}
             </div>
             <div>
               <Link href={`/crmhabita/leads/${lead.id}`}>
-              <h4 className="font-black text-primary text-sm leading-tight hover:text-accent transition-colors">{lead.name}</h4>
+                <h4 className="font-black text-primary text-sm leading-tight hover:text-accent transition-colors">{displayName}</h4>
               </Link>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest">{lead.source || 'Portal'}</p>

@@ -93,6 +93,7 @@ export interface Lead {
   history: any[];
   documents: any[];
   created_at: string;
+  person?: any; // Dados da pessoa vinculada (carregados via join)
 }
 
 export interface Developer {

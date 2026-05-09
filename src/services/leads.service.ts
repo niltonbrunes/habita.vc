@@ -5,7 +5,7 @@ export const LeadsService = {
   async getAll() {
     const { data, error } = await supabase
       .from('leads')
-      .select('*')
+      .select('*, person:people(*)') // Join mestre com a base de Pessoas
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -17,29 +17,29 @@ export const LeadsService = {
       probability: lead.probability || Math.floor(Math.random() * 90) + 10
     }));
 
-    return enrichedData as Lead[];
+    return enrichedData as (Lead & { person?: any })[];
   },
 
   async getById(id: string) {
     const { data, error } = await supabase
       .from('leads')
-      .select('*')
+      .select('*, person:people(*)')
       .eq('id', id)
       .single();
 
     if (error) throw error;
-    return data as Lead;
+    return data as (Lead & { person?: any });
   },
 
   async getByStatus(status: LeadStatus) {
     const { data, error } = await supabase
       .from('leads')
-      .select('*')
+      .select('*, person:people(*)')
       .eq('status', status)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return data as Lead[];
+    return data as (Lead & { person?: any })[];
   },
 
   async updateStatus(id: string, status: LeadStatus) {
