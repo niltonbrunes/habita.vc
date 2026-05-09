@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MoreVertical, Calendar, MessageSquare, Flame, Sparkles, Plus, Building, MapPin, Trash2 } from 'lucide-react';
+import { MoreVertical, Calendar, MessageSquare, Flame, Sparkles, Plus, Building, MapPin, Trash2, Phone, Mail, MessageCircle } from 'lucide-react';
 import { Lead } from '@/types/database';
 import { KanbanColumn } from '@/lib/constants/kanban';
 import { motion } from 'framer-motion';
@@ -76,6 +76,45 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
             <button className="p-2 bg-muted/30 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
               <MoreVertical size={14} className="text-muted-foreground" />
             </button>
+          </div>
+        </div>
+
+        {/* Quick Contact Actions */}
+        <div className="flex items-center gap-2 mb-6 p-2 bg-muted/10 rounded-2xl border border-border/20">
+          {lead.phone && (
+            <a 
+              href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-white text-green-600 rounded-xl hover:bg-green-600 hover:text-white transition-all shadow-sm border border-border/10"
+              title="WhatsApp"
+            >
+              <MessageCircle size={14} />
+              <span className="text-[10px] font-black uppercase tracking-widest">WhatsApp</span>
+            </a>
+          )}
+          <div className="flex items-center gap-2 px-1">
+            {lead.phone && (
+              <a 
+                href={`tel:${lead.phone.replace(/\D/g, '')}`}
+                onClick={(e) => e.stopPropagation()}
+                className="w-9 h-9 bg-white text-blue-600 rounded-xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-border/10"
+                title="Ligar"
+              >
+                <Phone size={14} />
+              </a>
+            )}
+            {lead.email && (
+              <a 
+                href={`mailto:${lead.email}`}
+                onClick={(e) => e.stopPropagation()}
+                className="w-9 h-9 bg-white text-primary rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm border border-border/10"
+                title="E-mail"
+              >
+                <Mail size={14} />
+              </a>
+            )}
           </div>
         </div>
 
