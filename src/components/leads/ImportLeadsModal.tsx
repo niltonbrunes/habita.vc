@@ -32,6 +32,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [selectedPropertyTitle, setSelectedPropertyTitle] = useState('');
   const [selectedPropertyPrice, setSelectedPropertyPrice] = useState<number>(0);
+  const [selectedPropertyType, setSelectedPropertyType] = useState<'property' | 'development' | null>(null);
   const [propertySearch, setPropertySearch] = useState('');
   const [propertyResults, setPropertyResults] = useState<any[]>([]);
   const [isSearchingProperty, setIsSearchingProperty] = useState(false);
@@ -155,13 +156,14 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           temperature: 'warm' as any,
           score: 50,
           source: raw.source || 'Importação CSV',
-          value: selectedPropertyId ? selectedPropertyPrice : undefined, // VALOR DO NEGÓCIO HERDADO APENAS SE HOUVER SELEÇÃO
-          property_id: selectedPropertyId || undefined, // VÍNCULO AO PRODUTO (OPCIONAL)
+          value: selectedPropertyId ? selectedPropertyPrice : undefined,
+          interest_description: selectedPropertyType === 'development' ? `Interesse no Empreendimento: ${selectedPropertyTitle}` : undefined,
+          property_id: selectedPropertyType === 'property' ? (selectedPropertyId || undefined) : undefined,
           history: [{ 
             type: 'import', 
             date: new Date().toISOString(), 
             note: selectedPropertyId 
-              ? `Importado e vinculado ao imóvel: ${selectedPropertyTitle}` 
+              ? `Importado e vinculado ao ${selectedPropertyType === 'development' ? 'empreendimento' : 'imóvel'}: ${selectedPropertyTitle}` 
               : 'Importado e vinculado à base de Pessoas.' 
           }]
         });
@@ -233,6 +235,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                           setSelectedPropertyId(p.id);
                           setSelectedPropertyTitle(p.title);
                           setSelectedPropertyPrice(p.price || 0);
+                          setSelectedPropertyType(p._type);
                           setPropertyResults([]);
                           setPropertySearch('');
                         }}

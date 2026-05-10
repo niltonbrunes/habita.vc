@@ -24,6 +24,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
   const [propertyMode, setPropertyMode] = useState<'none' | 'base' | 'market'>('none');
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
   const [selectedPropertyTitle, setSelectedPropertyTitle] = useState('');
+  const [selectedPropertyType, setSelectedPropertyType] = useState<'property' | 'development' | null>(null);
 
   React.useEffect(() => {
     if (preSelectedPersonId) {
@@ -118,8 +119,12 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
       await LeadsService.create({
         ...formData,
         person_id: personId as string, 
-        property_id: propertyMode === 'base' ? (selectedPropertyId || undefined) : undefined,
-        interest_description: propertyMode === 'market' ? formData.interest_description : undefined,
+        property_id: (propertyMode === 'base' && selectedPropertyType === 'property') ? (selectedPropertyId || undefined) : undefined,
+        interest_description: propertyMode === 'market' 
+          ? formData.interest_description 
+          : (propertyMode === 'base' && selectedPropertyType === 'development') 
+            ? `Interesse no Empreendimento: ${selectedPropertyTitle}` 
+            : undefined,
         assigned_to_id: user.id,
         status: 'lead' as any,
         history: [{ type: 'creation', date: new Date().toISOString(), note: `Lead criado e vinculado à Pessoa ID: ${personId}` }]
@@ -304,6 +309,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                               onClick={() => {
                                 setSelectedPropertyId(p.id);
                                 setSelectedPropertyTitle(p.title);
+                                setSelectedPropertyType(p._type);
                                 setPropertyResults([]);
                                 if (p.price) {
                                   setFormData(prev => ({ ...prev, value: p.price }));
