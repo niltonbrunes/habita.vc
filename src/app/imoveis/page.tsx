@@ -370,25 +370,6 @@ export default function PublicPropertiesPage() {
   );
 }
 
-             {/* Controles de Mapa Minimalistas */}
-             <div className="absolute bottom-10 right-10 flex flex-col gap-4 z-30">
-                <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 overflow-hidden">
-                   <button className="w-12 h-12 flex items-center justify-center text-primary hover:bg-gray-50 transition-all font-bold text-xl">+</button>
-                   <div className="h-px bg-gray-100 w-8 mx-auto" />
-                   <button className="w-12 h-12 flex items-center justify-center text-primary hover:bg-gray-50 transition-all font-bold text-xl">-</button>
-                </div>
-                <button className="bg-primary text-white px-8 py-4 rounded-full shadow-2xl text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-3 hover:bg-primary-light transition-all">
-                   <MapPin size={16} /> Ver no Mapa
-                </button>
-             </div>
-          </div>
-        </section>
-      </div>
-    </div>
-  );
-}
-
-
 
 const FilterPill = ({ label, active = false }: { label: string, active?: boolean }) => (
   <button className={`

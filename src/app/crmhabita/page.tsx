@@ -18,6 +18,7 @@ import { DashboardService, DashboardMetrics, RankingData } from '@/services/dash
 import { Lead, Task } from '@/types/database';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { FunnelSimulator } from '@/components/dashboard/FunnelSimulator';
 
 export default function DashboardPage() {
   const { profile, user } = useAuth();
@@ -80,6 +81,15 @@ export default function DashboardPage() {
             <button className="px-6 py-3 bg-primary text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">Nova Venda</button>
           </div>
         </div>
+
+        {/* Simulador de Funil Dinâmico (Canvas) */}
+        <section>
+          <div className="flex items-center gap-4 mb-8">
+            <h2 className="text-2xl font-black text-primary tracking-tight">Planejamento Estratégico</h2>
+            <div className="h-px bg-border flex-1" />
+          </div>
+          <FunnelSimulator />
+        </section>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
