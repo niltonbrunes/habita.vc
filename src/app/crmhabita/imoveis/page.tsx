@@ -12,7 +12,8 @@ import {
   Car,
   TrendingUp,
   RefreshCw,
-  DollarSign
+  DollarSign,
+  ChevronDown
 } from 'lucide-react';
 import { ImportService } from '@/services/import.service';
 import { useAuth } from '@/context/AuthContext';
