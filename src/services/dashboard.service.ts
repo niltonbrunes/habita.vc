@@ -1,0 +1,142 @@
+import { supabase } from '@/lib/supabase';
+import { Lead, Sale, Task, Profile } from '@/types/database';
+
+export interface DashboardMetrics {
+  monthlyGoal: number;
+  realEarnings: number;
+  vgvNeeded: number;
+  activeLeads: number;
+  newLeadsToday: number;
+  goalProgress: number;
+}
+
+export interface RankingData {
+  pos: number;
+  name: string;
+  value: string;
+  active?: boolean;
+}
+
+export class DashboardService {
+  static async getMetrics(userId: string): Promise<DashboardMetrics> {
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+    // 1. Get Profile for Goal
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('earnings_goal_monthly, avg_commission_percent')
+      .eq('id', userId)
+      .single();
+
+    const monthlyGoal = profile?.earnings_goal_monthly || 15000;
+    const avgCommission = (profile?.avg_commission_percent || 4) / 100;
+
+    // 2. Get Real Earnings from Sales this month
+    const { data: sales } = await supabase
+      .from('sales')
+      .select('broker_commission, sale_price')
+      .eq('broker_id', userId)
+      .gte('sale_date', firstDayOfMonth);
+
+    const realEarnings = sales?.reduce((acc, sale) => acc + (sale.broker_commission || 0), 0) || 0;
+    const currentVGV = sales?.reduce((acc, sale) => acc + (sale.sale_price || 0), 0) || 0;
+
+    // 3. Get Active Leads
+    const { count: activeLeads } = await supabase
+      .from('leads')
+      .select('*', { count: 'exact', head: true })
+      .eq('assigned_to_id', userId)
+      .not('status', 'in', '("sale","lost")');
+
+    // 4. New Leads Today
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const { count: newLeadsToday } = await supabase
+      .from('leads')
+      .select('*', { count: 'exact', head: true })
+      .eq('assigned_to_id', userId)
+      .gte('created_at', startOfToday.toISOString());
+
+    // 5. Calculate VGV Needed
+    // Formula: (Target Earnings - Current Earnings) / Avg Commission
+    const earningsGap = Math.max(0, monthlyGoal - realEarnings);
+    const vgvNeeded = earningsGap / (avgCommission || 0.04);
+
+    return {
+      monthlyGoal,
+      realEarnings,
+      vgvNeeded,
+      activeLeads: activeLeads || 0,
+      newLeadsToday: newLeadsToday || 0,
+      goalProgress: Math.min(100, Math.round((realEarnings / monthlyGoal) * 100))
+    };
+  }
+
+  static async getHotLeads(userId: string) {
+    const { data } = await supabase
+      .from('leads')
+      .select(`
+        *,
+        person:people(*)
+      `)
+      .eq('assigned_to_id', userId)
+      .not('status', 'in', '("sale","lost")')
+      .order('score', { ascending: false })
+      .limit(5);
+
+    return data || [];
+  }
+
+  static async getRanking(): Promise<RankingData[]> {
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+    const { data: sales } = await supabase
+      .from('sales')
+      .select(`
+        sale_price,
+        broker:profiles(full_name, id)
+      `)
+      .gte('sale_date', firstDayOfMonth);
+
+    if (!sales) return [];
+
+    // Group by broker
+    const brokerSales: Record<string, { name: string, total: number }> = {};
+    sales.forEach((s: any) => {
+      const broker = s.broker;
+      if (!broker) return;
+      if (!brokerSales[broker.id]) {
+        brokerSales[broker.id] = { name: broker.full_name, total: 0 };
+      }
+      brokerSales[broker.id].total += s.sale_price;
+    });
+
+    return Object.entries(brokerSales)
+      .map(([id, data]) => ({
+        pos: 0,
+        name: data.name,
+        value: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(data.total),
+        id
+      }))
+      .sort((a, b) => {
+         const valA = parseFloat(a.value.replace(/[^\d]/g, ''));
+         const valB = parseFloat(b.value.replace(/[^\d]/g, ''));
+         return valB - valA;
+      })
+      .map((item, index) => ({ ...item, pos: index + 1 }));
+  }
+
+  static async getDailyActions(userId: string) {
+    const { data } = await supabase
+      .from('tasks')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('completed', false)
+      .order('due_date', { ascending: true })
+      .limit(5);
+
+    return data || [];
+  }
+}
