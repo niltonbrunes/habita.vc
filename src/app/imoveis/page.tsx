@@ -53,18 +53,18 @@ export default function PublicPropertiesPage() {
         </div>
       )}
       
-      {/* Header Filters - Posicionado com Padding para evitar sobreposição da Navbar fixa */}
-      <header className="pt-16 border-b border-border bg-white z-40 relative shadow-sm">
+      {/* Header Filters - Forçando margem fixa para ficar abaixo da Navbar (h-16 = 64px) */}
+      <header className="mt-16 border-b border-border bg-gray-50/50 z-[60] relative shadow-md">
         <div className="px-6 py-4 flex flex-wrap items-center gap-3">
           {/* Search Input Pill */}
-          <div className="flex items-center gap-3 px-6 py-2.5 bg-muted/30 rounded-full border border-border/50 focus-within:border-primary/40 transition-all min-w-[300px]">
-            <Search className="text-primary/30" size={18} />
+          <div className="flex items-center gap-3 px-6 py-2.5 bg-white rounded-full border border-primary/20 focus-within:border-primary transition-all min-w-[320px] shadow-sm">
+            <Search className="text-primary" size={18} />
             <input 
               type="text" 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Onde você quer morar?"
-              className="bg-transparent border-none focus:outline-none text-sm font-bold text-primary placeholder:text-muted-foreground/40 w-full"
+              placeholder="Busque por cidade, bairro ou título..."
+              className="bg-transparent border-none focus:outline-none text-sm font-bold text-primary placeholder:text-muted-foreground/60 w-full"
             />
           </div>
 
@@ -149,24 +149,24 @@ export default function PublicPropertiesPage() {
           
           <div className="flex-1" />
 
-          <button className="flex items-center gap-2 px-5 py-2.5 border border-border rounded-full text-xs font-black uppercase tracking-widest hover:bg-muted transition-all">
+          <button className="flex items-center gap-2 px-5 py-2.5 border border-border bg-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-muted transition-all shadow-sm">
              <SlidersHorizontal size={14} /> Mais filtros
           </button>
         </div>
       </header>
 
-      {/* Main Content Split View */}
+      {/* Main Content Split View - Alargando a lista para caber 3 cards */}
       <div className="flex-1 flex overflow-hidden z-10">
         {/* Left: Property List */}
-        <section className="w-full md:w-[60%] lg:w-[55%] xl:w-[45%] overflow-y-auto px-6 py-8 scrollbar-hide bg-white">
+        <section className="w-full md:w-[65%] lg:w-[60%] xl:w-[55%] overflow-y-auto px-6 py-8 scrollbar-hide bg-white border-r border-border/50">
           <div className="mb-8">
-            <h2 className="text-xl font-black text-primary tracking-tight">
+            <h2 className="text-2xl font-black text-primary tracking-tight">
               {filteredProperties.length} {filteredProperties.length === 1 ? 'imóvel disponível' : 'imóveis disponíveis'}
             </h2>
-            <p className="text-xs text-muted-foreground font-medium mt-1">Imóveis selecionados para você</p>
+            <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest mt-1">Sugeridos para você em Goiânia e região</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-32">
             {filteredProperties.length > 0 ? (
               filteredProperties.map(property => (
                 <PropertyCard 
@@ -185,10 +185,10 @@ export default function PublicPropertiesPage() {
                 />
               ))
             ) : !loading && (
-              <div className="col-span-full py-32 text-center bg-muted/10 rounded-[3rem] border-2 border-dashed border-border/20 flex flex-col items-center justify-center">
-                <Search size={48} className="text-muted-foreground/20 mb-4" />
-                <h3 className="text-xl font-black text-primary">Nenhum resultado</h3>
-                <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest mt-2">Tente ajustar sua busca</p>
+              <div className="col-span-full py-32 text-center bg-muted/5 rounded-[3rem] border-2 border-dashed border-border/20 flex flex-col items-center justify-center">
+                <Search size={48} className="text-muted-foreground/10 mb-4" />
+                <h3 className="text-xl font-black text-primary/40">Nenhum resultado encontrado</h3>
+                <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest mt-2">Tente remover alguns filtros</p>
               </div>
             )}
           </div>
@@ -200,13 +200,13 @@ export default function PublicPropertiesPage() {
              <div className="absolute inset-0 bg-primary/5 backdrop-grayscale-[0.5]" />
              
              {/* Map Markers Mockup Based on Filtered Properties */}
-             {filteredProperties.slice(0, 15).map((p, idx) => (
+             {filteredProperties.slice(0, 20).map((p, idx) => (
                <div 
                  key={p.id}
                  className="absolute transform -translate-x-1/2 -translate-y-1/2"
                  style={{ 
-                   top: `${20 + (Math.random() * 60)}%`, 
-                   left: `${20 + (Math.random() * 60)}%` 
+                   top: `${15 + (Math.random() * 70)}%`, 
+                   left: `${15 + (Math.random() * 70)}%` 
                  }}
                >
                  <div className="bg-white text-primary text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg border border-border/50 hover:bg-primary hover:text-white transition-all cursor-pointer whitespace-nowrap">
