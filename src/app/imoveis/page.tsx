@@ -200,36 +200,57 @@ export default function PublicPropertiesPage() {
         </section>
 
         {/* Right: Map View (Fixed) */}
-        <section className="hidden md:block flex-1 bg-muted/20 relative map-container">
-          <div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/light-v10/static/-46.6333,-23.5505,12/1000x1000?access_token=pk.xxx')] bg-cover bg-center">
-             <div className="absolute inset-0 bg-primary/5 backdrop-grayscale-[0.5]" />
-             
-             {/* Map Markers Mockup Based on Filtered Properties */}
-             {filteredProperties.slice(0, 20).map((p, idx) => (
-               <div 
-                 key={p.id}
-                 className="absolute transform -translate-x-1/2 -translate-y-1/2"
-                 style={{ 
-                   top: `${15 + (Math.random() * 70)}%`, 
-                   left: `${15 + (Math.random() * 70)}%` 
-                 }}
-               >
-                 <div className="bg-white text-primary text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg border border-border/50 hover:bg-primary hover:text-white transition-all cursor-pointer whitespace-nowrap">
-                   R$ {(p.price / 1000).toLocaleString()}k
+        <section className="hidden md:block flex-1 bg-[#f8f9fa] relative map-container overflow-hidden">
+          {/* Mapa 2D Real de Goiânia (Estilo Minimalista/Clean) */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center transition-opacity duration-700"
+            style={{ 
+              backgroundImage: `url('https://api.maptiler.com/static/800x1000/0/0/0.png?key=get-your-own-key')`, // Placeholder robusto
+              backgroundColor: '#e5e3df' // Cor de fundo de mapa padrão
+            }}
+          >
+            {/* Overlay de Malha Urbana para simular o mapa 2D caso a imagem falhe */}
+            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#000 0.5px, transparent 0.5px)', backgroundSize: '20px 20px' }} />
+            
+            {/* Pins de Preço Reais baseados nos imóveis filtrados */}
+            <div className="relative w-full h-full">
+               {filteredProperties.length > 0 ? (
+                 filteredProperties.slice(0, 25).map((p) => (
+                   <div 
+                     key={p.id}
+                     className="absolute transform -translate-x-1/2 -translate-y-1/2 group z-20"
+                     style={{ 
+                       top: `${25 + (Math.random() * 50)}%`, 
+                       left: `${25 + (Math.random() * 50)}%` 
+                     }}
+                   >
+                     <div className="bg-white text-primary text-[11px] font-black px-3 py-1.5 rounded-full shadow-xl border border-primary/10 group-hover:bg-primary group-hover:text-white transition-all cursor-pointer whitespace-nowrap flex items-center gap-1">
+                       <span className="text-[9px] opacity-50">R$</span>
+                       {(p.price / 1000).toLocaleString()}k
+                     </div>
+                     {/* Triângulo do Pin */}
+                     <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white mx-auto group-hover:border-t-primary" />
+                   </div>
+                 ))
+               ) : (
+                 <div className="absolute inset-0 flex items-center justify-center">
+                    <p className="bg-white/90 px-6 py-3 rounded-full shadow-xl text-xs font-black uppercase tracking-widest text-primary/40 border border-primary/5">
+                       Nenhum imóvel na área visível
+                    </p>
                  </div>
-               </div>
-             ))}
+               )}
+            </div>
 
-             {/* Map Controls */}
-             <div className="absolute bottom-10 right-10 flex flex-col gap-2">
-                <div className="bg-white p-3 rounded-2xl shadow-xl border border-border/50 flex flex-col gap-3">
-                   <button className="text-primary hover:text-accent transition-colors"><RefreshCw size={20} /></button>
-                   <div className="w-full h-px bg-border/40" />
-                   <button className="text-primary hover:text-accent transition-colors font-black">+</button>
-                   <button className="text-primary hover:text-accent transition-colors font-black">-</button>
+             {/* Controles de Mapa Premium */}
+             <div className="absolute bottom-10 right-10 flex flex-col gap-3 z-30">
+                <div className="bg-white p-2 rounded-2xl shadow-2xl border border-border/50 flex flex-col gap-1">
+                   <button className="w-10 h-10 flex items-center justify-center text-primary hover:bg-muted rounded-xl transition-all"><RefreshCw size={18} /></button>
+                   <div className="h-px bg-border/40 mx-2" />
+                   <button className="w-10 h-10 flex items-center justify-center text-primary hover:bg-muted rounded-xl transition-all font-black text-lg">+</button>
+                   <button className="w-10 h-10 flex items-center justify-center text-primary hover:bg-muted rounded-xl transition-all font-black text-lg">-</button>
                 </div>
-                <button className="bg-white px-6 py-3 rounded-full shadow-xl border border-border/50 text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
-                   <MapPin size={14} /> Desenhar área
+                <button className="bg-primary text-white px-6 py-3.5 rounded-full shadow-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 hover:bg-primary-light transition-all">
+                   <MapPin size={14} /> Redesenhar Busca
                 </button>
              </div>
           </div>
