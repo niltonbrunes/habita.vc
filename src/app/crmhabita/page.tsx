@@ -10,7 +10,8 @@ import {
   Calendar,
   ArrowUpRight,
   ChevronRight,
-  CheckCircle2
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -18,15 +19,22 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <div className="max-w-7xl mx-auto space-y-12 pb-12">
         {/* Welcome Section */}
-        <div>
-          <h1 className="text-3xl font-bold mb-2">Olá, {profile?.full_name?.split(' ')[0] || 'Corretor'}! 👋</h1>
-          <p className="text-muted-foreground">Aqui está o resumo da sua performance e o plano para hoje.</p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-2">Bem-vindo de volta</p>
+            <h1 className="text-4xl font-black text-primary tracking-tight">Olá, {profile?.full_name?.split(' ')[0] || 'Corretor'}! 👋</h1>
+            <p className="text-muted-foreground mt-2 font-medium">Sua performance está <span className="text-green-600 font-bold">12% acima</span> da meta este mês.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="px-6 py-3 bg-white border border-border rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-muted/50 transition-all">Relatórios</button>
+            <button className="px-6 py-3 bg-primary text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">Nova Venda</button>
+          </div>
         </div>
 
-        {/* Stats Grid - The "Salary/Earnings Engine" summary */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <StatCard 
             title="Meta Mensal" 
             value="R$ 15.000" 
@@ -56,16 +64,21 @@ export default function DashboardPage() {
           />
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Daily Action Plan - "O que fazer hoje" */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white p-6 rounded-2xl shadow-premium border border-border">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold flex items-center gap-2">
-                  <Calendar className="text-accent" size={20} />
-                  Plano de Ações Diárias
-                </h3>
-                <span className="text-xs font-bold text-accent bg-accent/10 px-2 py-1 rounded-full uppercase">Inteligência Habita</span>
+        <div className="grid lg:grid-cols-3 gap-12">
+          {/* Daily Action Plan */}
+          <div className="lg:col-span-2 space-y-10">
+            <div className="bg-white p-10 rounded-[2.5rem] shadow-premium relative overflow-hidden">
+              <div className="flex justify-between items-center mb-10">
+                <div>
+                  <h3 className="text-xl font-black text-primary flex items-center gap-3">
+                    <Calendar className="text-accent" size={24} />
+                    Plano de Ações Diárias
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1 font-medium">Recomendações da Inteligência Habita para hoje</p>
+                </div>
+                <div className="bg-accent/5 p-3 rounded-2xl">
+                   <Sparkles className="text-accent" size={20} />
+                </div>
               </div>
               
               <div className="space-y-4">
@@ -92,25 +105,25 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Recent Leads/CRM Preview */}
-            <div className="bg-white p-6 rounded-2xl shadow-premium border border-border">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold">Leads Quentes</h3>
-                <button className="text-sm font-bold text-primary flex items-center gap-1 hover:text-accent transition-colors">
-                  Ver Funil Completo <ChevronRight size={16} />
+            {/* Recent Leads */}
+            <div className="bg-white p-10 rounded-[2.5rem] shadow-premium">
+              <div className="flex justify-between items-center mb-10">
+                <h3 className="text-xl font-black text-primary">Leads Quentes</h3>
+                <button className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2 hover:text-accent transition-all">
+                  Ver Funil Completo <ChevronRight size={14} />
                 </button>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="text-xs font-bold text-muted-foreground uppercase tracking-wider border-b border-border pb-4">
-                      <th className="pb-4">Lead</th>
-                      <th className="pb-4">Estágio</th>
-                      <th className="pb-4">Score</th>
-                      <th className="pb-4 text-right">Ação</th>
+                    <tr className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] border-b border-border">
+                      <th className="pb-6">Lead</th>
+                      <th className="pb-6">Estágio</th>
+                      <th className="pb-6">Score</th>
+                      <th className="pb-6 text-right">Ação</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border">
+                  <tbody className="divide-y divide-border/50">
                     <LeadRow name="Ricardo Santos" stage="Visita" score={85} />
                     <LeadRow name="Amanda Lima" stage="Apresentação" score={72} />
                     <LeadRow name="Bruno Mendes" stage="Proposta" score={94} />
@@ -120,33 +133,34 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Right Column - Gamification/Ranking & Niche Suggestion */}
-          <div className="space-y-6">
-            <div className="bg-primary text-white p-6 rounded-2xl shadow-luxury relative overflow-hidden">
+          {/* Right Column */}
+          <div className="space-y-8">
+            <div className="bg-primary text-white p-8 rounded-[2.5rem] shadow-luxury relative overflow-hidden group">
               <div className="relative z-10">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                  <TrendingUp size={20} className="text-accent" />
-                  Sugestão de Nicho
-                </h3>
-                <p className="text-sm text-white/70 mb-4 leading-relaxed">
-                  Sua performance em <span className="text-white font-bold italic">Alto Padrão</span> está 40% acima da média.
+                <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-6 border border-white/10 group-hover:scale-110 transition-transform">
+                  <Sparkles size={24} className="text-accent" />
+                </div>
+                <h3 className="text-xl font-black mb-2">Sugestão de Nicho</h3>
+                <p className="text-sm text-white/60 mb-8 leading-relaxed font-medium">
+                  Sua performance em <span className="text-accent font-bold">Alto Padrão</span> está 40% acima da média.
                 </p>
-                <div className="bg-white/10 p-4 rounded-xl border border-white/10">
-                  <p className="text-xs font-bold uppercase tracking-widest text-accent mb-1">Estratégia Recomendada</p>
-                  <p className="text-sm font-medium">Focar em lançamentos acima de R$ 2M no Setor Marista.</p>
+                <div className="bg-white/5 p-6 rounded-3xl border border-white/10 backdrop-blur-sm">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-accent mb-2">Estratégia</p>
+                  <p className="text-sm font-bold leading-snug">Focar em lançamentos acima de R$ 2M no Setor Marista.</p>
                 </div>
               </div>
-              {/* Decorative element */}
-              <div className="absolute top-[-20%] right-[-20%] w-40 h-40 bg-white/5 rounded-full blur-2xl" />
+              {/* Decoration */}
+              <div className="absolute top-[-20%] right-[-20%] w-64 h-64 bg-accent/20 rounded-full blur-[80px] group-hover:bg-accent/30 transition-all duration-700" />
             </div>
 
-            <div className="bg-white p-6 rounded-2xl shadow-premium border border-border">
-              <h3 className="text-lg font-bold mb-4">Seu Ranking</h3>
-              <div className="space-y-4">
+            <div className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-transparent">
+              <h3 className="text-lg font-black text-primary mb-8">Seu Ranking</h3>
+              <div className="space-y-2">
                 <RankingItem pos={1} name="Ana Paula" value="R$ 125k" />
                 <RankingItem pos={2} name="Você" value="R$ 84k" active />
                 <RankingItem pos={3} name="Carlos Ed." value="R$ 72k" />
               </div>
+              <button className="w-full mt-8 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors border-t border-border/50">Ver Ranking Completo</button>
             </div>
           </div>
         </div>
@@ -156,67 +170,68 @@ export default function DashboardPage() {
 }
 
 const StatCard = ({ title, value, subtext, icon, trend, progress }: any) => (
-  <div className="bg-white p-6 rounded-2xl shadow-premium border border-border hover:scale-[1.02] transition-all">
-    <div className="flex justify-between items-start mb-4">
-      <div className="p-2 bg-muted rounded-xl">{icon}</div>
-      {trend && <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">{trend}</span>}
+  <div className="bg-white p-8 rounded-[2.5rem] shadow-premium hover:translate-y-[-4px] transition-all duration-300 group">
+    <div className="flex justify-between items-start mb-8">
+      <div className="p-4 bg-muted/50 rounded-2xl group-hover:bg-accent/10 transition-colors">{icon}</div>
+      {trend && <span className="text-[10px] font-black text-green-600 bg-green-50 px-3 py-1.5 rounded-full">{trend}</span>}
     </div>
-    <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
-    <p className="text-2xl font-bold text-primary mb-2">{value}</p>
+    <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-2">{title}</p>
+    <p className="text-3xl font-black text-primary tracking-tighter mb-4">{value}</p>
     {progress !== undefined ? (
-      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-        <div className="h-full bg-accent rounded-full" style={{ width: `${progress}%` }} />
+      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+        <div className="h-full bg-accent rounded-full shadow-[0_0_10px_rgba(217,119,6,0.3)]" style={{ width: `${progress}%` }} />
       </div>
     ) : (
-      <p className="text-xs font-medium text-muted-foreground">{subtext}</p>
+      <p className="text-xs font-bold text-muted-foreground/60">{subtext}</p>
     )}
   </div>
 );
 
 const ActionItem = ({ title, desc, status }: any) => (
-  <div className={`flex gap-4 p-4 rounded-xl border transition-all ${status === 'done' ? 'bg-muted/50 border-transparent opacity-60' : 'bg-white border-border hover:shadow-md'}`}>
-    <div className={`mt-0.5 ${status === 'done' ? 'text-green-600' : 'text-muted-foreground'}`}>
-      <CheckCircle2 size={20} />
+  <div className={`flex gap-6 p-6 rounded-[1.5rem] transition-all duration-300 ${status === 'done' ? 'bg-muted/30 opacity-40' : 'bg-muted/30 hover:bg-white hover:shadow-xl group'}`}>
+    <div className={`mt-1 ${status === 'done' ? 'text-green-600' : 'text-primary/20 group-hover:text-accent transition-colors'}`}>
+      <CheckCircle2 size={24} strokeWidth={3} />
     </div>
     <div>
-      <p className={`text-sm font-bold ${status === 'done' ? 'line-through' : ''}`}>{title}</p>
-      <p className="text-xs text-muted-foreground mt-1">{desc}</p>
+      <p className={`text-base font-black text-primary ${status === 'done' ? 'line-through' : ''}`}>{title}</p>
+      <p className="text-xs text-muted-foreground mt-1 font-medium leading-relaxed">{desc}</p>
     </div>
   </div>
 );
 
 const LeadRow = ({ name, stage, score }: any) => (
-  <tr className="hover:bg-muted/30 transition-colors group">
-    <td className="py-4 font-bold text-sm text-primary">{name}</td>
-    <td className="py-4">
-      <span className="text-xs font-bold bg-primary/5 text-primary px-2 py-1 rounded-full">{stage}</span>
+  <tr className="hover:bg-muted/20 transition-all group cursor-pointer">
+    <td className="py-8 px-2 font-black text-base text-primary">{name}</td>
+    <td className="py-8 px-2">
+      <span className="text-[10px] font-black bg-primary/5 text-primary px-3 py-1.5 rounded-full uppercase tracking-widest">{stage}</span>
     </td>
-    <td className="py-4">
-      <div className="flex items-center gap-2">
-        <div className="w-12 h-1.5 bg-muted rounded-full overflow-hidden">
+    <td className="py-8 px-2">
+      <div className="flex items-center gap-3">
+        <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
           <div className={`h-full rounded-full ${score > 80 ? 'bg-green-500' : 'bg-accent'}`} style={{ width: `${score}%` }} />
         </div>
-        <span className="text-xs font-bold">{score}%</span>
+        <span className="text-xs font-black text-primary">{score}%</span>
       </div>
     </td>
-    <td className="py-4 text-right">
-      <button className="p-1.5 hover:bg-primary hover:text-white rounded-lg transition-all">
-        <ArrowUpRight size={16} />
+    <td className="py-8 px-2 text-right">
+      <button className="p-3 bg-muted/50 hover:bg-primary hover:text-white rounded-xl transition-all shadow-sm">
+        <ArrowUpRight size={18} />
       </button>
     </td>
   </tr>
 );
 
 const RankingItem = ({ pos, name, value, active = false }: any) => (
-  <div className={`flex items-center justify-between p-3 rounded-xl ${active ? 'bg-accent/10 border border-accent/20' : ''}`}>
-    <div className="flex items-center gap-3">
-      <span className={`text-sm font-bold w-5 ${active ? 'text-accent' : 'text-muted-foreground'}`}>{pos}º</span>
-      <span className={`text-sm font-bold ${active ? 'text-primary' : 'text-primary/70'}`}>{name}</span>
+  <div className={`flex items-center justify-between p-5 rounded-2xl transition-all ${active ? 'bg-accent text-white shadow-xl shadow-accent/20 scale-[1.05] z-10' : 'hover:bg-muted/50'}`}>
+    <div className="flex items-center gap-4">
+      <span className={`text-xs font-black w-6 ${active ? 'text-white' : 'text-muted-foreground'}`}>{pos}º</span>
+      <span className={`text-sm font-bold ${active ? 'text-white' : 'text-primary'}`}>{name}</span>
     </div>
-    <span className="text-sm font-bold text-primary">{value}</span>
+    <span className={`text-sm font-black ${active ? 'text-white' : 'text-primary'}`}>{value}</span>
   </div>
 );
 
 const TargetIcon = () => (
-  <svg className="text-accent" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+  <svg className="text-accent" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
 );
+

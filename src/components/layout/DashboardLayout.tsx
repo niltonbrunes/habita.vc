@@ -42,44 +42,45 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
   return (
     <div className={`flex h-screen ${isLuxury ? 'bg-black' : 'bg-muted/30'}`}>
       {/* Sidebar - code below omitted for brevity but preserved */}
-      <aside className={`w-64 flex flex-col shadow-xl z-20 transition-colors duration-500 ${isLuxury ? 'bg-black border-r border-white/10' : 'bg-primary'}`}>
-        <div className="p-6 flex items-center gap-2">
-          <div className="bg-white p-1 rounded-lg">
-            <Home className="w-6 h-6 text-primary" />
+      {/* Sidebar - code below omitted for brevity but preserved */}
+      <aside className={`w-60 flex flex-col shadow-2xl z-20 transition-all duration-500 border-r border-border/10 ${isLuxury ? 'bg-black' : 'bg-[#0f172a]'}`}>
+        <div className="p-8 flex items-center gap-3">
+          <div className="bg-accent p-2 rounded-xl shadow-lg shadow-accent/20">
+            <Home className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-white">Habita<span className="text-accent">.vc</span></span>
+          <span className="text-lg font-black tracking-tighter text-white">Habita<span className="text-accent">.vc</span></span>
         </div>
 
-        <nav className="flex-1 px-4 py-4 space-y-2">
-          <SidebarItem icon={<LayoutDashboard size={20} />} label="Dashboard" href="/crmhabita" active={pathname === '/crmhabita'} />
-          <SidebarItem icon={<Target size={20} />} label="Gestão de Leads" href="/crmhabita/leads" active={pathname.startsWith('/crmhabita/leads')} />
-          <SidebarItem icon={<Trophy size={20} />} label="Performance" href="/crmhabita/ranking" active={pathname === '/crmhabita/ranking'} />
-          <SidebarItem icon={<Layers size={20} />} label="Empreendimentos" href="/crmhabita/empreendimentos" active={pathname.startsWith('/crmhabita/empreendimentos')} />
-          <SidebarItem icon={<Calendar size={20} />} label="Agenda" href="/crmhabita/agenda" active={pathname === '/crmhabita/agenda'} />
-          <SidebarItem icon={<Users size={20} />} label="Pessoas (Contatos)" href="/crmhabita/pessoas" active={pathname.startsWith('/crmhabita/pessoas')} />
-          <SidebarItem icon={<Sparkles size={20} />} label="Prospecção IA" href="/crmhabita/prospeccao" active={pathname.startsWith('/crmhabita/prospeccao')} />
-          <SidebarItem icon={<Home size={20} />} label="Meus Imóveis" href="/crmhabita/imoveis" active={pathname.startsWith('/crmhabita/imoveis')} />
-          <SidebarItem icon={<Globe size={20} />} label="Publicação Portal" href="/crmhabita/publicacao" active={pathname === '/crmhabita/publicacao'} />
-          <SidebarItem icon={<TrendingUp size={20} />} label="Comissões" href="/crmhabita/comissoes" active={pathname.startsWith('/crmhabita/comissoes')} />
-          <SidebarItem icon={<Target size={20} />} label="BI & Metas" href="/crmhabita/metas" active={pathname.startsWith('/crmhabita/metas')} />
+        <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto scrollbar-hide">
+          <SidebarItem icon={<LayoutDashboard size={18} />} label="Dashboard" href="/crmhabita" active={pathname === '/crmhabita'} />
+          <SidebarItem icon={<Target size={18} />} label="Gestão de Leads" href="/crmhabita/leads" active={pathname.startsWith('/crmhabita/leads')} />
+          <SidebarItem icon={<Trophy size={18} />} label="Performance" href="/crmhabita/ranking" active={pathname === '/crmhabita/ranking'} />
+          <SidebarItem icon={<Layers size={18} />} label="Empreendimentos" href="/crmhabita/empreendimentos" active={pathname.startsWith('/crmhabita/empreendimentos')} />
+          <SidebarItem icon={<Calendar size={18} />} label="Agenda" href="/crmhabita/agenda" active={pathname === '/crmhabita/agenda'} />
+          <SidebarItem icon={<Users size={18} />} label="Contatos" href="/crmhabita/pessoas" active={pathname.startsWith('/crmhabita/pessoas')} />
+          <SidebarItem icon={<Sparkles size={18} />} label="Prospecção IA" href="/crmhabita/prospeccao" active={pathname.startsWith('/crmhabita/prospeccao')} />
+          <SidebarItem icon={<Home size={18} />} label="Meus Imóveis" href="/crmhabita/imoveis" active={pathname.startsWith('/crmhabita/imoveis')} />
+          <SidebarItem icon={<Globe size={18} />} label="Publicação" href="/crmhabita/publicacao" active={pathname === '/crmhabita/publicacao'} />
+          <SidebarItem icon={<TrendingUp size={18} />} label="Comissões" href="/crmhabita/comissoes" active={pathname.startsWith('/crmhabita/comissoes')} />
+          <SidebarItem icon={<Target size={18} />} label="BI & Metas" href="/crmhabita/metas" active={pathname.startsWith('/crmhabita/metas')} />
           {isRole(['admin', 'manager', 'director']) && (
-            <SidebarItem icon={<Briefcase size={20} />} label="Equipe" href="/crmhabita/equipe" active={pathname.startsWith('/crmhabita/equipe')} />
+            <SidebarItem icon={<Briefcase size={18} />} label="Equipe" href="/crmhabita/equipe" active={pathname.startsWith('/crmhabita/equipe')} />
           )}
-          <SidebarItem icon={<Settings size={20} />} label="Meu Perfil" href="/crmhabita/configuracoes" active={pathname.startsWith('/crmhabita/configuracoes')} />
+          <SidebarItem icon={<Settings size={18} />} label="Meu Perfil" href="/crmhabita/configuracoes" active={pathname.startsWith('/crmhabita/configuracoes')} />
         </nav>
 
-        <div className="p-4 border-t border-white/10">
-          <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
-            <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center font-bold text-white uppercase">
+        <div className="p-6">
+          <div className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-white/10 transition-all cursor-pointer">
+            <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center font-black text-white shadow-lg">
               {profile?.full_name?.substring(0, 2) || 'HB'}
             </div>
             <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-bold truncate text-white">{profile?.full_name || 'Carregando...'}</p>
-              <p className="text-[10px] text-white/50 uppercase tracking-widest truncate">{profile?.role || 'Corretor'}</p>
+              <p className="text-xs font-black truncate text-white">{profile?.full_name || 'Carregando...'}</p>
+              <p className="text-[9px] text-white/30 font-bold uppercase tracking-widest truncate">{profile?.role || 'Corretor'}</p>
             </div>
             <LogOut 
-              size={16} 
-              className="text-white/50 cursor-pointer hover:text-white transition-colors" 
+              size={14} 
+              className="text-white/20 cursor-pointer hover:text-red-400 transition-colors" 
               onClick={() => signOut()}
             />
           </div>
