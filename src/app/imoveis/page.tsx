@@ -9,13 +9,22 @@ import { Search, Filter, MapPin, RefreshCw, SlidersHorizontal, ChevronDown } fro
 export default function PublicPropertiesPage() {
   const { properties, loading } = useProperties();
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeFilter, setActiveFilter] = useState('Todos');
+  const [propertyType, setPropertyType] = useState('Todos');
+  const [roomsCount, setRoomsCount] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
 
-  const filteredProperties = properties.filter(p => 
-    p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.address_city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.address_neighborhood?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredProperties = properties.filter(p => {
+    const matchSearch = !searchTerm || 
+      p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.address_city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.address_neighborhood?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchType = propertyType === 'Todos' || p.type === propertyType;
+    const matchRooms = !roomsCount || p.rooms >= roomsCount;
+    const matchPrice = !maxPrice || p.price <= maxPrice;
+
+    return matchSearch && matchType && matchRooms && matchPrice;
+  });
 
   return (
     <div className="h-screen flex flex-col bg-white overflow-hidden">
@@ -45,20 +54,69 @@ export default function PublicPropertiesPage() {
             />
           </div>
 
-          <FilterPill label="Comprar" active />
-          <FilterPill label="Preço" />
-          <FilterPill label="Condomínio + IPTU" />
-          <FilterPill label="Tipo de Imóvel" />
-          <FilterPill label="Quartos" />
+          {/* Type Filter */}
+          <div className="relative group">
+            <FilterPill label={`Tipo: ${propertyType}`} active={propertyType !== 'Todos'} />
+            <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-luxury border border-border p-2 hidden group-hover:block transition-all">
+              {['Todos', 'Apartamento', 'Casa', 'Lote', 'Cobertura'].map(t => (
+                <button 
+                  key={t}
+                  onClick={() => setPropertyType(t)}
+                  className={`w-full text-left px-4 py-2 rounded-xl text-xs font-bold ${propertyType === t ? 'bg-primary text-white' : 'hover:bg-muted'}`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Price Filter */}
+          <div className="relative group">
+            <FilterPill label={maxPrice ? `Até R$ ${maxPrice / 1000}k` : 'Preço'} active={!!maxPrice} />
+            <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-luxury border border-border p-6 hidden group-hover:block transition-all">
+              <p className="text-[10px] font-black uppercase tracking-widest mb-4">Preço Máximo</p>
+              <input 
+                type="range" 
+                min="100000" 
+                max="5000000" 
+                step="50000"
+                value={maxPrice || 5000000}
+                onChange={(e) => setMaxPrice(parseInt(e.target.value))}
+                className="w-full accent-primary"
+              />
+              <div className="flex justify-between mt-4 text-[10px] font-black text-primary">
+                <span>R$ 100k</span>
+                <span>R$ {((maxPrice || 5000000) / 1000000).toFixed(1)}M</span>
+              </div>
+              <button 
+                onClick={() => setMaxPrice(null)}
+                className="w-full mt-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary"
+              >
+                Limpar Preço
+              </button>
+            </div>
+          </div>
+
+          {/* Rooms Filter */}
+          <div className="relative group">
+            <FilterPill label={roomsCount ? `${roomsCount}+ Quartos` : 'Quartos'} active={!!roomsCount} />
+            <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-luxury border border-border p-2 hidden group-hover:block transition-all">
+              {[null, 1, 2, 3, 4].map(r => (
+                <button 
+                  key={r}
+                  onClick={() => setRoomsCount(r)}
+                  className={`w-full text-left px-4 py-2 rounded-xl text-xs font-bold ${roomsCount === r ? 'bg-primary text-white' : 'hover:bg-muted'}`}
+                >
+                  {r ? `${r}+ Quartos` : 'Qualquer quantidade'}
+                </button>
+              ))}
+            </div>
+          </div>
           
           <div className="flex-1" />
 
           <button className="flex items-center gap-2 px-5 py-2.5 border border-border rounded-full text-xs font-black uppercase tracking-widest hover:bg-muted/50 transition-all">
              <SlidersHorizontal size={14} /> Mais filtros
-          </button>
-          
-          <button className="flex items-center gap-2 px-6 py-2.5 bg-primary/5 text-primary border border-primary/10 rounded-full text-xs font-black uppercase tracking-widest hover:bg-primary/10 transition-all shadow-sm">
-             <MapPin size={14} /> Alerta de Imóvel
           </button>
         </div>
       </header>
@@ -104,28 +162,24 @@ export default function PublicPropertiesPage() {
 
         {/* Right: Map View (Fixed) */}
         <section className="hidden md:block flex-1 bg-muted/20 relative">
-          {/* Map Placeholder with Style */}
-          <div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/light-v10/static/-46.6333,-23.5505,12/1000x1000?access_token=pk.eyJ1IjoiYm90LWNvZGUiLCJhIjoiY2w5cTVhNm5mMDBobjN2cGNmZ3NnZ3NnIn0.xxx')] bg-cover bg-center">
+          <div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/light-v10/static/-46.6333,-23.5505,12/1000x1000?access_token=pk.xxx')] bg-cover bg-center">
              <div className="absolute inset-0 bg-primary/5 backdrop-grayscale-[0.5]" />
              
-             {/* Map Markers Mockup */}
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className="bg-primary text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-2xl border-2 border-white animate-bounce">
-                  R$ 1.2M
-                </div>
-             </div>
-             
-             <div className="absolute top-[40%] left-[30%]">
-                <div className="bg-white text-primary text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg border border-border/50">
-                  R$ 850k
-                </div>
-             </div>
-
-             <div className="absolute top-[60%] left-[70%]">
-                <div className="bg-white text-primary text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg border border-border/50">
-                  R$ 2.5M
-                </div>
-             </div>
+             {/* Map Markers Mockup Based on Filtered Properties */}
+             {filteredProperties.slice(0, 10).map((p, idx) => (
+               <div 
+                 key={p.id}
+                 className="absolute"
+                 style={{ 
+                   top: `${30 + (idx * 5)}%`, 
+                   left: `${20 + (idx * 8)}%` 
+                 }}
+               >
+                 <div className="bg-white text-primary text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg border border-border/50 hover:bg-primary hover:text-white transition-all cursor-pointer">
+                   R$ {(p.price / 1000).toLocaleString()}k
+                 </div>
+               </div>
+             ))}
 
              {/* Map Controls */}
              <div className="absolute bottom-10 right-10 flex flex-col gap-2">
@@ -145,6 +199,7 @@ export default function PublicPropertiesPage() {
     </div>
   );
 }
+
 
 const FilterPill = ({ label, active = false }: { label: string, active?: boolean }) => (
   <button className={`
