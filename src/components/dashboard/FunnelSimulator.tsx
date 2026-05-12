@@ -190,7 +190,15 @@ export function FunnelSimulator() {
   );
 }
 
-const InputGroup = ({ label, value, onChange, icon, prefix }: any) => (
+interface InputGroupProps {
+  label: string;
+  value: number;
+  onChange: (v: string) => void;
+  icon: React.ReactNode;
+  prefix?: string;
+}
+
+const InputGroup = ({ label, value, onChange, icon, prefix }: InputGroupProps) => (
   <div className="space-y-2">
     <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{label}</label>
     <div className="relative group">
@@ -201,14 +209,20 @@ const InputGroup = ({ label, value, onChange, icon, prefix }: any) => (
       <input 
         type="number" 
         value={value} 
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
         className={`w-full bg-muted/30 border border-transparent focus:border-accent/30 focus:bg-white rounded-2xl py-4 ${prefix ? 'pl-16' : 'pl-12'} pr-4 text-sm font-bold text-primary transition-all outline-none`}
       />
     </div>
   </div>
 );
 
-const SliderGroup = ({ label, value, onChange }: any) => (
+interface SliderGroupProps {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+}
+
+const SliderGroup = ({ label, value, onChange }: SliderGroupProps) => (
   <div className="space-y-3">
     <div className="flex justify-between items-center">
       <label className="text-xs font-bold text-primary">{label}</label>
@@ -220,13 +234,22 @@ const SliderGroup = ({ label, value, onChange }: any) => (
       max="1" 
       step="0.01" 
       value={value} 
-      onChange={(e) => onChange(Number(e.target.value))}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(Number(e.target.value))}
       className="w-full h-1.5 bg-muted rounded-full appearance-none cursor-pointer accent-accent"
     />
   </div>
 );
 
-const FunnelLayer = ({ label, value, color, width, icon, rate }: any) => (
+interface FunnelLayerProps {
+  label: string;
+  value: number;
+  color: string;
+  width: string;
+  icon: React.ReactNode;
+  rate: string;
+}
+
+const FunnelLayer = ({ label, value, color, width, icon, rate }: FunnelLayerProps) => (
   <div className={`relative ${width} ${color} p-6 rounded-2xl flex items-center justify-between mb-4 border border-primary/5 group hover:border-accent/30 hover:shadow-lg transition-all duration-500 cursor-default overflow-hidden animate-in fade-in slide-in-from-bottom-4`}>
     <div className="flex items-center gap-4 relative z-10">
       <div className="p-3 bg-white/50 rounded-xl group-hover:scale-110 transition-transform duration-500">
@@ -246,7 +269,13 @@ const FunnelLayer = ({ label, value, color, width, icon, rate }: any) => (
   </div>
 );
 
-const ChannelItem = ({ name, percentage, leads }: any) => (
+interface ChannelItemProps {
+  name: string;
+  percentage: number;
+  leads: number;
+}
+
+const ChannelItem = ({ name, percentage, leads }: ChannelItemProps) => (
   <div className="flex items-center justify-between p-3 bg-muted/20 rounded-xl">
     <div className="flex items-center gap-3">
       <div className="w-1.5 h-1.5 rounded-full bg-accent" />
