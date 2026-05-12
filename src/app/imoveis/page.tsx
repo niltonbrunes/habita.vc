@@ -14,6 +14,8 @@ export default function PublicPropertiesPage() {
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [openFilter, setOpenFilter] = useState<string | null>(null);
 
+  const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(null);
+
   const filteredProperties = properties.filter(p => {
     const matchSearch = !searchTerm || 
       p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -31,6 +33,15 @@ export default function PublicPropertiesPage() {
     setOpenFilter(openFilter === name ? null : name);
   };
 
+  // Função para gerar uma posição "fixa" baseada no ID do imóvel (enquanto não temos lat/lng reais)
+  const getPropertyPosition = (id: string) => {
+    const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    return {
+      top: 20 + (hash % 60),
+      left: 20 + ((hash * 7) % 60)
+    };
+  };
+
   return (
     <div className="h-screen flex flex-col bg-white overflow-hidden relative">
       <style jsx global>{`
@@ -39,7 +50,6 @@ export default function PublicPropertiesPage() {
           max-height: none !important;
           background: transparent !important;
         }
-        /* Forçar a Navbar a não ser fixa nesta página para evitar conflitos */
         nav.fixed {
           position: relative !important;
           height: 64px !important;
@@ -58,7 +68,7 @@ export default function PublicPropertiesPage() {
         </div>
       )}
       
-      {/* Header Filters - Agora naturalmente abaixo da Navbar */}
+      {/* Header Filters */}
       <header className="border-b border-border bg-gray-50/50 z-40 relative shadow-sm">
         <div className="px-6 py-4 flex flex-wrap items-center gap-3">
           {/* Search Input Pill */}
@@ -174,20 +184,26 @@ export default function PublicPropertiesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-32">
             {filteredProperties.length > 0 ? (
               filteredProperties.map(property => (
-                <PropertyCard 
+                <div 
                   key={property.id}
-                  id={property.id}
-                  title={property.title}
-                  price={property.price}
-                  city={property.address_city}
-                  neighborhood={property.address_neighborhood || ''}
-                  bedrooms={property.rooms}
-                  bathrooms={property.bathrooms}
-                  area={property.area_useful}
-                  imageUrl={property.images?.[0]}
-                  slug={property.slug || property.id}
-                  type={property.type}
-                />
+                  onMouseEnter={() => setHoveredPropertyId(property.id)}
+                  onMouseLeave={() => setHoveredPropertyId(null)}
+                  className={`transition-all duration-300 rounded-[2.5rem] ${hoveredPropertyId === property.id ? 'ring-4 ring-primary/10 scale-[1.02]' : ''}`}
+                >
+                  <PropertyCard 
+                    id={property.id}
+                    title={property.title}
+                    price={property.price}
+                    city={property.address_city}
+                    neighborhood={property.address_neighborhood || ''}
+                    bedrooms={property.rooms}
+                    bathrooms={property.bathrooms}
+                    area={property.area_useful}
+                    imageUrl={property.images?.[0]}
+                    slug={property.slug || property.id}
+                    type={property.type}
+                  />
+                </div>
               ))
             ) : !loading && (
               <div className="col-span-full py-32 text-center bg-muted/5 rounded-[3rem] border-2 border-dashed border-border/20 flex flex-col items-center justify-center">
@@ -201,36 +217,52 @@ export default function PublicPropertiesPage() {
 
         {/* Right: Map View (Fixed) */}
         <section className="hidden md:block flex-1 bg-[#f0f0f0] relative map-container overflow-hidden">
-          {/* Mapa 2D de Goiânia (Versão Pública Segura) */}
+          {/* Mapa 2D de Goiânia */}
           <div 
             className="absolute inset-0 bg-cover bg-center grayscale-[0.2] opacity-90"
             style={{ 
               backgroundImage: `url('https://static-maps.yandex.ru/1.x/?ll=-49.2608,-16.6869&size=650,450&z=12&l=map&lang=pt_BR')`,
             }}
           >
-            {/* Camada de Marcadores com PREÇOS REAIS */}
+            {/* Marcadores Circulares Sincronizados */}
             <div className="relative w-full h-full">
                {filteredProperties.length > 0 ? (
-                 filteredProperties.slice(0, 25).map((p) => (
-                   <div 
-                     key={p.id}
-                     className="absolute transform -translate-x-1/2 -translate-y-1/2 group z-20"
-                     style={{ 
-                       top: `${15 + (Math.random() * 70)}%`, 
-                       left: `${15 + (Math.random() * 70)}%` 
-                     }}
-                   >
-                     {/* Marcador Circular Branco com PREÇO REAL */}
-                     <div className="px-3 py-2 bg-white text-primary text-[11px] font-black rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.15)] border border-gray-100 flex items-center justify-center hover:scale-110 hover:bg-primary hover:text-white transition-all cursor-pointer whitespace-nowrap min-w-[50px]">
-                        <span className="text-[8px] opacity-40 mr-0.5">R$</span>
-                        {(p.price / 1000).toLocaleString()}k
+                 filteredProperties.slice(0, 30).map((p) => {
+                   const pos = getPropertyPosition(p.id);
+                   const isHovered = hoveredPropertyId === p.id;
+                   
+                   return (
+                     <div 
+                       key={p.id}
+                       onMouseEnter={() => setHoveredPropertyId(p.id)}
+                       onMouseLeave={() => setHoveredPropertyId(null)}
+                       className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 z-20 ${isHovered ? 'z-30 scale-125' : ''}`}
+                       style={{ 
+                         top: `${pos.top}%`, 
+                         left: `${pos.left}%` 
+                       }}
+                     >
+                       {/* Marcador Circular com PREÇO REAL */}
+                       <div className={`
+                         px-3 py-2 text-[11px] font-black rounded-full shadow-2xl border transition-all whitespace-nowrap min-w-[50px]
+                         ${isHovered 
+                           ? 'bg-primary text-white border-primary shadow-primary/30 ring-4 ring-primary/20' 
+                           : 'bg-white text-primary border-gray-100'}
+                       `}>
+                          <span className={`text-[8px] mr-0.5 ${isHovered ? 'text-white/60' : 'text-primary/40'}`}>R$</span>
+                          {(p.price / 1000).toLocaleString()}k
+                       </div>
+                       {/* Triângulo indicador apenas no hover */}
+                       {isHovered && (
+                         <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-primary mx-auto" />
+                       )}
                      </div>
-                   </div>
-                 ))
+                   );
+                 })
                ) : (
                  <div className="absolute inset-0 flex items-center justify-center">
                     <p className="bg-white/95 px-8 py-4 rounded-full shadow-2xl text-[10px] font-black uppercase tracking-[0.2em] text-primary/30 border border-primary/5">
-                       Localizando Imóveis...
+                       Sincronizando Localização...
                     </p>
                  </div>
                )}
