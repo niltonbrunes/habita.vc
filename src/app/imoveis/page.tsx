@@ -45,7 +45,7 @@ export default function PublicPropertiesPage() {
       )}
       
       {/* Header Filters - QuintoAndar Style */}
-      <header className="mt-[80px] border-b border-border bg-white z-[60] relative shadow-sm">
+      <header className="mt-16 border-b border-border bg-white z-30 relative shadow-sm">
         <div className="px-6 py-4 flex flex-wrap items-center gap-3">
           {/* Search Input Pill */}
           <div className="flex items-center gap-3 px-6 py-2.5 bg-muted/30 rounded-full border border-border/50 focus-within:border-primary/40 transition-all min-w-[300px]">
