@@ -14,7 +14,39 @@ export default function PublicPropertiesPage() {
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [openFilter, setOpenFilter] = useState<string | null>(null);
 
-  const [showMapMobile, setShowMapMobile] = useState(false);
+  const [minArea, setMinArea] = useState<number | null>(null);
+  const [bathroomsMin, setBathroomsMin] = useState<number | null>(null);
+  const [parkingMin, setParkingMin] = useState<number | null>(null);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+
+  const filteredProperties = properties.filter(p => {
+    const matchSearch = !searchTerm || 
+      p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.address_city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.address_neighborhood?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchType = propertyType === 'Todos' || p.type === propertyType;
+    const matchRooms = !roomsCount || p.rooms >= roomsCount;
+    const matchPrice = !maxPrice || p.price <= maxPrice;
+    
+    // Novos filtros avançados
+    const matchArea = !minArea || p.area_useful >= minArea;
+    const matchBathrooms = !bathroomsMin || p.bathrooms >= bathroomsMin;
+    const matchParking = !parkingMin || p.parking_spaces >= parkingMin;
+
+    return matchSearch && matchType && matchRooms && matchPrice && matchArea && matchBathrooms && matchParking;
+  });
+
+  const toggleFilter = (name: string) => {
+    setOpenFilter(openFilter === name ? null : name);
+  };
+
+  const resetAdvancedFilters = () => {
+    setMinArea(null);
+    setBathroomsMin(null);
+    setParkingMin(null);
+    setShowAdvancedFilters(false);
+  };
 
   // Função para gerar uma posição "fixa" baseada no ID do imóvel (enquanto não temos lat/lng reais)
   const getPropertyPosition = (id: string) => {
@@ -55,6 +87,97 @@ export default function PublicPropertiesPage() {
           <div className="flex flex-col items-center gap-6">
             <RefreshCw className="animate-spin text-primary" size={64} />
             <p className="font-black text-primary uppercase tracking-[0.3em] text-[10px]">Sincronizando Vitrine...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Filtros Avançados */}
+      {showAdvancedFilters && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-end md:items-center justify-center p-0 md:p-6 transition-all">
+          <div className="bg-white w-full md:max-w-2xl md:rounded-[3rem] rounded-t-[3rem] shadow-2xl overflow-hidden animate-in slide-in-from-bottom-20 duration-300">
+            <div className="px-8 py-6 border-b border-border flex items-center justify-between">
+              <h3 className="text-xl font-black text-primary">Filtros Avançados</h3>
+              <button onClick={() => setShowAdvancedFilters(false)} className="p-2 hover:bg-muted rounded-full transition-all">
+                <Search size={20} className="rotate-45" />
+              </button>
+            </div>
+            
+            <div className="p-8 space-y-10 max-h-[70vh] overflow-y-auto no-scrollbar">
+              {/* Área (m²) */}
+              <section>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-4">Área Útil (m²)</p>
+                <div className="flex items-center gap-4">
+                  {[0, 50, 100, 200, 500].map(area => (
+                    <button 
+                      key={area}
+                      onClick={() => setMinArea(area || null)}
+                      className={`px-6 py-3 rounded-full text-xs font-bold border transition-all ${minArea === area ? 'bg-primary text-white border-primary' : 'hover:bg-muted border-border'}`}
+                    >
+                      {area === 0 ? 'Qualquer' : `${area}m²+`}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              {/* Banheiros */}
+              <section>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-4">Banheiros</p>
+                <div className="flex items-center gap-4">
+                  {[null, 1, 2, 3, 4].map(b => (
+                    <button 
+                      key={b === null ? 'any' : b}
+                      onClick={() => setBathroomsMin(b)}
+                      className={`px-6 py-3 rounded-full text-xs font-bold border transition-all ${bathroomsMin === b ? 'bg-primary text-white border-primary' : 'hover:bg-muted border-border'}`}
+                    >
+                      {b === null ? 'Qualquer' : `${b}+`}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              {/* Vagas de Garagem */}
+              <section>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-4">Vagas de Garagem</p>
+                <div className="flex items-center gap-4">
+                  {[null, 1, 2, 3, 4].map(v => (
+                    <button 
+                      key={v === null ? 'any' : v}
+                      onClick={() => setParkingMin(v)}
+                      className={`px-6 py-3 rounded-full text-xs font-bold border transition-all ${parkingMin === v ? 'bg-primary text-white border-primary' : 'hover:bg-muted border-border'}`}
+                    >
+                      {v === null ? 'Qualquer' : `${v}+`}
+                    </button>
+                  ))}
+                </div>
+              </section>
+
+              {/* Amenidades (Mock) */}
+              <section>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40 mb-4">Características</p>
+                <div className="flex flex-wrap gap-2">
+                  {['Piscina', 'Academia', 'Mobiliado', 'Pet Friendly', 'Churrasqueira', 'Portaria 24h'].map(tag => (
+                    <button key={tag} className="px-4 py-2 rounded-full text-[10px] font-bold border border-border hover:bg-muted transition-all">
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </section>
+            </div>
+
+            <div className="p-8 bg-gray-50 border-t border-border flex gap-4">
+              <button 
+                onClick={resetAdvancedFilters}
+                className="flex-1 py-4 text-xs font-black uppercase tracking-[0.1em] text-muted-foreground hover:bg-muted rounded-2xl transition-all"
+              >
+                Limpar Tudo
+              </button>
+              <button 
+                onClick={() => setShowAdvancedFilters(false)}
+                className="flex-[2] py-4 bg-primary text-white text-xs font-black uppercase tracking-[0.1em] rounded-2xl shadow-xl shadow-primary/20 transition-all hover:scale-[1.02]"
+              >
+                Ver {filteredProperties.length} Resultados
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -143,6 +266,16 @@ export default function PublicPropertiesPage() {
                 </div>
               )}
             </div>
+
+            {/* Advanced Filters Button */}
+            <button 
+              onClick={() => setShowAdvancedFilters(true)}
+              className={`flex items-center gap-2 px-5 py-2.5 border rounded-full text-xs font-black uppercase tracking-widest transition-all shadow-sm whitespace-nowrap
+                ${(minArea || bathroomsMin || parkingMin) ? 'bg-primary text-white border-primary' : 'bg-white border-border hover:bg-muted'}
+              `}
+            >
+               <SlidersHorizontal size={14} /> Mais filtros
+            </button>
           </div>
         </div>
       </header>
