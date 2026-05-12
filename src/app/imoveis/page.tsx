@@ -33,6 +33,15 @@ export default function PublicPropertiesPage() {
 
   return (
     <div className="h-screen flex flex-col bg-white overflow-hidden relative">
+      {/* Estilo para corrigir os tiles do mapa que ficam brancos */}
+      <style jsx global>{`
+        .map-container img {
+          max-width: none !important;
+          max-height: none !important;
+          background: transparent !important;
+        }
+      `}</style>
+
       <Navbar />
       
       {loading && (
@@ -44,8 +53,8 @@ export default function PublicPropertiesPage() {
         </div>
       )}
       
-      {/* Header Filters - QuintoAndar Style */}
-      <header className="mt-16 border-b border-border bg-white z-30 relative shadow-sm">
+      {/* Header Filters - Posicionado com Padding para evitar sobreposição da Navbar fixa */}
+      <header className="pt-16 border-b border-border bg-white z-40 relative shadow-sm">
         <div className="px-6 py-4 flex flex-wrap items-center gap-3">
           {/* Search Input Pill */}
           <div className="flex items-center gap-3 px-6 py-2.5 bg-muted/30 rounded-full border border-border/50 focus-within:border-primary/40 transition-all min-w-[300px]">
@@ -186,7 +195,7 @@ export default function PublicPropertiesPage() {
         </section>
 
         {/* Right: Map View (Fixed) */}
-        <section className="hidden md:block flex-1 bg-muted/20 relative">
+        <section className="hidden md:block flex-1 bg-muted/20 relative map-container">
           <div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/light-v10/static/-46.6333,-23.5505,12/1000x1000?access_token=pk.xxx')] bg-cover bg-center">
              <div className="absolute inset-0 bg-primary/5 backdrop-grayscale-[0.5]" />
              
@@ -224,6 +233,7 @@ export default function PublicPropertiesPage() {
     </div>
   );
 }
+
 
 const FilterPill = ({ label, active = false }: { label: string, active?: boolean }) => (
   <button className={`
