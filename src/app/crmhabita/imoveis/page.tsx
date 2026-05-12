@@ -52,169 +52,208 @@ export default function PropertiesPage() {
     }
   };
 
+export default function PropertiesPage() {
+  const { user, profile } = useAuth();
+  const { properties, loading, refresh } = useProperties();
+  const [syncing, setSyncing] = React.useState(false);
+  const [search, setSearch] = React.useState('');
+  const [patternFilter, setPatternFilter] = React.useState('');
+  const [statusFilter, setStatusFilter] = React.useState('');
+
+  const filtered = properties.filter(p => {
+    const q = search.toLowerCase();
+    const matchSearch = !q ||
+      (p.title ?? '').toLowerCase().includes(q) ||
+      (p.address_city ?? '').toLowerCase().includes(q) ||
+      (p.address_street ?? '').toLowerCase().includes(q);
+    const matchPattern = !patternFilter || p.pattern === patternFilter;
+    const matchStatus  = !statusFilter  || p.status  === statusFilter;
+    return matchSearch && matchPattern && matchStatus;
+  });
+
+  const handleSync = async () => {
+    if (!user) return;
+    try {
+      setSyncing(true);
+      const stats = await ImportService.importFromXml('https://api.urbs.com.br/Portal/chaves.ashx?uid=4395', user.id);
+      alert(`Sincronização concluída!\nImportados: ${stats.imported}\nPulados: ${stats.skipped}\nErros: ${stats.errors}`);
+      refresh();
+    } catch (err) {
+      alert('Erro ao sincronizar XML.');
+      console.error(err);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   return (
     <DashboardLayout>
-      <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="flex justify-between items-end">
-          <div>
-            <h1 className="text-4xl font-black text-primary tracking-tight">Meus Imóveis</h1>
-            <p className="text-muted-foreground text-sm">Gerencie seu portfólio e captações.</p>
-          </div>
-          
-          <div className="flex gap-3">
-            <button 
-              disabled={syncing}
-              onClick={handleSync}
-              className="flex items-center gap-2 bg-muted text-primary px-4 py-2 rounded-xl text-sm font-bold hover:bg-muted-foreground/10 transition-all border border-border"
-            >
-              <RefreshCw size={16} className={syncing ? 'animate-spin' : ''} /> 
-              {syncing ? 'Sincronizando...' : 'Sincronizar XML'}
-            </button>
-            <Link 
-              href="/crmhabita/imoveis/novo"
-              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary-light transition-all shadow-premium"
-            >
-              <Plus size={16} /> Novo Imóvel
-            </Link>
-          </div>
-        </div>
-
-        {/* Filters and Search */}
-        <div className="flex flex-wrap items-center gap-4 bg-white p-4 rounded-2xl shadow-premium border border-border">
-          <div className="flex-1 min-w-[240px] flex items-center gap-3 px-4 py-2 bg-muted/50 rounded-xl border border-transparent focus-within:border-primary/20 transition-all">
-            <Search className="text-muted-foreground" size={18} />
-            <input 
-              type="text" 
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Buscar por título, endereço ou código..."
-              className="w-full bg-transparent border-none focus:outline-none text-sm"
-            />
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <select
-              value={patternFilter}
-              onChange={e => setPatternFilter(e.target.value)}
-              className="bg-white border border-border px-3 py-1.5 rounded-lg text-xs font-bold text-muted-foreground outline-none focus:border-primary/30"
-            >
-              <option value="">Padrão (todos)</option>
-              <option value="high_end">Alto Padrão</option>
-              <option value="medium">Médio</option>
-              <option value="economic">Econômico</option>
-            </select>
-            <select
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-              className="bg-white border border-border px-3 py-1.5 rounded-lg text-xs font-bold text-muted-foreground outline-none focus:border-primary/30"
-            >
-              <option value="">Status (todos)</option>
-              <option value="available">Disponível</option>
-              <option value="reserved">Reservado</option>
-              <option value="sold">Vendido</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Properties Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filtered.length > 0 ? (
-            filtered.map(property => (
-              <PropertyCard key={property.id} property={property} />
-            ))
-          ) : !loading && (
-            <div className="col-span-full py-20 text-center bg-white rounded-3xl border-2 border-dashed border-border">
-              <p className="text-muted-foreground font-medium">
-                {search || patternFilter || statusFilter
-                  ? 'Nenhum imóvel encontrado para os filtros aplicados.'
-                  : 'Nenhum imóvel cadastrado ainda.'}
-              </p>
+      <div className="h-[calc(100vh-100px)] flex flex-col bg-white overflow-hidden rounded-[2.5rem] shadow-premium">
+        {/* Header Section */}
+        <header className="p-6 border-b border-border bg-white z-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+            <div>
+              <h1 className="text-3xl font-black text-primary tracking-tight">Gestão de Imóveis</h1>
+              <p className="text-muted-foreground text-xs font-medium">Portfólio atualizado: {properties.length} ativos</p>
             </div>
-          )}
+            <div className="flex items-center gap-3">
+               <button 
+                disabled={syncing}
+                onClick={handleSync}
+                className="flex items-center gap-2 bg-muted/50 text-primary px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-muted transition-all border border-border"
+              >
+                <RefreshCw size={14} className={syncing ? 'animate-spin' : ''} /> 
+                {syncing ? 'Sincronizando...' : 'Sincronizar XML'}
+              </button>
+              <Link 
+                href="/crmhabita/imoveis/novo"
+                className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary/20"
+              >
+                <Plus size={14} /> Novo Imóvel
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Search Pill */}
+            <div className="flex items-center gap-3 px-5 py-2 bg-muted/30 rounded-full border border-border/50 focus-within:border-primary/40 transition-all flex-1 min-w-[280px]">
+              <Search className="text-primary/30" size={16} />
+              <input 
+                type="text" 
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Buscar por título, endereço ou código..."
+                className="bg-transparent border-none focus:outline-none text-sm font-bold text-primary placeholder:text-muted-foreground/40 w-full"
+              />
+            </div>
+            
+            <FilterPill label="Padrão" value={patternFilter} onChange={setPatternFilter} options={[
+              { label: 'Todos', value: '' },
+              { label: 'Alto Padrão', value: 'high_end' },
+              { label: 'Médio', value: 'medium' },
+              { label: 'Econômico', value: 'economic' }
+            ]} />
+
+            <FilterPill label="Status" value={statusFilter} onChange={setStatusFilter} options={[
+              { label: 'Todos', value: '' },
+              { label: 'Disponível', value: 'available' },
+              { label: 'Reservado', value: 'reserved' },
+              { label: 'Vendido', value: 'sold' }
+            ]} />
+          </div>
+        </header>
+
+        {/* Split View Content */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* List Section */}
+          <section className="w-full md:w-[60%] lg:w-[50%] overflow-y-auto p-6 scrollbar-hide bg-white">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {filtered.length > 0 ? (
+                filtered.map(property => (
+                  <PropertyCard key={property.id} property={property} />
+                ))
+              ) : !loading && (
+                <div className="col-span-full py-20 text-center bg-muted/5 rounded-[2rem] border-2 border-dashed border-border/20 flex flex-col items-center justify-center">
+                  <Search size={40} className="text-muted-foreground/10 mb-4" />
+                  <p className="text-sm font-bold text-muted-foreground/60">Nenhum imóvel encontrado.</p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Map Section */}
+          <section className="hidden md:block flex-1 bg-muted/10 relative">
+             <div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/light-v10/static/-46.6333,-23.5505,12/800x800?access_token=pk.xxx')] bg-cover bg-center">
+                <div className="absolute inset-0 bg-primary/5 backdrop-grayscale-[0.2]" />
+                
+                {/* Mock Markers */}
+                <div className="absolute top-[45%] left-[50%] animate-pulse">
+                   <div className="bg-primary w-4 h-4 rounded-full border-2 border-white shadow-xl" />
+                </div>
+                
+                <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-border/40">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Visualização Geográfica</p>
+                   <p className="text-xs text-muted-foreground font-medium italic">O mapa ajuda você a organizar rotas de visita para seus leads.</p>
+                </div>
+             </div>
+          </section>
         </div>
       </div>
     </DashboardLayout>
   );
 }
 
-const PropertyCard = ({ property }: { property: any }) => (
-  <Link href={`/crmhabita/imoveis/${property.id}`} className="group">
-    <div className="bg-white rounded-3xl overflow-hidden shadow-premium border border-border group-hover:border-primary/20 transition-all">
-      {/* Image Placeholder */}
-      <div className="relative aspect-[4/3] bg-muted flex items-center justify-center overflow-hidden">
-        {property.pattern === 'high_end' && (
-          <span className="absolute top-4 left-4 z-10 bg-luxury-gold text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full shadow-lg">
-            Alto Padrão
-          </span>
-        )}
-        <span className={`absolute top-4 right-4 z-10 text-[10px] font-bold uppercase px-2 py-1 rounded-full shadow-md ${
-          property.status === 'available' ? 'bg-green-500 text-white' : 'bg-accent text-white'
-        }`}>
-          {property.status}
-        </span>
-        <div className="w-full h-full bg-primary/5 group-hover:scale-110 transition-transform duration-500">
-          {(property.main_image || (property.images && property.images.length > 0)) ? (
-            <img 
-              src={property.main_image || property.images[0]} 
-              alt={property.title}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <MapPin className="text-primary/10" size={48} />
-            </div>
-          )}
-        </div>
+const FilterPill = ({ label, value, onChange, options }: any) => (
+  <div className="relative group">
+    <select 
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      className={`
+        appearance-none pl-5 pr-10 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all border cursor-pointer
+        ${value ? 'bg-primary/5 text-primary border-primary/20' : 'bg-white text-primary/40 border-border hover:bg-muted/50'}
+      `}
+    >
+      <option value="" disabled>{label}</option>
+      {options.map((opt: any) => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+    <ChevronDown size={12} className="absolute right-4 top-1/2 -translate-y-1/2 text-primary/30 pointer-events-none" />
+  </div>
+);
+
+const PropertyCard = ({ property }: { property: any }) => {
+  const formattedPrice = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0
+  }).format(property.price);
+
+  return (
+    <Link href={`/crmhabita/imoveis/${property.id}`} className="group block bg-white border border-border/60 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
+      <div className="relative aspect-[1.5/1] overflow-hidden bg-muted">
+        <img 
+          src={property.main_image || property.images?.[0] || "/hero_luxury.png"} 
+          alt={property.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+        />
         
-        {/* Estimated Commission Overlay */}
-        <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md p-3 rounded-2xl flex justify-between items-center shadow-lg transform translate-y-2 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all">
-          <div>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase">Comissão Estimada</p>
-            <p className="text-sm font-black text-primary">R$ {(property.price * property.commission_estimated_percent / 100).toLocaleString()}</p>
-          </div>
-          <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
-            <TrendingUp size={14} />
-          </div>
+        {/* Status Badge */}
+        <div className="absolute top-3 left-3">
+          <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-sm border ${
+            property.status === 'available' ? 'bg-green-500 text-white border-green-400' : 'bg-accent text-white border-accent-light'
+          }`}>
+            {property.status}
+          </span>
+        </div>
+
+        {/* Commission Badge */}
+        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg shadow-lg border border-border/20 scale-90 group-hover:scale-100 transition-all">
+          <p className="text-[8px] font-black text-muted-foreground uppercase leading-none">Comissão</p>
+          <p className="text-xs font-black text-primary">R$ {(property.price * (property.commission_estimated_percent || 4) / 100).toLocaleString()}</p>
         </div>
       </div>
 
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-bold text-lg text-primary truncate flex-1">{property.title}</h3>
-          <p className="font-black text-primary ml-4">R$ {(property.price / 1000).toLocaleString()}k</p>
-        </div>
-        <p className="text-xs text-muted-foreground flex items-center gap-1 mb-4">
-          <MapPin size={12} /> {property.address_city}, {property.address_state}
+      <div className="p-4 space-y-2">
+        <h3 className="text-xs font-bold text-primary/80 line-clamp-1 group-hover:text-primary transition-colors">
+          {property.title}
+        </h3>
+        
+        <p className="text-lg font-black text-primary tracking-tight">
+          {formattedPrice}
         </p>
 
-        <div className="flex items-center gap-4 pt-4 border-t border-border">
-          <div className="flex items-center gap-1.5">
-            <BedDouble size={16} className="text-muted-foreground" />
-            <span className="text-xs font-bold">{property.metadata?.rooms || 0}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Square size={14} className="text-muted-foreground" />
-            <span className="text-xs font-bold">{property.metadata?.area || 0}m²</span>
-          </div>
-           <div className="flex items-center gap-1.5">
-            <Car size={16} className="text-muted-foreground" />
-            <span className="text-xs font-bold">{property.metadata?.parking || 0}</span>
-          </div>
-
-          <div className="ml-auto flex gap-2">
-            {property.accepts_financing && (
-              <div title="Aceita Financiamento" className="w-6 h-6 rounded-md bg-green-50 flex items-center justify-center text-green-600">
-                <DollarSign size={14} />
-              </div>
-            )}
-            {property.accepts_exchange && (
-              <div title="Aceita Permuta" className="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center text-blue-600">
-                <RefreshCw size={12} />
-              </div>
-            )}
-          </div>
+        <div className="flex items-center gap-3 pt-1 text-[11px] font-bold text-muted-foreground">
+          <div className="flex items-center gap-1"><BedDouble size={14} /> {property.rooms || 0}</div>
+          <div className="flex items-center gap-1"><Square size={12} /> {property.area_useful || 0}m²</div>
+          <div className="flex items-center gap-1"><Car size={14} /> {property.parking_spaces || 0}</div>
         </div>
+
+        <p className="text-[10px] text-muted-foreground font-medium truncate pt-1 flex items-center gap-1">
+          <MapPin size={10} className="text-accent" /> {property.address_neighborhood || 'Bairro'}, {property.address_city}
+        </p>
       </div>
-    </div>
-  </Link>
-);
+    </Link>
+  );
+};
+

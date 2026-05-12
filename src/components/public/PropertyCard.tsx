@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { BedDouble, Bath, Square, MapPin, ArrowUpRight } from 'lucide-react';
+import { BedDouble, Bath, Square, MapPin, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PropertyCardProps {
   id: string;
@@ -14,6 +14,8 @@ interface PropertyCardProps {
   imageUrl?: string;
   slug: string;
   type: string;
+  condoPrice?: number;
+  iptuPrice?: number;
 }
 
 export const PropertyCard = ({
@@ -27,7 +29,9 @@ export const PropertyCard = ({
   area,
   imageUrl,
   slug,
-  type
+  type,
+  condoPrice = 450,
+  iptuPrice = 120
 }: PropertyCardProps) => {
   const formattedPrice = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -35,68 +39,72 @@ export const PropertyCard = ({
     maximumFractionDigits: 0
   }).format(price);
 
+  const formattedCondo = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0
+  }).format(condoPrice + iptuPrice);
+
   return (
-    <Link href={`/imoveis/${city.toLowerCase()}/${slug}`} className="group block h-full">
-      <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-premium hover:shadow-luxury transition-all duration-500 flex flex-col h-full border border-border/40 group relative">
-        
-        {/* Image Section */}
-        <div className="relative aspect-[4/3] overflow-hidden">
+    <Link href={`/imoveis/${city.toLowerCase()}/${slug}`} className="group block bg-white border border-border/60 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300">
+      <div className="relative">
+        {/* Image Carousel Mockup */}
+        <div className="relative aspect-[1.4/1] overflow-hidden">
           <img 
             src={imageUrl || "/hero_luxury.png"} 
             alt={title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
           
-          {/* Status Badges */}
-          <div className="absolute top-5 left-5 flex flex-wrap gap-2">
-            <span className="bg-accent text-white text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-[0.2em] shadow-xl">
-              Novo
-            </span>
-            <span className="bg-white/90 backdrop-blur-md text-primary text-[9px] font-black px-4 py-2 rounded-full uppercase tracking-[0.2em] shadow-lg">
-              {type}
+          {/* Badge Anúncio Novo */}
+          <div className="absolute top-3 left-3">
+            <span className="bg-white text-primary text-[10px] font-bold px-3 py-1 rounded shadow-sm border border-border/20">
+              Anúncio novo
             </span>
           </div>
-          
-          <div className="absolute bottom-5 left-5">
-             <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl flex items-center gap-2 shadow-lg">
-                <MapPin size={12} className="text-accent" />
-                <span className="text-[10px] font-black text-primary uppercase tracking-widest">{neighborhood}</span>
-             </div>
+
+          {/* Heart Button */}
+          <button className="absolute top-3 right-3 w-8 h-8 bg-white/20 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-white hover:text-red-500 transition-all">
+            <Heart size={18} />
+          </button>
+
+          {/* Carousel Dots */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {[1, 2, 3, 4, 5].map(i => (
+              <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === 1 ? 'bg-white' : 'bg-white/40'}`} />
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Content Section - Portal Style */}
-        <div className="p-8 flex flex-col flex-1 space-y-6">
-          <div className="space-y-2">
-            <p className="text-3xl font-serif italic text-primary tracking-tighter">
-              {formattedPrice}
-            </p>
-            <h3 className="text-lg font-black text-primary leading-tight line-clamp-2 group-hover:text-accent transition-colors">
-              {title}
-            </h3>
-          </div>
+      <div className="p-4 space-y-2">
+        <div className="min-h-[3rem]">
+          <h3 className="text-sm font-medium text-primary/70 line-clamp-2 leading-snug">
+            {title}
+          </h3>
+        </div>
 
-          <div className="flex items-center justify-between py-6 border-y border-border/50">
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-lg font-black text-primary">{bedrooms}</span>
-              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Quartos</span>
-            </div>
-            <div className="w-px h-8 bg-border/50" />
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-lg font-black text-primary">{bathrooms}</span>
-              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Suítes</span>
-            </div>
-            <div className="w-px h-8 bg-border/50" />
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-lg font-black text-primary">{area}m²</span>
-              <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Área</span>
-            </div>
-          </div>
+        <div className="space-y-0.5">
+          <p className="text-xl font-bold text-primary tracking-tight">
+            {formattedPrice}
+          </p>
+          <p className="text-xs text-muted-foreground font-medium">
+            {formattedCondo} Condo. + IPTU
+          </p>
+        </div>
 
-          <div className="pt-2 flex items-center justify-between text-muted-foreground group-hover:text-primary transition-colors">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Ver detalhes</span>
-            <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-          </div>
+        <div className="flex items-center gap-2 pt-2 text-primary font-bold text-[13px]">
+          <span>{area} m²</span>
+          <span className="text-muted-foreground/30">•</span>
+          <span>{bedrooms} quartos</span>
+          <span className="text-muted-foreground/30">•</span>
+          <span>{bathrooms} vagas</span>
+        </div>
+
+        <div className="pt-1">
+          <p className="text-xs text-muted-foreground truncate font-medium">
+            {neighborhood}, {city}
+          </p>
         </div>
       </div>
     </Link>
