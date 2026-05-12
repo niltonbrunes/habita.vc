@@ -17,6 +17,7 @@ import {
 import { DashboardService, DashboardMetrics, RankingData } from '@/services/dashboard.service';
 import { Lead, Task } from '@/types/database';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function DashboardPage() {
   const { profile, user } = useAuth();
