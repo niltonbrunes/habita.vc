@@ -18,39 +18,6 @@ import { ImportService } from '@/services/import.service';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 
-export default function PropertiesPage() {
-  const { user } = useAuth();
-  const { properties, loading, refresh } = useProperties();
-  const [syncing, setSyncing] = React.useState(false);
-  const [search, setSearch] = React.useState('');
-  const [patternFilter, setPatternFilter] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState('');
-
-  const filtered = properties.filter(p => {
-    const q = search.toLowerCase();
-    const matchSearch = !q ||
-      (p.title ?? '').toLowerCase().includes(q) ||
-      (p.address_city ?? '').toLowerCase().includes(q) ||
-      (p.address_street ?? '').toLowerCase().includes(q);
-    const matchPattern = !patternFilter || p.pattern === patternFilter;
-    const matchStatus  = !statusFilter  || p.status  === statusFilter;
-    return matchSearch && matchPattern && matchStatus;
-  });
-
-  const handleSync = async () => {
-    if (!user) return;
-    try {
-      setSyncing(true);
-      const stats = await ImportService.importFromXml('https://api.urbs.com.br/Portal/chaves.ashx?uid=4395', user.id);
-      alert(`Sincronização concluída!\nImportados: ${stats.imported}\nPulados: ${stats.skipped}\nErros: ${stats.errors}`);
-      refresh();
-    } catch (err) {
-      alert('Erro ao sincronizar XML.');
-      console.error(err);
-    } finally {
-      setSyncing(false);
-    }
-  };
 
 export default function PropertiesPage() {
   const { user, profile } = useAuth();
