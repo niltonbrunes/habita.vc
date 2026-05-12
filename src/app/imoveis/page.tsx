@@ -200,38 +200,37 @@ export default function PublicPropertiesPage() {
         </section>
 
         {/* Right: Map View (Fixed) */}
-        <section className="hidden md:block flex-1 bg-[#e5e3df] relative map-container overflow-hidden">
-          {/* Mapa 2D Google Maps Style (Goiânia) */}
+        <section className="hidden md:block flex-1 bg-[#f0f0f0] relative map-container overflow-hidden">
+          {/* Mapa 2D de Goiânia (Versão Pública Segura) */}
           <div 
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0 bg-cover bg-center grayscale-[0.2] opacity-90"
             style={{ 
-              backgroundImage: `url('https://api.maptiler.com/static/styles/bright-v2/800x1000.png?key=get-your-own-key')`, // Estilo Bright/Light
-              opacity: 0.9
+              backgroundImage: `url('https://static-maps.yandex.ru/1.x/?ll=-49.2608,-16.6869&size=650,450&z=12&l=map&lang=pt_BR')`,
             }}
           >
-            {/* Camada de Interatividade e Marcadores Estilo Cluster (Imagem do Usuário) */}
+            {/* Camada de Marcadores com PREÇOS REAIS */}
             <div className="relative w-full h-full">
                {filteredProperties.length > 0 ? (
-                 filteredProperties.slice(0, 20).map((p, idx) => (
+                 filteredProperties.slice(0, 25).map((p) => (
                    <div 
                      key={p.id}
                      className="absolute transform -translate-x-1/2 -translate-y-1/2 group z-20"
                      style={{ 
-                       top: `${20 + (Math.random() * 65)}%`, 
-                       left: `${20 + (Math.random() * 65)}%` 
+                       top: `${15 + (Math.random() * 70)}%`, 
+                       left: `${15 + (Math.random() * 70)}%` 
                      }}
                    >
-                     {/* Marcador Circular Branco (Exatamente como na imagem do usuário) */}
-                     <div className="w-10 h-10 bg-white text-primary text-sm font-bold rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 flex items-center justify-center hover:scale-110 hover:shadow-2xl transition-all cursor-pointer">
-                        {/* Simular número de cluster ou apenas um ID visual para bater com a imagem */}
-                        {Math.floor(Math.random() * 20) + 1}
+                     {/* Marcador Circular Branco com PREÇO REAL */}
+                     <div className="px-3 py-2 bg-white text-primary text-[11px] font-black rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.15)] border border-gray-100 flex items-center justify-center hover:scale-110 hover:bg-primary hover:text-white transition-all cursor-pointer whitespace-nowrap min-w-[50px]">
+                        <span className="text-[8px] opacity-40 mr-0.5">R$</span>
+                        {(p.price / 1000).toLocaleString()}k
                      </div>
                    </div>
                  ))
                ) : (
                  <div className="absolute inset-0 flex items-center justify-center">
                     <p className="bg-white/95 px-8 py-4 rounded-full shadow-2xl text-[10px] font-black uppercase tracking-[0.2em] text-primary/30 border border-primary/5">
-                       Explorando Região...
+                       Localizando Imóveis...
                     </p>
                  </div>
                )}
