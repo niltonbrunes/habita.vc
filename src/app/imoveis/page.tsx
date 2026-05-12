@@ -33,15 +33,20 @@ export default function PublicPropertiesPage() {
 
   return (
     <div className="h-screen flex flex-col bg-white overflow-hidden relative">
-      {/* Estilo para corrigir os tiles do mapa que ficam brancos */}
       <style jsx global>{`
         .map-container img {
           max-width: none !important;
           max-height: none !important;
           background: transparent !important;
         }
+        /* Forçar a Navbar a não ser fixa nesta página para evitar conflitos */
+        nav.fixed {
+          position: relative !important;
+          height: 64px !important;
+        }
       `}</style>
 
+      {/* Navbar agora em fluxo normal */}
       <Navbar />
       
       {loading && (
@@ -53,8 +58,8 @@ export default function PublicPropertiesPage() {
         </div>
       )}
       
-      {/* Header Filters - Forçando margem fixa para ficar abaixo da Navbar (h-16 = 64px) */}
-      <header className="mt-16 border-b border-border bg-gray-50/50 z-[60] relative shadow-md">
+      {/* Header Filters - Agora naturalmente abaixo da Navbar */}
+      <header className="border-b border-border bg-gray-50/50 z-40 relative shadow-sm">
         <div className="px-6 py-4 flex flex-wrap items-center gap-3">
           {/* Search Input Pill */}
           <div className="flex items-center gap-3 px-6 py-2.5 bg-white rounded-full border border-primary/20 focus-within:border-primary transition-all min-w-[320px] shadow-sm">
@@ -155,7 +160,7 @@ export default function PublicPropertiesPage() {
         </div>
       </header>
 
-      {/* Main Content Split View - Alargando a lista para caber 3 cards */}
+      {/* Main Content Split View */}
       <div className="flex-1 flex overflow-hidden z-10">
         {/* Left: Property List */}
         <section className="w-full md:w-[65%] lg:w-[60%] xl:w-[55%] overflow-y-auto px-6 py-8 scrollbar-hide bg-white border-r border-border/50">
@@ -233,6 +238,7 @@ export default function PublicPropertiesPage() {
     </div>
   );
 }
+
 
 
 const FilterPill = ({ label, active = false }: { label: string, active?: boolean }) => (
