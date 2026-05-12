@@ -18,6 +18,8 @@ export default function PublicPropertiesPage() {
   const [bathroomsMin, setBathroomsMin] = useState<number | null>(null);
   const [parkingMin, setParkingMin] = useState<number | null>(null);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showMapMobile, setShowMapMobile] = useState(false);
+  const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(null);
 
   const filteredProperties = properties.filter(p => {
     const matchSearch = !searchTerm || 
