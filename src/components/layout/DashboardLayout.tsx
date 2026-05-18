@@ -19,7 +19,9 @@ import {
   Sparkles,
   Layers,
   Trophy,
-  Globe
+  Globe,
+  Menu,
+  X
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -37,18 +39,37 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
   const { profile, signOut, isRole } = useAuth();
   const { notifications, unreadCount, markAsRead } = useNotifications();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
   return (
     <div className={`flex h-screen ${isLuxury ? 'bg-black' : 'bg-muted/30'}`}>
-      {/* Sidebar - code below omitted for brevity but preserved */}
-      {/* Sidebar - code below omitted for brevity but preserved */}
-      <aside className={`w-60 flex flex-col shadow-2xl z-20 transition-all duration-500 border-r border-border/10 ${isLuxury ? 'bg-black' : 'bg-[#0f172a]'}`}>
-        <div className="p-8 flex items-center gap-3">
-          <div className="bg-accent p-2 rounded-xl shadow-lg shadow-accent/20">
-            <Home className="w-5 h-5 text-white" />
+      {/* Mobile Backdrop */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm transition-opacity"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`
+        fixed inset-y-0 left-0 z-50 w-60 flex flex-col shadow-2xl transition-transform duration-300
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:static lg:translate-x-0 lg:flex
+        border-r border-border/10
+        ${isLuxury ? 'bg-black' : 'bg-[#0f172a]'}
+      `}>
+        <div className="p-8 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-accent p-2 rounded-xl shadow-lg shadow-accent/20">
+              <Home className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-lg font-black tracking-tighter text-white">Habita<span className="text-accent">.vc</span></span>
           </div>
-          <span className="text-lg font-black tracking-tighter text-white">Habita<span className="text-accent">.vc</span></span>
+          <button className="lg:hidden text-white/50 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+            <X size={20} />
+          </button>
         </div>
 
         <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto scrollbar-hide">
@@ -87,11 +108,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col overflow-hidden">
-        <header className={`h-16 border-b flex items-center justify-between px-8 z-50 transition-colors duration-500 ${isLuxury ? 'bg-black/80 backdrop-blur-md border-white/10' : 'bg-white border-border'}`}>
-          <div className="flex items-center gap-4 flex-1">
-            <h2 className={`text-lg font-bold ${isLuxury ? 'text-white' : 'text-primary'}`}>
-              {isRole(['director', 'manager']) ? 'Painel de Gestão' : 'Dashboard Corretor'}
+      <main className="flex-1 flex flex-col overflow-hidden w-full relative">
+        <header className={`h-16 border-b flex items-center justify-between px-4 lg:px-8 z-30 transition-colors duration-500 ${isLuxury ? 'bg-black/80 backdrop-blur-md border-white/10' : 'bg-white border-border'}`}>
+          <div className="flex items-center gap-3 lg:gap-4 flex-1">
+            <button 
+              className="lg:hidden p-1 -ml-1"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu size={24} className={isLuxury ? 'text-white' : 'text-primary'} />
+            </button>
+            <h2 className={`text-sm md:text-lg font-bold truncate ${isLuxury ? 'text-white' : 'text-primary'}`}>
+              {isRole(['director', 'manager']) ? 'Painel Gestão' : 'Dashboard Corretor'}
             </h2>
             {actions && (
               <div className="hidden md:flex items-center gap-2 ml-4 px-4 border-l border-border/50 h-8">
@@ -104,14 +131,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
             <div 
               onClick={toggleLuxury}
               className={`
-                flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all border group
+                hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all border group
                 ${isLuxury 
                   ? 'bg-accent text-white border-accent shadow-[0_0_15px_rgba(217,119,6,0.4)]' 
                   : 'bg-luxury-gold/10 text-luxury-gold border-luxury-gold/20 hover:bg-luxury-gold/20'}
               `}
             >
               <Crown size={16} className={`group-hover:scale-110 transition-transform ${isLuxury ? 'fill-white' : ''}`} />
-              <span className="text-xs font-bold uppercase tracking-wider">Modo Alto Padrão</span>
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">Modo Premium</span>
             </div>
             
             <div className="relative">
@@ -155,7 +182,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
         </header>
 
         {/* Scrollable Area */}
-        <div className="flex-1 overflow-y-auto p-8">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-8">
           {children}
         </div>
       </main>
