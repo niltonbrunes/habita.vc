@@ -173,34 +173,27 @@ export default function DashboardPage() {
                   Ver Funil Completo <ChevronRight size={14} />
                 </button>
               </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] border-b border-border">
-                      <th className="pb-6">Lead</th>
-                      <th className="pb-6">Estágio</th>
-                      <th className="pb-6">Score</th>
-                      <th className="pb-6 text-right">Ação</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/50">
-                    {loading ? (
-                      [1, 2, 3].map(i => (
-                        <tr key={i} className="animate-pulse">
-                          <td colSpan={4} className="py-6"><div className="h-10 bg-muted/50 rounded-xl w-full" /></td>
-                        </tr>
-                      ))
-                    ) : hotLeads.length > 0 ? (
-                      hotLeads.map(lead => (
-                        <LeadRow key={lead.id} name={lead.person?.name || lead.name} stage={lead.status} score={lead.score} id={lead.id} />
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan={4} className="py-12 text-center text-sm font-bold text-muted-foreground">Sem leads quentes no momento.</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+              <div className="space-y-4 mt-8">
+                <div className="hidden md:grid grid-cols-4 px-6 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-2">
+                  <div>Lead</div>
+                  <div>Estágio</div>
+                  <div>Score</div>
+                  <div className="text-right">Ação</div>
+                </div>
+                
+                {loading ? (
+                  [1, 2, 3].map(i => (
+                    <div key={i} className="animate-pulse h-24 bg-muted/50 rounded-[1.5rem] w-full" />
+                  ))
+                ) : hotLeads.length > 0 ? (
+                  hotLeads.map(lead => (
+                    <LeadRow key={lead.id} name={lead.person?.name || lead.name} stage={lead.status} score={lead.score} id={lead.id} />
+                  ))
+                ) : (
+                  <div className="py-12 text-center border-2 border-dashed border-border/20 rounded-[2rem]">
+                    <p className="text-sm font-bold text-muted-foreground">Sem leads quentes no momento.</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -229,7 +222,7 @@ export default function DashboardPage() {
               <div className="absolute top-[-20%] right-[-20%] w-64 h-64 bg-accent/20 rounded-full blur-[80px] group-hover:bg-accent/30 transition-all duration-700" />
             </div>
 
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-transparent">
+            <div className="bg-card p-10 rounded-[2.5rem] shadow-premium border border-border/50">
               <h3 className="text-lg font-black text-primary mb-8">Ranking Mensal VGV</h3>
               <div className="space-y-2">
                 {loading ? (
@@ -295,26 +288,26 @@ const ActionItem = ({ title, desc, status }: any) => (
 );
 
 const LeadRow = ({ name, stage, score, id }: any) => (
-  <Link href={`/crmhabita/leads/${id}`} className="contents">
-    <tr className="hover:bg-muted/20 transition-all group cursor-pointer">
-      <td className="py-8 px-2 font-black text-base text-primary">{name}</td>
-      <td className="py-8 px-2">
+  <Link href={`/crmhabita/leads/${id}`} className="block">
+    <div className="grid grid-cols-2 md:grid-cols-4 items-center gap-4 bg-muted/30 hover:bg-card border border-transparent hover:border-border/50 p-6 rounded-[1.5rem] transition-all duration-300 group hover:shadow-xl cursor-pointer">
+      <div className="font-black text-base text-primary">{name}</div>
+      <div>
         <span className="text-[10px] font-black bg-primary/5 text-primary px-3 py-1.5 rounded-full uppercase tracking-widest">{stage}</span>
-      </td>
-      <td className="py-8 px-2">
+      </div>
+      <div>
         <div className="flex items-center gap-3">
           <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
             <div className={`h-full rounded-full ${score > 80 ? 'bg-green-500' : 'bg-accent'}`} style={{ width: `${score}%` }} />
           </div>
           <span className="text-xs font-black text-primary">{score}%</span>
         </div>
-      </td>
-      <td className="py-8 px-2 text-right">
+      </div>
+      <div className="text-right hidden md:block">
         <div className="p-3 bg-muted/50 group-hover:bg-primary group-hover:text-white rounded-xl transition-all shadow-sm inline-block">
           <ArrowUpRight size={18} />
         </div>
-      </td>
-    </tr>
+      </div>
+    </div>
   </Link>
 );
 

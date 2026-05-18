@@ -43,7 +43,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
   const pathname = usePathname();
 
   return (
-    <div className={`flex h-screen ${isLuxury ? 'bg-black' : 'bg-muted/30'}`}>
+    <div className={`flex h-screen bg-background font-sans transition-colors duration-500 ${isLuxury ? 'luxury-mode' : ''}`}>
       {/* Mobile Backdrop */}
       {isMobileMenuOpen && (
         <div 
