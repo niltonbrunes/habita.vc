@@ -207,7 +207,7 @@ export function FunnelSimulator() {
           </div>
 
           {/* Meta Diária Card */}
-          <div className="absolute top-10 right-0 bg-white border-2 border-accent p-6 rounded-3xl shadow-2xl rotate-3 hover:rotate-0 transition-all duration-500 max-w-[180px]">
+          <div className="lg:absolute lg:top-20 lg:-right-4 xl:-right-12 mt-8 lg:mt-0 bg-white border-2 border-accent p-6 rounded-3xl shadow-2xl lg:rotate-3 hover:rotate-0 transition-all duration-500 max-w-[180px] z-20 mx-auto w-full text-center lg:text-left">
              <p className="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Ação Requerida</p>
              <p className="text-3xl font-black text-primary">{dailyLeadGoal}</p>
              <p className="text-xs font-bold text-muted-foreground leading-tight mt-1">contatos novos por dia útil</p>
@@ -238,7 +238,7 @@ const InputGroup = ({ label, value, onChange, icon, prefix }: InputGroupProps) =
         type="number" 
         value={value} 
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
-        className={`w-full bg-muted/30 border border-transparent focus:border-accent/30 focus:bg-white rounded-2xl py-4 ${prefix ? 'pl-16' : 'pl-12'} pr-4 text-sm font-bold text-primary transition-all outline-none`}
+        className={`w-full bg-muted/30 border border-transparent focus:border-accent/30 focus:bg-white rounded-2xl py-4 ${prefix ? 'pl-20' : 'pl-12'} pr-4 text-sm font-bold text-primary transition-all outline-none`}
       />
     </div>
   </div>
