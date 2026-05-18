@@ -54,20 +54,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-60 flex flex-col shadow-2xl transition-transform duration-300
+        fixed inset-y-0 left-0 z-50 w-60 flex flex-col shadow-[20px_0_40px_-15px_rgba(0,0,0,0.05)] transition-transform duration-300
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:static lg:translate-x-0 lg:flex
-        border-r border-border/10
-        ${isLuxury ? 'bg-black' : 'bg-[#0f172a]'}
+        bg-card border-r border-border
       `}>
         <div className="p-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-accent p-2 rounded-xl shadow-lg shadow-accent/20">
               <Home className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-black tracking-tighter text-white">Habita<span className="text-accent">.vc</span></span>
+            <span className="text-lg font-black tracking-tighter text-primary">Habita<span className="text-accent">.vc</span></span>
           </div>
-          <button className="lg:hidden text-white/50 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
+          <button className="lg:hidden text-muted-foreground hover:text-primary" onClick={() => setIsMobileMenuOpen(false)}>
             <X size={20} />
           </button>
         </div>
@@ -91,17 +90,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
         </nav>
 
         <div className="p-6">
-          <div className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-white/10 transition-all cursor-pointer">
+          <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-2xl border border-border group hover:bg-muted transition-all cursor-pointer">
             <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center font-black text-white shadow-lg">
               {profile?.full_name?.substring(0, 2) || 'HB'}
             </div>
             <div className="flex-1 overflow-hidden">
-              <p className="text-xs font-black truncate text-white">{profile?.full_name || 'Carregando...'}</p>
-              <p className="text-[9px] text-white/30 font-bold uppercase tracking-widest truncate">{profile?.role || 'Corretor'}</p>
+              <p className="text-xs font-black truncate text-primary">{profile?.full_name || 'Carregando...'}</p>
+              <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest truncate">{profile?.role || 'Corretor'}</p>
             </div>
             <LogOut 
               size={14} 
-              className="text-white/20 cursor-pointer hover:text-red-400 transition-colors" 
+              className="text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" 
               onClick={() => signOut()}
             />
           </div>
@@ -109,15 +108,15 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
       </aside>
 
       <main className="flex-1 flex flex-col overflow-hidden w-full relative">
-        <header className={`h-16 border-b flex items-center justify-between px-4 lg:px-8 z-30 transition-colors duration-500 ${isLuxury ? 'bg-black/80 backdrop-blur-md border-white/10' : 'bg-white border-border'}`}>
+        <header className="h-16 border-b border-border flex items-center justify-between px-4 lg:px-8 z-30 transition-colors duration-500 bg-card/80 backdrop-blur-md">
           <div className="flex items-center gap-3 lg:gap-4 flex-1">
             <button 
-              className="lg:hidden p-1 -ml-1"
+              className="lg:hidden p-1 -ml-1 text-primary hover:text-accent"
               onClick={() => setIsMobileMenuOpen(true)}
             >
-              <Menu size={24} className={isLuxury ? 'text-white' : 'text-primary'} />
+              <Menu size={24} />
             </button>
-            <h2 className={`text-sm md:text-lg font-bold truncate ${isLuxury ? 'text-white' : 'text-primary'}`}>
+            <h2 className="text-sm md:text-lg font-bold truncate text-primary">
               {isRole(['director', 'manager']) ? 'Painel Gestão' : 'Dashboard Corretor'}
             </h2>
             {actions && (
@@ -197,7 +196,7 @@ const SidebarItem = ({ icon, label, href, active = false }: { icon: React.ReactN
       flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all
       ${active 
         ? 'bg-accent text-white shadow-lg' 
-        : 'text-white/70 hover:bg-white/10 hover:text-white'}
+        : 'text-muted-foreground hover:bg-muted hover:text-primary'}
     `}
   >
     {icon}

@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  /* Habita.vc Core Palette */
-  --primary: #1a3c34;
-  --primary-light: #2d5a4e;
-  --accent: #d97706;
+  /* Habita.vc Core Palette - Refined for Soft Light Mode */
+  --primary: #1e293b; /* Deep Slate instead of harsh dark green */
+  --primary-light: #334155;
+  --accent: #d97706; /* Gold/Amber */
   --accent-light: #f59e0b;
-  --background: #fdfdfd;
-  --foreground: #1e293b;
+  --background: #f8fafc; /* Very soft slate background to make white cards pop */
+  --foreground: #0f172a;
   --card: #ffffff;
-  --card-foreground: #1e293b;
+  --card-foreground: #0f172a;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
   --border: #e2e8f0;
   
-  /* High-End Mode (Luxury) - Initial variables */
-  --luxury-gold: #c5a059;
-  --luxury-black: #0f172a;
+  /* High-End Mode (Luxury/Dark) - Initial variables */
+  --luxury-gold: #D4AF37; /* Brighter, classic luxury gold */
+  --luxury-black: #050505; /* Obsidian */
 }
 
 @theme inline {
@@ -58,11 +58,21 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.025em;
 }
 
-/* Glassmorphism utility */
+/* Glassmorphism utility - Enhanced */
 .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+}
+
+.glass-dark {
+  background: rgba(5, 5, 5, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
 /* Luxury Mode Transitions */
@@ -71,18 +81,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .luxury-mode {
-  --background: #050505;
+  --background: #050505; /* Obsidian Black */
   --foreground: #f8fafc;
   --primary: #0a0a0a;
   --primary-light: #171717;
-  --accent: #c5a059;
-  --accent-light: #d4af37;
-  --muted: #0f172a;
+  --accent: #D4AF37; /* Brighter gold */
+  --accent-light: #fcd34d;
+  --muted: #111111;
   --muted-foreground: #94a3b8;
-  --border: #1e293b;
+  --border: #1e1e1e;
   --card: #0c0c0c;
   --shadow-premium: 0 20px 40px -15px rgba(0, 0, 0, 0.8);
-  --shadow-luxury: 0 0 50px -12px rgba(197, 160, 89, 0.15);
+  --shadow-luxury: 0 0 50px -12px rgba(212, 175, 55, 0.15); /* Match new gold */
 }
 
 .luxury-mode body {

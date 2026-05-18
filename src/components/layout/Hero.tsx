@@ -21,11 +21,12 @@ export const Hero = () => {
   };
 
   return (
-    <section className="relative min-h-[85vh] lg:min-h-screen flex items-center pt-20 pb-20 bg-[#fdfdfc] overflow-x-hidden">
-      {/* Background - Soft Dynamic Mosaic Pattern */}
-      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
-      <div className="absolute top-0 right-0 w-[40%] h-full bg-[#f8f8f5] -z-10 hidden lg:block" />
-      <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[50%] bg-accent/5 rounded-full blur-[120px] -z-10" />
+    <section className="relative min-h-[85vh] lg:min-h-screen flex items-center pt-20 pb-20 overflow-x-hidden">
+      {/* Background Image with Dark Gradient Mask */}
+      <div className="absolute inset-0 z-0">
+        <img src="/hero_luxury.png" alt="Luxury Real Estate" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-black/40" />
+      </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-20">
         <div className="flex flex-col items-center text-center space-y-12 mb-16">
@@ -35,11 +36,11 @@ export const Hero = () => {
             transition={{ duration: 0.6 }}
             className="space-y-6 max-w-4xl"
           >
-            <h1 className="text-5xl md:text-8xl font-black text-primary leading-[0.95] tracking-tighter">
+            <h1 className="text-5xl md:text-8xl font-black text-white leading-[0.95] tracking-tighter drop-shadow-2xl">
               Encontre o seu <br />
               <span className="font-serif italic font-light text-accent">próximo momento.</span>
             </h1>
-            <p className="text-lg md:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-2xl text-white/80 font-medium max-w-2xl mx-auto leading-relaxed drop-shadow-md">
               Descubra as melhores casas, apartamentos e lançamentos em Goiânia com curadoria de especialistas.
             </p>
           </motion.div>
@@ -57,10 +58,10 @@ export const Hero = () => {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-8 py-3 rounded-t-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all ${
+                  className={`px-8 py-3 rounded-t-[1.5rem] text-[11px] font-black uppercase tracking-[0.2em] transition-all backdrop-blur-md ${
                     activeTab === tab 
-                    ? 'bg-white text-primary shadow-[-10px_-10px_30px_rgba(0,0,0,0.05)] border-t border-x border-border/40' 
-                    : 'text-muted-foreground/60 hover:text-primary'
+                    ? 'glass-dark text-white border-b-0 border-white/20' 
+                    : 'text-white/60 hover:text-white'
                   }`}
                 >
                   {tab}
@@ -68,8 +69,8 @@ export const Hero = () => {
               ))}
             </div>
 
-            {/* Search Bar - High Contrast & Premium */}
-            <div className="bg-white p-3 md:p-4 rounded-[2.5rem] md:rounded-full shadow-[0_30px_100px_-20px_rgba(0,0,0,0.12)] border border-border/40 flex flex-col md:flex-row items-center gap-2 group transition-all hover:border-accent/20">
+            {/* Search Bar - Glassmorphism */}
+            <div className="glass-dark p-3 md:p-4 rounded-[2.5rem] md:rounded-full shadow-luxury border-white/10 flex flex-col md:flex-row items-center gap-2 group transition-all hover:border-accent/40 relative z-20">
               <div className="flex-[1.8] flex items-center px-8 gap-4 w-full">
                 <Search className="text-accent shrink-0" size={24} />
                 <input 
@@ -78,16 +79,16 @@ export const Hero = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                   placeholder="Cidade, bairro ou condomínio" 
-                  className="w-full py-5 bg-transparent outline-none font-bold text-primary placeholder:text-muted-foreground/30 text-lg md:text-xl"
+                  className="w-full py-5 bg-transparent outline-none font-bold text-white placeholder:text-white/40 text-lg md:text-xl"
                 />
               </div>
-              <div className="hidden md:block w-px h-12 bg-border/60 mx-2" />
+              <div className="hidden md:block w-px h-12 bg-white/20 mx-2" />
               <div className="flex-1 flex items-center px-8 gap-4 w-full">
-                <MapPin className="text-accent/40" size={22} />
+                <MapPin className="text-accent/60" size={22} />
                 <select 
                   value={propertyType}
                   onChange={(e) => setPropertyType(e.target.value)}
-                  className="bg-transparent outline-none font-bold text-primary appearance-none cursor-pointer w-full text-lg"
+                  className="bg-transparent outline-none font-bold text-white appearance-none cursor-pointer w-full text-lg [&>option]:text-black"
                 >
                   <option>Tipo de imóvel</option>
                   <option>Apartamento</option>
@@ -96,15 +97,15 @@ export const Hero = () => {
                   <option>Lote</option>
                 </select>
               </div>
-              <div className="hidden md:block w-px h-12 bg-border/60 mx-2" />
+              <div className="hidden md:block w-px h-12 bg-white/20 mx-2" />
               <div className="flex-1 flex items-center px-8 gap-4 w-full">
-                <div className="bg-accent/10 p-2 rounded-lg">
+                <div className="bg-accent/20 p-2 rounded-lg">
                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
                 </div>
                 <select 
                   value={priceRange}
                   onChange={(e) => setPriceRange(e.target.value)}
-                  className="bg-transparent outline-none font-bold text-primary appearance-none cursor-pointer w-full text-lg"
+                  className="bg-transparent outline-none font-bold text-white appearance-none cursor-pointer w-full text-lg [&>option]:text-black"
                 >
                   <option>Faixa de Preço</option>
                   <option>Até R$ 500k</option>
@@ -124,10 +125,10 @@ export const Hero = () => {
         </div>
 
         {/* Quick Discovery Chips - Mobile Focus */}
-        <div className="flex flex-wrap justify-center gap-3 mt-8">
-          <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest w-full text-center mb-2">Bairros mais buscados</p>
+        <div className="flex flex-wrap justify-center gap-3 mt-8 relative z-20">
+          <p className="text-[10px] font-black text-white/40 uppercase tracking-widest w-full text-center mb-2">Bairros mais buscados</p>
           {['Setor Marista', 'Setor Bueno', 'Jardim Goiás', 'Alphaville', 'Setor Oeste'].map(chip => (
-            <button key={chip} className="px-5 py-2.5 bg-white border border-border/60 rounded-full text-[11px] font-bold text-primary hover:border-accent hover:text-accent transition-all shadow-sm">
+            <button key={chip} className="px-5 py-2.5 glass-dark text-white rounded-full text-[11px] font-bold hover:border-accent hover:text-accent transition-all shadow-sm">
               {chip}
             </button>
           ))}

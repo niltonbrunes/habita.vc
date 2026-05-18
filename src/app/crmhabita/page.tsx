@@ -77,7 +77,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button className="px-6 py-3 bg-white border border-border rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-muted/50 transition-all whitespace-nowrap">Relatórios</button>
+            <button className="px-6 py-3 bg-card border border-border/50 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-muted/50 transition-all whitespace-nowrap">Relatórios</button>
             <button className="px-6 py-3 bg-primary text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all whitespace-nowrap">Nova Venda</button>
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function DashboardPage() {
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Daily Action Plan */}
           <div className="lg:col-span-2 space-y-10">
-            <div className="bg-white p-10 rounded-[2.5rem] shadow-premium relative overflow-hidden">
+            <div className="bg-card border border-border/50 p-10 rounded-[2.5rem] shadow-premium relative overflow-hidden">
               <div className="flex justify-between items-center mb-10">
                 <div>
                   <h3 className="text-xl font-black text-primary flex items-center gap-3">
@@ -166,7 +166,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Recent Leads */}
-            <div className="bg-white p-10 rounded-[2.5rem] shadow-premium">
+            <div className="bg-card border border-border/50 p-10 rounded-[2.5rem] shadow-premium">
               <div className="flex justify-between items-center mb-10">
                 <h3 className="text-xl font-black text-primary">Leads Quentes (IA Score)</h3>
                 <button className="text-[10px] font-black text-primary uppercase tracking-widest flex items-center gap-2 hover:text-accent transition-all">
@@ -252,7 +252,7 @@ export default function DashboardPage() {
 }
 
 const StatCard = ({ title, value, subtext, icon, trend, progress, loading }: any) => (
-  <div className="bg-white p-8 rounded-[2.5rem] shadow-premium hover:translate-y-[-4px] transition-all duration-300 group">
+  <div className="bg-card border border-border/50 p-8 rounded-[2.5rem] shadow-premium hover:translate-y-[-4px] transition-all duration-300 group">
     {loading ? (
       <div className="animate-pulse space-y-4">
         <div className="flex justify-between items-start">
@@ -283,7 +283,7 @@ const StatCard = ({ title, value, subtext, icon, trend, progress, loading }: any
 );
 
 const ActionItem = ({ title, desc, status }: any) => (
-  <div className={`flex gap-6 p-6 rounded-[1.5rem] transition-all duration-300 ${status === 'done' ? 'bg-muted/30 opacity-40' : 'bg-muted/30 hover:bg-white hover:shadow-xl group'}`}>
+  <div className={`flex gap-6 p-6 rounded-[1.5rem] transition-all duration-300 ${status === 'done' ? 'bg-muted/30 opacity-40' : 'bg-muted/30 hover:bg-card hover:shadow-xl group border border-transparent hover:border-border/50'}`}>
     <div className={`mt-1 ${status === 'done' ? 'text-green-600' : 'text-primary/20 group-hover:text-accent transition-colors'}`}>
       <CheckCircle2 size={24} strokeWidth={3} />
     </div>

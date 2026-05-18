@@ -81,7 +81,7 @@ export function FunnelSimulator() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-12 bg-white rounded-[2.5rem] shadow-premium">
+      <div className="flex items-center justify-center p-12 bg-card rounded-[2.5rem] shadow-premium">
         <RefreshCcw className="animate-spin text-primary" size={32} />
       </div>
     );
@@ -92,7 +92,7 @@ export function FunnelSimulator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8 bg-white p-10 rounded-[2.5rem] shadow-premium">
+    <div className="grid lg:grid-cols-3 gap-8 bg-card p-10 rounded-[2.5rem] shadow-premium border border-border/50">
       {/* Coluna de Configuração */}
       <div className="space-y-8 border-r border-border pr-8">
         <div>
@@ -238,7 +238,7 @@ const InputGroup = ({ label, value, onChange, icon, prefix }: InputGroupProps) =
         type="number" 
         value={value} 
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
-        className={`w-full bg-muted/30 border border-transparent focus:border-accent/30 focus:bg-white rounded-2xl py-4 ${prefix ? 'pl-20' : 'pl-12'} pr-4 text-sm font-bold text-primary transition-all outline-none`}
+        className={`w-full bg-muted/50 border border-border/50 focus:border-accent/50 focus:bg-card rounded-2xl py-4 ${prefix ? 'pl-20' : 'pl-12'} pr-4 text-sm font-bold text-primary transition-all outline-none`}
       />
     </div>
   </div>
@@ -278,9 +278,9 @@ interface FunnelLayerProps {
 }
 
 const FunnelLayer = ({ label, value, color, width, icon, rate }: FunnelLayerProps) => (
-  <div className={`relative ${width} ${color} p-6 rounded-2xl flex items-center justify-between mb-4 border border-primary/5 group hover:border-accent/30 hover:shadow-lg transition-all duration-500 cursor-default overflow-hidden animate-in fade-in slide-in-from-bottom-4`}>
+  <div className={`relative ${width} ${color} p-6 rounded-[2rem] flex items-center justify-between mb-4 border border-border/50 group hover:border-accent/30 hover:shadow-lg transition-all duration-500 cursor-default overflow-hidden animate-in fade-in slide-in-from-bottom-4`}>
     <div className="flex items-center gap-4 relative z-10">
-      <div className="p-3 bg-white/50 rounded-xl group-hover:scale-110 transition-transform duration-500">
+      <div className="p-3 bg-card/80 backdrop-blur-sm rounded-xl group-hover:scale-110 transition-transform duration-500">
         {icon}
       </div>
       <div>

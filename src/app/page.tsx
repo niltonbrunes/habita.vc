@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white selection:bg-accent/20">
+    <div className="min-h-screen bg-[#050505] text-white selection:bg-accent/20">
       <Navbar />
       
       <main>
@@ -33,19 +33,19 @@ export default function Home() {
         <PropertyHighlights />
         
         {/* 3. LANÇAMENTOS (Seção de Novidades) */}
-        <section className="py-24 bg-[#fafafa] border-y border-border/40">
+        <section className="py-24 bg-[#0a0a0a] border-y border-white/10">
            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
                 <div className="max-w-2xl">
-                  <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-primary leading-none">
+                  <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter text-white leading-none">
                     Lançamentos <br />
                     <span className="text-accent italic font-serif font-light lowercase tracking-normal">Imperdíveis</span>
                   </h2>
-                  <p className="text-muted-foreground text-xl font-medium leading-relaxed">
+                  <p className="text-white/60 text-xl font-medium leading-relaxed">
                     As maiores oportunidades de investimento e moradia que acabaram de chegar ao mercado.
                   </p>
                 </div>
-                <button className="px-10 py-4 bg-white border-2 border-primary text-primary rounded-full font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm">
+                <button className="px-10 py-4 bg-transparent border-2 border-white/20 text-white rounded-full font-black text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all shadow-sm">
                   Explorar Lançamentos
                 </button>
               </div>
@@ -72,9 +72,9 @@ export default function Home() {
         <RegionSection />
 
         {/* 5. OPORTUNIDADES DO DIA (Layout Rápido) */}
-        <section className="py-24 bg-white">
+        <section className="py-24 bg-[#050505]">
            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="bg-primary rounded-[4rem] p-12 md:p-24 relative overflow-hidden">
+              <div className="bg-[#0a0a0a] border border-white/10 rounded-[4rem] p-12 md:p-24 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-accent/10 -z-0 rounded-l-full blur-3xl" />
                 <div className="relative z-10 grid lg:grid-cols-2 gap-20 items-center">
                   <div className="space-y-8">
@@ -99,11 +99,11 @@ export default function Home() {
         </section>
 
         {/* 6. CORRETORES VERIFICADOS (Credibilidade) */}
-        <section className="py-24 bg-white border-t border-border/40">
+        <section className="py-24 bg-[#0a0a0a] border-t border-white/10">
            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <div className="max-w-2xl mx-auto mb-16 space-y-4">
-                <h2 className="text-4xl font-black text-primary tracking-tighter">Corretores Verificados</h2>
-                <p className="text-muted-foreground font-medium">Os melhores especialistas do mercado imobiliário prontos para te atender.</p>
+                <h2 className="text-4xl font-black text-white tracking-tighter">Corretores Verificados</h2>
+                <p className="text-white/60 font-medium">Os melhores especialistas do mercado imobiliário prontos para te atender.</p>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
                 {[1,2,3,4,5,6].map(i => (
@@ -116,8 +116,8 @@ export default function Home() {
                       </div>
                     </div>
                     <div>
-                      <p className="font-black text-primary leading-none">Consultor {i}</p>
-                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1">Especialista Marista</p>
+                      <p className="font-black text-white leading-none">Consultor {i}</p>
+                      <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest mt-1">Especialista Marista</p>
                     </div>
                   </div>
                 ))}
@@ -148,18 +148,18 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="bg-[#f8f8f8] py-24 border-t border-border/40">
+      <footer className="bg-[#050505] py-24 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-20 mb-20">
             <div className="col-span-1 md:col-span-2 space-y-8">
-              <span className="text-4xl font-black text-primary tracking-tighter">Habita<span className="text-accent">.vc</span></span>
-              <p className="text-muted-foreground max-w-sm font-medium leading-relaxed text-lg">
+              <span className="text-4xl font-black text-white tracking-tighter">Habita<span className="text-accent">.vc</span></span>
+              <p className="text-white/60 max-w-sm font-medium leading-relaxed text-lg">
                 O marketplace imobiliário inteligente de Goiânia. Encontre casas, apartamentos e oportunidades únicas.
               </p>
             </div>
             <div>
-              <h4 className="font-black text-primary mb-8 uppercase tracking-[0.2em] text-[10px]">Portal</h4>
-              <ul className="space-y-5 text-muted-foreground text-sm font-bold">
+              <h4 className="font-black text-white/80 mb-8 uppercase tracking-[0.2em] text-[10px]">Portal</h4>
+              <ul className="space-y-5 text-white/60 text-sm font-bold">
                 <li><Link href="/imoveis" className="hover:text-accent transition-colors">Buscar Imóveis</Link></li>
                 <li><Link href="/empreendimentos" className="hover:text-accent transition-colors">Lançamentos</Link></li>
                 <li><Link href="/blog" className="hover:text-accent transition-colors">Blog Imobiliário</Link></li>
@@ -167,20 +167,20 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <h4 className="font-black text-primary mb-8 uppercase tracking-[0.2em] text-[10px]">Cidades</h4>
-              <ul className="space-y-5 text-muted-foreground text-sm font-bold">
-                <li>Goiânia</li>
+              <h4 className="font-black text-white/80 mb-8 uppercase tracking-[0.2em] text-[10px]">Cidades</h4>
+              <ul className="space-y-5 text-white/60 text-sm font-bold">
+                <li className="hover:text-accent transition-colors cursor-pointer">Goiânia</li>
                 <li>Aparecida de Goiânia</li>
                 <li>Anápolis</li>
                 <li>Senador Canedo</li>
               </ul>
             </div>
           </div>
-          <div className="pt-10 border-t border-border/60 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p className="text-[10px] font-black text-primary/30 uppercase tracking-[0.3em]">© 2026 Habita.vc • O Portal Imobiliário de Goiânia</p>
+          <div className="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">© 2026 Habita.vc • O Portal Imobiliário de Goiânia</p>
             <div className="flex gap-8">
                {['Instagram', 'LinkedIn', 'YouTube'].map(social => (
-                 <span key={social} className="text-[10px] font-black text-primary/40 uppercase tracking-widest cursor-pointer hover:text-accent transition-colors">{social}</span>
+                 <span key={social} className="text-[10px] font-black text-white/40 uppercase tracking-widest cursor-pointer hover:text-accent transition-colors">{social}</span>
                ))}
             </div>
           </div>
