@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-accent/20">
+    <div className="luxury-mode min-h-screen bg-background text-foreground selection:bg-accent/20">
       <Navbar />
       
       <main>
