@@ -64,15 +64,7 @@ export function FunnelSimulator() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-12 bg-white rounded-[2.5rem] shadow-premium">
-        <RefreshCcw className="animate-spin text-primary" size={32} />
-      </div>
-    );
-  }
-
-  // Hook de Cálculo
+  // Hook de Cálculo (Deve ficar antes de qualquer return condicional)
   const { 
     salesNeeded, 
     proposalsNeeded, 
@@ -86,6 +78,14 @@ export function FunnelSimulator() {
     presentationToProposal: rateApresToProp,
     proposalToSale: ratePropToSale
   });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-12 bg-white rounded-[2.5rem] shadow-premium">
+        <RefreshCcw className="animate-spin text-primary" size={32} />
+      </div>
+    );
+  }
 
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
