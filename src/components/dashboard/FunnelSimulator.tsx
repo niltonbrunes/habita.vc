@@ -14,8 +14,11 @@ import {
   Save
 } from 'lucide-react';
 import { useFunnelCalculator } from '@/hooks/useFunnelCalculator';
+import { useAuth } from '@/context/AuthContext';
+import { DashboardService } from '@/services/dashboard.service';
 
 export function FunnelSimulator() {
+  const { user } = useAuth();
   // Estados para os inputs (Personalizáveis por Corretor)
   const [goal, setGoal] = useState(3000000);
   const [ticket, setTicket] = useState(500000);
@@ -23,26 +26,51 @@ export function FunnelSimulator() {
   const [rateApresToProp, setRateApresToProp] = useState(0.30);
   const [ratePropToSale, setRatePropToSale] = useState(0.40);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Carregar dados salvos ao iniciar
   useEffect(() => {
-    const saved = localStorage.getItem('habita_funnel_config');
-    if (saved) {
-      const config = JSON.parse(saved);
-      setGoal(config.goal);
-      setTicket(config.ticket);
-      setRateCallToApres(config.rateCallToApres);
-      setRateApresToProp(config.rateApresToProp);
-      setRatePropToSale(config.ratePropToSale);
+    async function loadConfig() {
+      if (!user) return;
+      try {
+        setIsLoading(true);
+        const config = await DashboardService.getFunnelConfig(user.id);
+        if (config) {
+          setGoal(config.goal || 3000000);
+          setTicket(config.ticket || 500000);
+          setRateCallToApres(config.rateCallToApres || 0.20);
+          setRateApresToProp(config.rateApresToProp || 0.30);
+          setRatePropToSale(config.ratePropToSale || 0.40);
+        }
+      } catch (error) {
+        console.error('Error loading funnel config', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  }, []);
+    loadConfig();
+  }, [user]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (!user) return;
     setIsSaving(true);
-    const config = { goal, ticket, rateCallToApres, rateApresToProp, ratePropToSale };
-    localStorage.setItem('habita_funnel_config', JSON.stringify(config));
-    setTimeout(() => setIsSaving(false), 800);
+    try {
+      const config = { goal, ticket, rateCallToApres, rateApresToProp, ratePropToSale };
+      await DashboardService.saveFunnelConfig(user.id, config);
+    } catch (error) {
+      console.error('Error saving funnel config', error);
+    } finally {
+      setTimeout(() => setIsSaving(false), 800);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-12 bg-white rounded-[2.5rem] shadow-premium">
+        <RefreshCcw className="animate-spin text-primary" size={32} />
+      </div>
+    );
+  }
 
   // Hook de Cálculo
   const { 

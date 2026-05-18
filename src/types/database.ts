@@ -27,6 +27,7 @@ export interface Profile {
   creci?: string;
   status: 'active' | 'inactive';
   bio?: string;
+  funnel_config?: any;
   created_at: string;
 }
 

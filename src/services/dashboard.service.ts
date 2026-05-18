@@ -139,4 +139,31 @@ export class DashboardService {
 
     return data || [];
   }
+
+  static async getFunnelConfig(userId: string) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('funnel_config')
+      .eq('id', userId)
+      .single();
+    
+    if (error) {
+      console.error('Error fetching funnel config:', error);
+      return null;
+    }
+    return data?.funnel_config;
+  }
+
+  static async saveFunnelConfig(userId: string, config: any) {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ funnel_config: config })
+      .eq('id', userId);
+    
+    if (error) {
+      console.error('Error saving funnel config:', error);
+      return false;
+    }
+    return true;
+  }
 }
