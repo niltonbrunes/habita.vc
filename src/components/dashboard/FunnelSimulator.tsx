@@ -229,16 +229,14 @@ interface InputGroupProps {
 const InputGroup = ({ label, value, onChange, icon, prefix }: InputGroupProps) => (
   <div className="space-y-2">
     <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{label}</label>
-    <div className="relative group">
-      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-accent transition-colors">
-        {icon}
-      </div>
-      {prefix && <span className="absolute left-10 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground/50">{prefix}</span>}
+    <div className="flex items-center gap-3 bg-muted/50 border border-border/50 focus-within:border-accent/50 focus-within:bg-card rounded-2xl px-4 py-3 transition-all">
+      <div className="text-muted-foreground">{icon}</div>
+      {prefix && <span className="text-xs font-bold text-muted-foreground/80">{prefix}</span>}
       <input 
         type="number" 
         value={value} 
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
-        className={`w-full bg-muted/50 border border-border/50 focus:border-accent/50 focus:bg-card rounded-2xl py-4 ${prefix ? 'pl-20' : 'pl-12'} pr-4 text-sm font-bold text-primary transition-all outline-none`}
+        className="w-full bg-transparent text-sm font-bold text-primary outline-none"
       />
     </div>
   </div>
@@ -278,17 +276,17 @@ interface FunnelLayerProps {
 }
 
 const FunnelLayer = ({ label, value, color, width, icon, rate }: FunnelLayerProps) => (
-  <div className={`relative ${width} ${color} p-6 rounded-[2rem] flex items-center justify-between mb-4 border border-border/50 group hover:border-accent/30 hover:shadow-lg transition-all duration-500 cursor-default overflow-hidden animate-in fade-in slide-in-from-bottom-4`}>
-    <div className="flex items-center gap-4 relative z-10">
-      <div className="p-3 bg-card/80 backdrop-blur-sm rounded-xl group-hover:scale-110 transition-transform duration-500">
+  <div className={`relative ${width} ${color} py-4 px-5 sm:px-6 sm:py-5 rounded-[1.5rem] flex flex-col sm:flex-row items-center justify-between mb-4 border border-border/50 group hover:border-accent/30 hover:shadow-lg transition-all duration-500 cursor-default overflow-hidden gap-2`}>
+    <div className="flex items-center gap-4 relative z-10 w-full sm:w-auto text-left">
+      <div className="p-3 bg-card/80 backdrop-blur-sm rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-500">
         {icon}
       </div>
-      <div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{label}</p>
-        <p className="text-xl font-black text-primary">{value}</p>
+      <div className="min-w-0">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground truncate">{label}</p>
+        <p className="text-xl sm:text-2xl font-black text-primary">{value}</p>
       </div>
     </div>
-    <div className="text-right relative z-10">
+    <div className="text-right relative z-10 w-full sm:w-auto flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end">
       <p className="text-[10px] font-black uppercase tracking-widest text-accent">Taxa Próxima</p>
       <p className="text-lg font-black text-primary">{rate}</p>
     </div>

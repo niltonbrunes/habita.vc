@@ -57,15 +57,15 @@ export default function DevelopmentsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {developments.map((dev) => (
-            <div key={dev.id} className="group bg-white rounded-[2.5rem] shadow-premium border border-border overflow-hidden hover:shadow-luxury transition-all">
-              <div className="aspect-video relative overflow-hidden">
-                <img src={dev.image_url} alt={dev.name} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" />
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5 border border-white/20">
-                  <Building2 size={12} /> {dev.developer?.name}
+            <div key={dev.id} className="group bg-card rounded-[2.5rem] shadow-premium border border-border/50 overflow-hidden hover:shadow-luxury transition-all flex flex-col">
+              <div className="aspect-video relative overflow-hidden bg-muted flex items-center justify-center text-muted-foreground shrink-0">
+                <img src={dev.image_url} alt={dev.name} className="absolute inset-0 object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5 border border-border/50">
+                  <Building2 size={12} /> {dev.developer?.name || 'Construtora'}
                 </div>
               </div>
               
-              <div className="p-8 space-y-4">
+              <div className="p-8 space-y-4 flex-1">
                 <div>
                   <h3 className="text-xl font-bold text-primary mb-1">{dev.name}</h3>
                   <div className="flex items-center gap-1.5 text-muted-foreground">

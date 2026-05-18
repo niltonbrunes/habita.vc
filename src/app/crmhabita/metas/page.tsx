@@ -138,7 +138,7 @@ export default function TeamManagementPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Detailed Broker Ranking */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-8 min-w-0">
             <div className="bg-white rounded-[2.5rem] shadow-premium border border-border overflow-hidden">
               <div className="p-8 border-b border-border flex justify-between items-center bg-muted/10">
                 <h3 className="text-xl font-black text-primary uppercase tracking-tight">Ranking de Performance</h3>
@@ -274,7 +274,7 @@ export default function TeamManagementPage() {
 }
 
 const StatCard = ({ title, value, icon, trend, trendUp, subtitle }: any) => (
-  <div className="bg-white p-6 rounded-[2rem] shadow-premium border border-border hover:shadow-luxury transition-all group">
+  <div className="bg-card p-6 rounded-[1.5rem] shadow-premium border border-border/50 hover:shadow-luxury transition-all group flex flex-col justify-between min-h-[160px]">
     <div className="flex justify-between items-start mb-4">
       <div className="p-3 bg-muted/30 rounded-2xl group-hover:scale-110 transition-transform">
         {React.cloneElement(icon, { size: 24 })}

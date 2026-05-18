@@ -245,7 +245,7 @@ export default function DashboardPage() {
 }
 
 const StatCard = ({ title, value, subtext, icon, trend, progress, loading }: any) => (
-  <div className="bg-card border border-border/50 p-8 rounded-[2.5rem] shadow-premium hover:translate-y-[-4px] transition-all duration-300 group">
+  <div className="bg-card border border-border/50 p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] shadow-premium hover:translate-y-[-4px] transition-all duration-300 group flex flex-col justify-between min-h-[180px]">
     {loading ? (
       <div className="animate-pulse space-y-4">
         <div className="flex justify-between items-start">
