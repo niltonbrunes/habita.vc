@@ -24,7 +24,7 @@ export const PropertyHighlights = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
           <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-primary">
               Imóveis em <span className="text-accent">Destaque</span>
             </h2>
             <p className="text-muted-foreground text-lg">
