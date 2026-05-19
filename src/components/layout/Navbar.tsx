@@ -29,9 +29,9 @@ export const Navbar = () => {
             </button>
             <Link 
               href="/crmhabita" 
-              className="hidden sm:flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full text-sm font-semibold hover:bg-white/90 transition-all shadow-premium"
+              className="hidden sm:flex items-center gap-2 bg-white text-black px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-white/90 transition-all shadow-premium whitespace-nowrap shrink-0"
             >
-              <LayoutDashboard className="w-4 h-4" />
+              <LayoutDashboard className="w-4 h-4 shrink-0" />
               CRM Habita
             </Link>
             <button className="md:hidden p-2 text-white">
