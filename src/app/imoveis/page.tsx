@@ -186,7 +186,7 @@ export default function PublicPropertiesPage() {
       
       {/* Header Filters - Mobile Friendly Horizontal Scroll */}
       <header className="border-b border-border bg-white z-40 relative shadow-sm">
-        <div className="px-4 py-3 flex items-center gap-3 overflow-x-auto no-scrollbar scroll-smooth">
+        <div className="px-4 py-3 flex items-center gap-3 flex-wrap">
           {/* Search Input Pill - Resizes on mobile */}
           <div className="flex items-center gap-3 px-4 py-2 bg-muted/30 rounded-full border border-border/50 focus-within:border-primary/40 transition-all min-w-[200px] md:min-w-[320px]">
             <Search className="text-primary/40" size={16} />
@@ -199,12 +199,10 @@ export default function PublicPropertiesPage() {
             />
           </div>
 
-          {/* Filter Pills Carrousel */}
-          <div className="flex items-center gap-2">
+          {/* Filter Pills */}
+          <div className="flex items-center gap-2 flex-wrap">
             <div className="relative">
-              <div onClick={() => toggleFilter('type')}>
-                <FilterPill label={propertyType} active={propertyType !== 'Todos'} />
-              </div>
+              <FilterPill label={propertyType} active={propertyType !== 'Todos'} onClick={() => toggleFilter('type')} />
               {openFilter === 'type' && (
                 <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-border p-2 z-[70]">
                   {['Todos', 'Apartamento', 'Casa', 'Lote', 'Cobertura'].map(t => (
@@ -221,9 +219,7 @@ export default function PublicPropertiesPage() {
             </div>
 
             <div className="relative">
-              <div onClick={() => toggleFilter('price')}>
-                <FilterPill label={maxPrice ? `Até R$ ${maxPrice / 1000}k` : 'Preço'} active={!!maxPrice} />
-              </div>
+              <FilterPill label={maxPrice ? `Até R$ ${maxPrice / 1000}k` : 'Preço'} active={!!maxPrice} onClick={() => toggleFilter('price')} />
               {openFilter === 'price' && (
                 <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-border p-6 z-[70]">
                   <p className="text-[10px] font-black uppercase tracking-widest mb-4">Até quanto?</p>
@@ -251,9 +247,7 @@ export default function PublicPropertiesPage() {
             </div>
 
             <div className="relative">
-              <div onClick={() => toggleFilter('rooms')}>
-                <FilterPill label={roomsCount ? `${roomsCount}+ Qts` : 'Quartos'} active={!!roomsCount} />
-              </div>
+              <FilterPill label={roomsCount ? `${roomsCount}+ Quartos` : 'Quartos'} active={!!roomsCount} onClick={() => toggleFilter('rooms')} />
               {openFilter === 'rooms' && (
                 <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-border p-2 z-[70]">
                   {[null, 1, 2, 3, 4].map(r => (
@@ -373,8 +367,8 @@ export default function PublicPropertiesPage() {
 }
 
 
-const FilterPill = ({ label, active = false }: { label: string, active?: boolean }) => (
-  <button className={`
+const FilterPill = ({ label, active = false, onClick }: { label: string, active?: boolean, onClick?: () => void }) => (
+  <button onClick={onClick} className={`
     px-5 py-2.5 rounded-full text-sm font-bold transition-all border whitespace-nowrap flex items-center gap-2
     ${active 
       ? 'bg-primary text-white border-primary shadow-lg scale-[1.02]' 
