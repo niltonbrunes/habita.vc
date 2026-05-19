@@ -34,7 +34,7 @@ export default function PublicDevelopmentsPage() {
         </div>
       )}
 
-      <main className="pt-40 md:pt-48 pb-20 px-4 sm:px-8 max-w-7xl mx-auto w-full">
+      <main className="pb-20 px-4 sm:px-8 max-w-7xl mx-auto w-full" style={{ paddingTop: '160px' }}>
         <div className="text-center mb-20 space-y-4">
           <div className="inline-flex items-center gap-2 bg-primary/5 text-primary px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] animate-in fade-in duration-1000">
             <Star size={14} className="text-accent fill-accent" /> Lançamentos Exclusivos
@@ -51,8 +51,17 @@ export default function PublicDevelopmentsPage() {
           {developments.map((dev) => (
             <Link key={dev.id} href={`/empreendimentos/${dev.id}`} className="group block">
               <div className="bg-white rounded-[3rem] overflow-hidden shadow-premium hover:shadow-luxury border border-border transition-all duration-700">
-                <div className="relative aspect-[16/10] overflow-hidden bg-muted flex items-center justify-center text-muted-foreground shrink-0">
-                  <img src={dev.image_url} alt={dev.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                <div className="relative aspect-[16/10] overflow-hidden bg-muted flex flex-col items-center justify-center text-muted-foreground/30 shrink-0">
+                  <Building2 size={48} className="mb-2 opacity-50" />
+                  <span className="text-xs font-black uppercase tracking-widest opacity-50">Sem Imagem</span>
+                  <img 
+                    src={dev.image_url} 
+                    alt={dev.name} 
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 text-transparent" 
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10" />
                   <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2 shadow-lg border border-white/20 z-20">
                     <Building2 size={12} className="text-accent" /> {dev.developer?.name || 'Construtora'}
