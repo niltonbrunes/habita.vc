@@ -225,16 +225,27 @@ export default function PublicPropertyDetailSlugPage({ params }: { params: Promi
               {/* LOCATION */}
               <div className="space-y-6">
                 <h3 className="text-2xl font-black text-primary">Localização</h3>
-                <div className="w-full h-[300px] bg-muted/30 rounded-[2rem] border border-border flex items-center justify-center relative overflow-hidden">
-                   {/* Here we would put a real map if we had Google Maps API. For now, a stylized placeholder */}
-                   <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #000 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-                   <div className="text-center relative z-10 space-y-2">
-                     <div className="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-                        <MapPin size={32} className="text-accent" />
-                     </div>
-                     <p className="font-black text-primary text-xl">{property.address_neighborhood || property.address_city}</p>
-                     <p className="text-sm font-bold text-muted-foreground">{property.address_city} - {property.address_state}</p>
-                   </div>
+                <div className="w-full h-[400px] bg-muted/30 rounded-[2rem] border border-border relative overflow-hidden group">
+                  <iframe 
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(`${property.address_neighborhood || ''}, ${property.address_city}, ${property.address_state}`)}&t=&z=15&ie=UTF8&iwloc=&output=embed`} 
+                    width="100%" 
+                    height="100%" 
+                    frameBorder="0" 
+                    style={{ border: 0, filter: 'grayscale(0.2)' }} 
+                    allowFullScreen 
+                    className="absolute inset-0 transition-all duration-700 group-hover:scale-105"
+                  />
+                  
+                  {/* Floating Box with Address Info */}
+                  <div className="absolute bottom-6 left-6 right-6 md:right-auto bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-white/20 flex items-center gap-4 animate-in slide-in-from-bottom-4">
+                    <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center shrink-0">
+                      <MapPin size={24} className="text-accent" />
+                    </div>
+                    <div>
+                      <p className="font-black text-primary text-lg leading-tight">{property.address_neighborhood || 'Região Central'}</p>
+                      <p className="text-xs font-bold text-muted-foreground">{property.address_city} - {property.address_state}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
