@@ -34,7 +34,7 @@ export default function PublicDevelopmentsPage() {
         </div>
       )}
 
-      <main className="pb-20 px-4 sm:px-8 max-w-7xl mx-auto w-full" style={{ paddingTop: '120px' }}>
+      <main className="pb-20 px-4 sm:px-8 max-w-7xl mx-auto w-full" style={{ paddingTop: '90px' }}>
         <div className="text-center mb-20 space-y-4">
           <div className="inline-flex items-center gap-2 bg-primary/5 text-primary px-4 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] animate-in fade-in duration-1000">
             <Star size={14} className="text-accent fill-accent" /> Lançamentos Exclusivos
@@ -42,7 +42,7 @@ export default function PublicDevelopmentsPage() {
           <h1 className="text-5xl md:text-7xl font-black text-primary tracking-tighter leading-none">
             Futuros que inspiram.
           </h1>
-          <p className="text-muted-foreground text-xl max-w-2xl mx-auto font-medium text-center">
+          <p className="text-muted-foreground text-xl max-w-2xl mx-auto font-medium text-center" style={{ textAlign: 'center' }}>
             Explore os empreendimentos mais aguardados das melhores incorporadoras.
           </p>
         </div>
