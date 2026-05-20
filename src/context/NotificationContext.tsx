@@ -68,7 +68,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
         addNotification({
           id: Math.random().toString(),
           title: '💰 VENDA REALIZADA!',
-          message: `Um novo fechamento de R$ ${newSale.sale_price.toLocaleString()} acaba de acontecer!`,
+          message: `Um novo fechamento de R$ ${(newSale.total_price || newSale.sale_price || 0).toLocaleString()} acaba de acontecer!`,
           type: 'sale',
           created_at: new Date().toISOString(),
           read: false

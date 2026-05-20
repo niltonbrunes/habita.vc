@@ -36,12 +36,16 @@ export class DashboardService {
     // 2. Get Real Earnings from Sales this month
     const { data: sales } = await supabase
       .from('sales')
-      .select('broker_commission, sale_price')
+      .select('id, total_price, commissions(total_commission_value, split_details)')
       .eq('broker_id', userId)
       .gte('sale_date', firstDayOfMonth);
 
-    const realEarnings = sales?.reduce((acc, sale) => acc + (sale.broker_commission || 0), 0) || 0;
-    const currentVGV = sales?.reduce((acc, sale) => acc + (sale.sale_price || 0), 0) || 0;
+    const currentVGV = (sales as any)?.reduce((acc: number, sale: any) => acc + Number(sale.total_price || 0), 0) || 0;
+    const realEarnings = (sales as any)?.reduce((acc: number, sale: any) => {
+      const comm = sale.commissions && sale.commissions[0];
+      const brokerSplit = comm?.split_details?.find((p: any) => p.role === 'broker');
+      return acc + Number(brokerSplit?.value || 0);
+    }, 0) || 0;
 
     // 3. Get Active Leads
     const { count: activeLeads } = await supabase
@@ -97,7 +101,7 @@ export class DashboardService {
     const { data: sales } = await supabase
       .from('sales')
       .select(`
-        sale_price,
+        total_price,
         broker:profiles(full_name, id)
       `)
       .gte('sale_date', firstDayOfMonth);
@@ -112,7 +116,7 @@ export class DashboardService {
       if (!brokerSales[broker.id]) {
         brokerSales[broker.id] = { name: broker.full_name, total: 0 };
       }
-      brokerSales[broker.id].total += s.sale_price;
+      brokerSales[broker.id].total += Number(s.total_price || 0);
     });
 
     return Object.entries(brokerSales)

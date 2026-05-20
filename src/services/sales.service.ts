@@ -3,21 +3,52 @@ import { Sale } from '@/types/database';
 
 export const SalesService = {
   async getAll() {
-    const { data, error } = await supabase
+    const { data: sales, error: salesErr } = await supabase
       .from('sales')
       .select('*, leads(name), properties(title)')
       .order('sale_date', { ascending: false });
 
-    if (error) throw error;
-    return data;
+    if (salesErr) throw salesErr;
+
+    const { data: commissions } = await supabase
+      .from('commissions')
+      .select('*');
+
+    return (sales || []).map(s => {
+      const comm = commissions?.find(c => c.sale_id === s.id);
+      const brokerSplit = comm?.split_details?.find((p: any) => p.role === 'broker');
+      const managerSplit = comm?.split_details?.find((p: any) => p.role === 'manager');
+      const totalComm = Number(comm?.total_commission_value || 0);
+      const brokerComm = Number(brokerSplit?.value || 0);
+      const managerComm = Number(managerSplit?.value || 0);
+      
+      const brokerPercent = brokerSplit?.percent || 50;
+      const totalPercent = s.total_price > 0 ? (totalComm / Number(s.total_price)) * 100 : 5;
+
+      return {
+        ...s,
+        sale_price: Number(s.total_price || 0),
+        total_commission: totalComm,
+        broker_commission: brokerComm,
+        manager_commission: managerComm,
+        split_type: 'direct',
+        split_metadata: {
+          total_percent: totalPercent,
+          broker_percent: brokerPercent
+        }
+      };
+    });
   },
 
   async create(sale: Partial<Sale>) {
-    // 1. Create the sale record
+    // 1. Create the sale record in the database using exact database columns
     const { data: saleData, error: saleError } = await supabase
       .from('sales')
       .insert({
-        ...sale,
+        lead_id: sale.lead_id,
+        property_id: sale.property_id,
+        broker_id: sale.broker_id,
+        total_price: sale.sale_price || 0,
         sale_date: new Date().toISOString(),
       })
       .select()
@@ -25,7 +56,43 @@ export const SalesService = {
 
     if (saleError) throw saleError;
 
-    // 2. Update lead status to 'sale' and append to history safely
+    // 2. Create the commission and split details record
+    try {
+      const brokerPercent = sale.split_metadata?.broker_percent || 50;
+      const totalCommVal = sale.total_commission || 0;
+      const brokerCommVal = sale.broker_commission || 0;
+      const managerCommVal = sale.manager_commission || (totalCommVal - brokerCommVal);
+
+      const { error: commError } = await supabase
+        .from('commissions')
+        .insert({
+          sale_id: saleData.id,
+          total_commission_value: totalCommVal,
+          split_details: [
+            {
+              participant_id: sale.broker_id,
+              role: 'broker',
+              value: brokerCommVal,
+              percent: brokerPercent
+            },
+            {
+              participant_id: null,
+              role: 'manager',
+              value: managerCommVal,
+              percent: 100 - brokerPercent
+            }
+          ],
+          status: 'projected'
+        });
+
+      if (commError) {
+        console.error('Erro ao registrar comissão no banco de dados:', commError);
+      }
+    } catch (commErr) {
+      console.error('Erro ao processar objeto de comissão:', commErr);
+    }
+
+    // 3. Update lead status to 'sale' and append to history safely
     if (sale.lead_id) {
       try {
         const { data: leadData, error: leadError } = await supabase
@@ -63,6 +130,15 @@ export const SalesService = {
       }
     }
 
-    return saleData as Sale;
+    // Return the mapped Sale object format expected by the frontend
+    return {
+      ...saleData,
+      sale_price: Number(saleData.total_price || 0),
+      total_commission: sale.total_commission || 0,
+      broker_commission: sale.broker_commission || 0,
+      manager_commission: sale.manager_commission || 0,
+      split_type: 'direct',
+      split_metadata: sale.split_metadata
+    } as any;
   }
 };
