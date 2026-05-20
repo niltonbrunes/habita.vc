@@ -33,12 +33,28 @@ export default function SettingsPage() {
     if (!user || !profile) return;
     setSaving(true);
     try {
-      await ProfilesService.update(user.id, profile);
+      // Only send fields that are safe to update (avoid id, email, role, and complex objects)
+      const updatableFields: Record<string, any> = {
+        full_name: profile.full_name,
+        whatsapp: profile.whatsapp || null,
+        phone: profile.phone || null,
+        creci: profile.creci || null,
+        bio: profile.bio || null,
+        slug: profile.slug || null,
+        avatar_url: profile.avatar_url || null,
+        earnings_goal_monthly: profile.earnings_goal_monthly || 0,
+        avg_ticket: profile.avg_ticket || 0,
+        avg_commission_percent: profile.avg_commission_percent || 0,
+        focus: profile.focus || 'hybrid',
+        high_end_mode: profile.high_end_mode || false,
+      };
+      await ProfilesService.update(user.id, updatableFields);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao salvar perfil.');
+    } catch (err: any) {
+      console.error('Erro ao salvar perfil:', err);
+      const msg = err?.message || 'Erro desconhecido ao salvar.';
+      alert('Erro ao salvar perfil: ' + msg);
     } finally {
       setSaving(false);
     }
