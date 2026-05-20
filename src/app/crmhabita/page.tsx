@@ -19,6 +19,7 @@ import { Lead, Task } from '@/types/database';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FunnelSimulator } from '@/components/dashboard/FunnelSimulator';
+import { SaleModal } from '@/components/leads/SaleModal';
 
 export default function DashboardPage() {
   const { profile, user } = useAuth();
@@ -27,28 +28,30 @@ export default function DashboardPage() {
   const [ranking, setRanking] = useState<RankingData[]>([]);
   const [actions, setActions] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
+
+  const loadDashboardData = async () => {
+    if (!user) return;
+    try {
+      setLoading(true);
+      const [m, hl, r, a] = await Promise.all([
+        DashboardService.getMetrics(user.id),
+        DashboardService.getHotLeads(user.id),
+        DashboardService.getRanking(),
+        DashboardService.getDailyActions(user.id)
+      ]);
+      setMetrics(m);
+      setHotLeads(hl);
+      setRanking(r);
+      setActions(a);
+    } catch (error) {
+      console.error('Erro ao carregar dashboard:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function loadDashboardData() {
-      if (!user) return;
-      try {
-        setLoading(true);
-        const [m, hl, r, a] = await Promise.all([
-          DashboardService.getMetrics(user.id),
-          DashboardService.getHotLeads(user.id),
-          DashboardService.getRanking(),
-          DashboardService.getDailyActions(user.id)
-        ]);
-        setMetrics(m);
-        setHotLeads(hl);
-        setRanking(r);
-        setActions(a);
-      } catch (error) {
-        console.error('Erro ao carregar dashboard:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
     loadDashboardData();
   }, [user]);
 
@@ -78,7 +81,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-3">
             <button className="px-6 py-3 bg-card border border-border/50 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-muted/50 transition-all whitespace-nowrap">Relatórios</button>
-            <button className="px-6 py-3 bg-primary text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all whitespace-nowrap">Nova Venda</button>
+            <button onClick={() => setIsSaleModalOpen(true)} className="px-6 py-3 bg-primary text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all whitespace-nowrap">Nova Venda</button>
           </div>
         </div>
 
@@ -240,7 +243,12 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+      <SaleModal 
+          isOpen={isSaleModalOpen} 
+          onClose={() => setIsSaleModalOpen(false)} 
+          onSuccess={loadDashboardData} 
+        />
+      </DashboardLayout>
   );
 }
 
