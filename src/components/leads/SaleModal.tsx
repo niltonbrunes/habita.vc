@@ -25,6 +25,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
   const [peopleList, setPeopleList] = useState<Person[]>([]);
   const [propertiesList, setPropertiesList] = useState<Property[]>([]);
   const [selectedPersonId, setSelectedPersonId] = useState('');
+  const [error, setError] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     property_id: '',
@@ -43,6 +44,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
         broker_split_percent: 50,
       });
       setSelectedPersonId('');
+      setError(null);
     }
   }, [isOpen]);
 
@@ -53,6 +55,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
     async function loadInitialData() {
       try {
         setInitialLoading(true);
+        setError(null);
         
         // Load properties if not provided
         if (!properties) {
@@ -69,6 +72,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
         }
       } catch (err) {
         console.error('Erro ao carregar dados iniciais no SaleModal:', err);
+        setError('Falha ao carregar dados do formulário.');
       } finally {
         setInitialLoading(false);
       }
@@ -84,9 +88,17 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!lead && !selectedPersonId) return;
+    if (!lead && !selectedPersonId) {
+      setError('Selecione o cliente da venda.');
+      return;
+    }
+    if (!formData.property_id) {
+      setError('Selecione o imóvel vendido.');
+      return;
+    }
 
     setLoading(true);
+    setError(null);
     try {
       let activeLead: Lead | null = null;
 
@@ -102,7 +114,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
         } else {
           // If no lead exists for this person, dynamically create one
           const selectedPerson = peopleList.find(p => p.id === selectedPersonId);
-          if (!selectedPerson) throw new Error('Cliente selecionado não encontrado.');
+          if (!selectedPerson) throw new Error('Cliente selecionado não foi encontrado na base de dados.');
 
           const newLead = await LeadsService.create({
             name: selectedPerson.fantasy_name || selectedPerson.name || 'Sem nome',
@@ -118,7 +130,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
         }
       }
 
-      if (!activeLead) throw new Error('Não foi possível determinar ou criar o Lead para esta venda.');
+      if (!activeLead) throw new Error('Não foi possível determinar ou criar o Lead correspondente.');
 
       // 1. Criar o registro da venda
       await SalesService.create({
@@ -155,8 +167,9 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
 
       onSuccess();
       onClose();
-    } catch (error) {
-      console.error('Erro ao lançar venda:', error);
+    } catch (err: any) {
+      console.error('Erro ao lançar venda:', err);
+      setError(err?.message || 'Erro ao registrar a venda no banco de dados. Verifique a conexão.');
     } finally {
       setLoading(false);
     }
@@ -166,11 +179,11 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-primary/40 backdrop-blur-md" onClick={onClose} />
       
-      <div className="bg-white w-full max-w-xl rounded-[3rem] shadow-luxury border border-border relative overflow-hidden animate-in fade-in zoom-in duration-300">
-        <div className="p-10 border-b border-border bg-muted/30">
-          <h2 className="text-3xl font-black text-primary mb-2">Lançar Venda! 🎉</h2>
+      <div className="bg-white w-full max-w-xl rounded-[3rem] shadow-luxury border border-border relative max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div className="p-8 border-b border-border bg-muted/30 shrink-0 relative">
+          <h2 className="text-2xl font-black text-primary mb-1">Lançar Venda! 🎉</h2>
           <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">Registrar fechamento e calcular comissões</p>
-          <button onClick={onClose} className="absolute top-8 right-8 p-2 hover:bg-white rounded-xl transition-colors">
+          <button onClick={onClose} className="absolute top-6 right-8 p-2 hover:bg-muted rounded-xl transition-colors">
             <X size={24} />
           </button>
         </div>
@@ -181,7 +194,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Carregando dados...</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-10 space-y-8">
+          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 space-y-6">
             <div className="space-y-6">
               
               {/* Select Person/Contact (if not provided as lead prop) */}
@@ -226,28 +239,32 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Valor da Venda</label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                  <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-white focus-within:border-primary/20 transition-all overflow-hidden">
+                    <div className="pl-4 pr-1 text-muted-foreground shrink-0">
+                      <DollarSign size={18} />
+                    </div>
                     <input
                       type="number"
                       required
                       value={formData.sale_price || ''}
                       onChange={e => setFormData({ ...formData, sale_price: Number(e.target.value) })}
-                      className="w-full pl-12 pr-4 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-black text-primary"
+                      className="w-full py-4 pr-4 bg-transparent outline-none font-black text-primary border-none focus:ring-0"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Comissão Total (%)</label>
-                  <div className="relative">
-                    <Percent className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                  <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-white focus-within:border-primary/20 transition-all overflow-hidden">
+                    <div className="pl-4 pr-1 text-muted-foreground shrink-0">
+                      <Percent size={18} />
+                    </div>
                     <input
                       type="number"
                       required
                       step="0.1"
                       value={formData.total_commission_percent}
                       onChange={e => setFormData({ ...formData, total_commission_percent: Number(e.target.value) })}
-                      className="w-full pl-12 pr-4 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-black text-primary"
+                      className="w-full py-4 pr-4 bg-transparent outline-none font-black text-primary border-none focus:ring-0"
                     />
                   </div>
                 </div>
@@ -266,7 +283,13 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-6">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+                <span>⚠️ {error}</span>
+              </div>
+            )}
+
+            <div className="flex items-center justify-between pt-4">
               <div className="flex items-center gap-2 text-green-600">
                 <ShieldCheck size={18} />
                 <span className="text-[10px] font-black uppercase tracking-widest">Dados Verificados</span>
