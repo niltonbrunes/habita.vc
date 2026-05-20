@@ -40,6 +40,7 @@ export const KanbanHeader = ({ leads, search, onSearchChange }: KanbanHeaderProp
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
             className="w-full pl-14 pr-6 py-4 bg-white rounded-[2rem] border border-border/40 shadow-sm focus:border-accent/30 focus:ring-4 focus:ring-accent/5 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+            style={{ paddingLeft: "3.5rem" }}
           />
         </div>
         

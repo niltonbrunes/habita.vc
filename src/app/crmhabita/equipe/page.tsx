@@ -104,7 +104,7 @@ export default function TeamDashboardPage() {
                 <input 
                   type="text" 
                   placeholder="Buscar por nome ou CRECI..." 
-                  className="w-full pl-12 pr-4 py-3 bg-muted/30 border-2 border-transparent focus:border-primary/20 rounded-xl font-bold transition-all outline-none"
+                  className="w-full pl-12 pr-4 py-3 bg-muted/30 border-2 border-transparent focus:border-primary/20 rounded-xl font-bold transition-all outline-none" style={{ paddingLeft: "3rem" }}
                 />
              </div>
              <div className="flex items-center gap-2">

@@ -52,7 +52,7 @@ export default function PeopleListPage() {
               placeholder="Buscar por nome, CPF, CNPJ..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-muted/30 border border-border rounded-xl font-medium focus:border-primary focus:bg-white transition-all outline-none"
+              className="w-full pl-12 pr-4 py-3 bg-muted/30 border border-border rounded-xl font-medium focus:border-primary focus:bg-white transition-all outline-none" style={{ paddingLeft: "3rem" }}
             />
           </div>
           <select

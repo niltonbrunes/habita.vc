@@ -117,7 +117,7 @@ export default function PublicationDashboard() {
             <input 
               type="text" 
               placeholder="Buscar por referência ou título..."
-              className="w-full pl-12 pr-6 py-3 bg-muted/50 border border-transparent rounded-xl focus:bg-white focus:border-accent/20 transition-all outline-none font-bold text-sm"
+              className="w-full pl-12 pr-6 py-3 bg-muted/50 border border-transparent rounded-xl focus:bg-white focus:border-accent/20 transition-all outline-none font-bold text-sm" style={{ paddingLeft: "3rem" }}
             />
           </div>
         </div>

@@ -11,8 +11,9 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-export default function PublicPropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function PublicPropertyDetailPage({ params }: { params: Promise<{ city: string }> }) {
   const resolvedParams = React.use(params);
+  const id = resolvedParams.city;
   const router = useRouter();
   const [property, setProperty] = useState<Property | null>(null);
   const [similarProperties, setSimilarProperties] = useState<Property[]>([]);
@@ -29,19 +30,19 @@ export default function PublicPropertyDetailPage({ params }: { params: Promise<{
   useEffect(() => {
     const fetch = async () => {
       // Check if ID is not a UUID
-      const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(resolvedParams.id);
+      const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
       
       if (!isUUID) {
         // It's likely a city or something else, redirect to search
         const searchParams = new URLSearchParams(window.location.search);
-        searchParams.set('city', resolvedParams.id);
+        searchParams.set('city', id);
         router.replace(`/imoveis?${searchParams.toString()}`);
         return;
       }
 
       try {
         setLoading(true);
-        const data = await PropertiesService.getById(resolvedParams.id);
+        const data = await PropertiesService.getById(id);
         setProperty(data);
         
         // Fetch similar properties
@@ -58,7 +59,7 @@ export default function PublicPropertyDetailPage({ params }: { params: Promise<{
       }
     };
     fetch();
-  }, [resolvedParams.id, router]);
+  }, [id, router]);
 
   const handleWhatsApp = (message?: string) => {
     const brokerPhone = property?.registered_by_profile?.whatsapp || '5562999999999';

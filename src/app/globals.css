@@ -20,6 +20,7 @@
 }
 
 @theme inline {
+  --font-sans: var(--font-inter), system-ui, sans-serif;
   --color-primary: var(--primary);
   --color-primary-light: var(--primary-light);
   --color-accent: var(--accent);

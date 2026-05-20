@@ -28,7 +28,7 @@ export default function CommissionsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 pb-20">
+      <div className="max-w-7xl mx-auto space-y-8 pb-12">
         <div>
           <h1 className="text-3xl font-bold mb-2">Motor de Comissões & Split</h1>
           <p className="text-muted-foreground">Simule ganhos e configure a distribuição automática por venda.</p>

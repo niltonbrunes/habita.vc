@@ -94,7 +94,7 @@ export function FunnelSimulator() {
   return (
     <div className="grid lg:grid-cols-3 gap-8 bg-card p-10 rounded-[2.5rem] shadow-premium border border-border/50">
       {/* Coluna de Configuração */}
-      <div className="space-y-8 border-r border-border pr-8">
+      <div className="space-y-8 lg:border-r border-r-0 lg:border-border border-transparent lg:pr-8 pr-0">
         <div>
           <h3 className="text-xl font-black text-primary flex items-center gap-3">
             <Target className="text-accent" size={24} />
@@ -159,7 +159,7 @@ export function FunnelSimulator() {
       </div>
 
       {/* Coluna do Funil Visual */}
-      <div className="lg:col-span-2 space-y-10 pl-4">
+      <div className="lg:col-span-2 space-y-10 lg:pl-8 pl-0">
         <div className="flex justify-between items-center">
           <h3 className="text-xl font-black text-primary">Seu Funil Necessário</h3>
           <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full text-[10px] font-black uppercase tracking-widest">
@@ -167,7 +167,7 @@ export function FunnelSimulator() {
           </div>
         </div>
 
-        <div className="relative py-10 flex flex-col items-center">
+        <div className="relative py-10 flex flex-col items-center lg:pr-32 xl:pr-40 w-full">
           {/* Camada: Ligações */}
           <FunnelLayer 
             label="Ligações / Leads" 
@@ -183,7 +183,7 @@ export function FunnelSimulator() {
             label="Apresentações" 
             value={presentationsNeeded} 
             color="bg-primary/10" 
-            width="w-[80%]"
+            width="w-full sm:w-[90%] md:w-[85%] lg:w-[80%]"
             icon={<Presentation className="text-primary/60" />}
             rate={`${(rateApresToProp * 100).toFixed(0)}%`}
           />
@@ -193,13 +193,13 @@ export function FunnelSimulator() {
             label="Propostas" 
             value={proposalsNeeded} 
             color="bg-primary/20" 
-            width="w-[60%]"
+            width="w-full sm:w-[80%] md:w-[70%] lg:w-[60%]"
             icon={<FileText className="text-primary/80" />}
             rate={`${(ratePropToSale * 100).toFixed(0)}%`}
           />
 
           {/* Camada: Vendas */}
-          <div className="relative z-10 w-[40%] bg-accent text-white p-6 rounded-2xl shadow-xl shadow-accent/20 flex flex-col items-center group hover:scale-110 transition-all duration-500">
+          <div className="relative z-10 w-full sm:w-[50%] md:w-[45%] lg:w-[40%] max-w-[280px] bg-accent text-white p-6 rounded-2xl shadow-xl shadow-accent/20 flex flex-col items-center group hover:scale-110 transition-all duration-500">
             <CheckCircle2 size={32} className="mb-2 text-white/80" />
             <span className="text-2xl font-black">{salesNeeded}</span>
             <span className="text-[10px] font-black uppercase tracking-widest opacity-80 text-center">Vendas Trimestre</span>
@@ -207,7 +207,7 @@ export function FunnelSimulator() {
           </div>
 
           {/* Meta Diária Card */}
-          <div className="lg:absolute lg:top-20 lg:-right-4 xl:-right-12 mt-8 lg:mt-0 bg-white border-2 border-accent p-6 rounded-3xl shadow-2xl lg:rotate-3 hover:rotate-0 transition-all duration-500 max-w-[180px] z-20 mx-auto w-full text-center lg:text-left">
+          <div className="lg:absolute lg:top-20 lg:right-0 xl:right-2 mt-8 lg:mt-0 bg-white border-2 border-accent p-6 rounded-3xl shadow-2xl lg:rotate-3 hover:rotate-0 transition-all duration-500 max-w-[180px] z-20 mx-auto w-full text-center lg:text-left">
              <p className="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Ação Requerida</p>
              <p className="text-3xl font-black text-primary">{dailyLeadGoal}</p>
              <p className="text-xs font-bold text-muted-foreground leading-tight mt-1">contatos novos por dia útil</p>
