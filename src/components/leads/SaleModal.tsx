@@ -16,9 +16,14 @@ interface SaleModalProps {
   onSuccess: () => void;
   lead?: Lead;
   properties?: Property[];
+  initialData?: {
+    sale_price?: number;
+    total_commission_percent?: number;
+    broker_split_percent?: number;
+  };
 }
 
-export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: SaleModalProps) => {
+export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initialData }: SaleModalProps) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(false);
@@ -39,14 +44,14 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
     if (isOpen) {
       setFormData({
         property_id: '',
-        sale_price: 0,
-        total_commission_percent: 5,
-        broker_split_percent: 50,
+        sale_price: initialData?.sale_price || 0,
+        total_commission_percent: initialData?.total_commission_percent ?? 5,
+        broker_split_percent: initialData?.broker_split_percent ?? 50,
       });
       setSelectedPersonId('');
       setError(null);
     }
-  }, [isOpen]);
+  }, [isOpen, initialData]);
 
   // Load people and properties if not provided as props
   useEffect(() => {

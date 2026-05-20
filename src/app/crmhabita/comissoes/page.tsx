@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { calculateCommission, CommissionType, CommissionResult } from '@/utils/commission-engine';
+import { SaleModal } from '@/components/leads/SaleModal';
 import { 
   TrendingUp, 
   DollarSign, 
@@ -20,6 +21,7 @@ export default function CommissionsPage() {
   const [commType, setCommType] = useState<CommissionType>('resale');
   const [customPercent, setCustomPercent] = useState<number | undefined>(undefined);
   const [result, setResult] = useState<CommissionResult | null>(null);
+  const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
 
   useEffect(() => {
     const res = calculateCommission(salePrice, commType, customPercent);
@@ -151,7 +153,7 @@ export default function CommissionsPage() {
                   <div className="flex items-center gap-3 text-sm font-bold text-muted-foreground">
                     <CheckCircle2 className="text-green-500" /> Regra aplicada conforme parametrização
                   </div>
-                  <button className="bg-primary text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-primary-light transition-all shadow-premium group">
+                  <button onClick={() => setIsSaleModalOpen(true)} className="bg-primary text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-primary-light transition-all shadow-premium group">
                     Lançar Venda no CRM <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
@@ -160,6 +162,22 @@ export default function CommissionsPage() {
           </div>
         </div>
       </div>
+      {isSaleModalOpen && (
+        <SaleModal
+          isOpen={isSaleModalOpen}
+          onClose={() => setIsSaleModalOpen(false)}
+          onSuccess={() => {
+            setIsSaleModalOpen(false);
+          }}
+          initialData={{
+            sale_price: salePrice,
+            total_commission_percent: result?.totalPercentage || 0,
+            broker_split_percent: result && result.totalPercentage > 0
+              ? Math.round(((result.splits.find(s => s.participantRole === 'seller')?.percentage || 0) / result.totalPercentage) * 100)
+              : 50
+          }}
+        />
+      )}
     </DashboardLayout>
   );
 }
