@@ -18,6 +18,7 @@ import {
   Briefcase,
   Sparkles,
   Layers,
+  ShoppingBag,
   Trophy,
   Globe,
   Menu,
@@ -81,6 +82,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
           <SidebarItem icon={<Sparkles size={18} />} label="Prospecção IA" href="/crmhabita/prospeccao" active={pathname.startsWith('/crmhabita/prospeccao')} />
           <SidebarItem icon={<Home size={18} />} label="Meus Imóveis" href="/crmhabita/imoveis" active={pathname.startsWith('/crmhabita/imoveis')} />
           <SidebarItem icon={<Globe size={18} />} label="Publicação" href="/crmhabita/publicacao" active={pathname === '/crmhabita/publicacao'} />
+          <SidebarItem icon={<TrendingUp size={18} />} label="Vendas" href="/crmhabita/vendas" active={pathname.startsWith('/crmhabita/vendas')} />
           <SidebarItem icon={<TrendingUp size={18} />} label="Comissões" href="/crmhabita/comissoes" active={pathname.startsWith('/crmhabita/comissoes')} />
           <SidebarItem icon={<Target size={18} />} label="BI & Metas" href="/crmhabita/metas" active={pathname.startsWith('/crmhabita/metas')} />
           {isRole(['admin', 'manager', 'director']) && (

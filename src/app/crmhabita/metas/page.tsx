@@ -8,6 +8,7 @@ import { LeadsService } from '@/services/leads.service';
 import { PropertiesService } from '@/services/properties.service';
 import { Profile, Lead, Property } from '@/types/database';
 import { supabase } from '@/lib/supabase';
+import { SalesService } from '@/services/sales.service';
 import { 
   Users, 
   Target, 
@@ -40,7 +41,7 @@ export default function TeamManagementPage() {
           ProfilesService.getAll(),
           LeadsService.getAll(),
           PropertiesService.getAll(),
-          supabase.from('sales').select('*, leads(name), profiles(full_name)').order('sale_date', { ascending: false }).limit(5)
+          SalesService.getAll().then(allSales => ({ data: allSales.slice(0, 5) }))
         ]);
         setProfiles(pData);
         setLeads(lData);
@@ -72,7 +73,7 @@ export default function TeamManagementPage() {
   const totalLeads = leads.length;
   const hotLeads = leads.filter(l => l.temperature === 'hot').length;
   const totalProperties = properties.length;
-  const totalSalesValue = sales.reduce((acc, s) => acc + s.sale_price, 0);
+  const totalSalesValue = sales.reduce((acc, s) => acc + (Number(s.sale_price) || 0), 0);
 
   return (
     <DashboardLayout>
@@ -104,7 +105,7 @@ export default function TeamManagementPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard 
             title="Volume de Vendas" 
-            value={`R$ ${(totalSalesValue / 1000000).toFixed(1)}M`} 
+            value={`R$ ${totalSalesValue >= 1000000 ? (totalSalesValue / 1000000).toFixed(1) + "M" : totalSalesValue >= 1000 ? (totalSalesValue / 1000).toFixed(0) + "k" : totalSalesValue.toFixed(0)}`} 
             icon={<DollarSign className="text-green-500" />} 
             trend="+8%" 
             trendUp={true} 
@@ -219,7 +220,7 @@ export default function TeamManagementPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-black text-primary">R$ {(sale.sale_price / 1000).toFixed(0)}k</p>
+                      <p className="font-black text-primary">R$ {sale.sale_price > 0 ? (sale.sale_price / 1000).toFixed(0) : '0'}k</p>
                       <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{new Date(sale.sale_date).toLocaleDateString()}</p>
                     </div>
                   </div>
