@@ -7,6 +7,8 @@ import { PeopleService } from '@/services/people.service';
 import { LeadsService } from '@/services/leads.service';
 import { PropertiesService } from '@/services/properties.service';
 import { Lead, Property } from '@/types/database';
+import { Person } from '@/types/people';
+import { useAuth } from '@/context/AuthContext';
 
 interface SaleModalProps {
   isOpen: boolean;
@@ -17,11 +19,12 @@ interface SaleModalProps {
 }
 
 export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: SaleModalProps) => {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(false);
-  const [leadsList, setLeadsList] = useState<Lead[]>([]);
+  const [peopleList, setPeopleList] = useState<Person[]>([]);
   const [propertiesList, setPropertiesList] = useState<Property[]>([]);
-  const [selectedLeadId, setSelectedLeadId] = useState('');
+  const [selectedPersonId, setSelectedPersonId] = useState('');
   
   const [formData, setFormData] = useState({
     property_id: '',
@@ -39,11 +42,11 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
         total_commission_percent: 5,
         broker_split_percent: 50,
       });
-      setSelectedLeadId('');
+      setSelectedPersonId('');
     }
   }, [isOpen]);
 
-  // Load leads and properties if not provided as props
+  // Load people and properties if not provided as props
   useEffect(() => {
     if (!isOpen) return;
 
@@ -59,12 +62,10 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
           setPropertiesList(properties);
         }
 
-        // Load leads if not provided
+        // Load people (contacts) if not provided
         if (!lead) {
-          const allLeads = await LeadsService.getAll();
-          // Filter active leads that are not already won or lost
-          const activeLeads = (allLeads || []).filter(l => l.status !== 'sale' && l.status !== 'lost');
-          setLeadsList(activeLeads);
+          const allPeople = await PeopleService.getAll();
+          setPeopleList(allPeople || []);
         }
       } catch (err) {
         console.error('Erro ao carregar dados iniciais no SaleModal:', err);
@@ -81,20 +82,49 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
   const totalCommission = (formData.sale_price * formData.total_commission_percent) / 100;
   const brokerCommission = (totalCommission * formData.broker_split_percent) / 100;
 
-  // Get active lead object (either from prop or from selected dropdown)
-  const activeLead = lead || leadsList.find(l => l.id === selectedLeadId);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!activeLead) return;
+    if (!lead && !selectedPersonId) return;
 
     setLoading(true);
     try {
+      let activeLead: Lead | null = null;
+
+      if (lead) {
+        activeLead = lead;
+      } else {
+        // Find if this person already has a lead
+        const allLeads = await LeadsService.getAll();
+        const existingLead = allLeads.find(l => l.person_id === selectedPersonId);
+
+        if (existingLead) {
+          activeLead = existingLead;
+        } else {
+          // If no lead exists for this person, dynamically create one
+          const selectedPerson = peopleList.find(p => p.id === selectedPersonId);
+          if (!selectedPerson) throw new Error('Cliente selecionado não encontrado.');
+
+          const newLead = await LeadsService.create({
+            name: selectedPerson.fantasy_name || selectedPerson.name || 'Sem nome',
+            person_id: selectedPerson.id,
+            assigned_to_id: selectedPerson.assigned_to_id || user?.id || '',
+            status: 'lead',
+            temperature: 'hot',
+            score: 100,
+            history: [],
+            documents: []
+          });
+          activeLead = newLead;
+        }
+      }
+
+      if (!activeLead) throw new Error('Não foi possível determinar ou criar o Lead para esta venda.');
+
       // 1. Criar o registro da venda
       await SalesService.create({
         lead_id: activeLead.id,
         property_id: formData.property_id,
-        broker_id: activeLead.assigned_to_id,
+        broker_id: activeLead.assigned_to_id || user?.id,
         sale_price: formData.sale_price,
         total_commission: totalCommission,
         broker_commission: brokerCommission,
@@ -154,20 +184,20 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
           <form onSubmit={handleSubmit} className="p-10 space-y-8">
             <div className="space-y-6">
               
-              {/* Select Lead (if not provided as prop) */}
+              {/* Select Person/Contact (if not provided as lead prop) */}
               {!lead && (
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Cliente / Oportunidade (Lead)</label>
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Cliente (Contatos/Pessoas)</label>
                   <select
                     required
-                    value={selectedLeadId}
-                    onChange={e => setSelectedLeadId(e.target.value)}
+                    value={selectedPersonId}
+                    onChange={e => setSelectedPersonId(e.target.value)}
                     className="w-full px-6 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
                   >
                     <option value="">Selecione o cliente...</option>
-                    {leadsList.map(l => (
-                      <option key={l.id} value={l.id}>
-                        {l.name || 'Lead sem nome'} - Status: {l.status}
+                    {peopleList.map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.fantasy_name || p.name} {p.document_id ? '(' + p.document_id + ')' : ''}
                       </option>
                     ))}
                   </select>
@@ -244,7 +274,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties }: Sale
               
               <button
                 type="submit"
-                disabled={loading || !formData.property_id || (!lead && !selectedLeadId)}
+                disabled={loading || !formData.property_id || (!lead && !selectedPersonId)}
                 className="bg-primary text-white px-10 py-4 rounded-2xl font-black text-lg hover:bg-primary-light transition-all shadow-premium flex items-center gap-3 disabled:opacity-50"
               >
                 {loading ? <Loader2 className="animate-spin" size={24} /> : (
