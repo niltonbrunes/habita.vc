@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ProfilesService } from '@/services/profiles.service';
+import { InviteMemberModal } from '@/components/team/InviteMemberModal';
 import { Profile } from '@/types/database';
 import { 
   Users, 
@@ -21,6 +22,7 @@ import {
 export default function TeamDashboardPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   useEffect(() => {
     ProfilesService.getAll()
@@ -38,6 +40,10 @@ export default function TeamDashboardPage() {
       console.error(err);
       alert('Erro ao atualizar status do usuário.');
     }
+  };
+
+  const reloadProfiles = () => {
+    ProfilesService.getAll().then(setProfiles).catch(console.error);
   };
 
   const handleRoleChange = async (p: Profile, newRole: any) => {
@@ -60,7 +66,7 @@ export default function TeamDashboardPage() {
           </div>
           
           <div className="flex gap-3">
-             <button className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-primary-light transition-all shadow-premium">
+             <button onClick={() => setIsInviteOpen(true)} className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-primary-light transition-all shadow-premium">
               <Users size={18} /> Convidar Membro
             </button>
           </div>
@@ -187,6 +193,11 @@ export default function TeamDashboardPage() {
           )}
         </div>
       </div>
+      <InviteMemberModal
+        isOpen={isInviteOpen}
+        onClose={() => setIsInviteOpen(false)}
+        onSuccess={() => { setIsInviteOpen(false); reloadProfiles(); }}
+      />
     </DashboardLayout>
   );
 }
