@@ -102,17 +102,17 @@ export default function DashboardPage() {
             loading={loading}
           />
           <StatCard 
-            title="Ganhos Reais" 
-            value={formatCurrency(metrics?.realEarnings || 0)} 
-            subtext={`${metrics?.goalProgress || 0}% da meta atingida`}
+            title="Ganhos Reais"
+            value={formatCurrency(metrics?.realEarnings || 0)}
+            subtext={`${metrics?.goalProgress || 0}% da meta (VGV: ${formatVGV(metrics?.realVgv || 0)})`}
             icon={<DollarSign className="text-green-600" />}
             progress={metrics?.goalProgress}
             loading={loading}
           />
           <StatCard 
-            title="VGV Necessário" 
-            value={formatVGV(metrics?.vgvNeeded || 0)} 
-            subtext="Para atingir a meta"
+            title="VGV Necessário"
+            value={formatVGV(metrics?.vgvNeeded || 0)}
+            subtext={`VGV Realizado: ${formatVGV(metrics?.realVgv || 0)}`}
             icon={<TrendingUp className="text-blue-600" />}
             loading={loading}
           />

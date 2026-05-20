@@ -8,6 +8,7 @@ export interface DashboardMetrics {
   activeLeads: number;
   newLeadsToday: number;
   goalProgress: number;
+  realVgv: number;
 }
 
 export interface RankingData {
@@ -69,7 +70,8 @@ export class DashboardService {
       vgvNeeded,
       activeLeads: activeLeads || 0,
       newLeadsToday: newLeadsToday || 0,
-      goalProgress: Math.min(100, Math.round((realEarnings / monthlyGoal) * 100))
+      goalProgress: Math.min(100, Math.round((realEarnings / monthlyGoal) * 100)),
+      realVgv: currentVGV
     };
   }
 
