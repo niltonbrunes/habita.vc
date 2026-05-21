@@ -142,8 +142,12 @@ export default function RankingPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center font-bold text-primary text-xs">
-                            {broker.avatar}
+                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center font-bold text-primary text-xs overflow-hidden">
+                            {broker.avatar?.startsWith('http') ? (
+                              <img src={broker.avatar} alt={broker.name} className="w-full h-full object-cover" />
+                            ) : (
+                              broker.avatar
+                            )}
                           </div>
                           <div>
                             <p className="font-bold text-primary text-sm">{broker.name}</p>
