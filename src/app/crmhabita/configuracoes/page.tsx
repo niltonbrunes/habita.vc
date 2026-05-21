@@ -126,17 +126,31 @@ export default function SettingsPage() {
                     <Target size={20} /> Metas Mensais
                   </h4>
                   
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">Meta de Ganhos</p>
-                    <div className="flex items-end gap-1">
-                      <span className="text-2xl font-black">R$ {profile?.earnings_goal_monthly.toLocaleString()}</span>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2">Meta de Ganhos</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl font-black">R$</span>
+                        <input 
+                          type="number"
+                          value={profile?.earnings_goal_monthly || 0}
+                          onChange={e => setProfile(p => p ? {...p, earnings_goal_monthly: Number(e.target.value)} : null)}
+                          className="bg-white/10 text-xl md:text-2xl font-black text-white px-4 py-2 rounded-xl outline-none w-full border border-transparent focus:border-white/20 transition-all"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-1">Ticket Médio</p>
-                    <p className="text-lg font-bold">R$ {profile?.avg_ticket.toLocaleString()}</p>
-                  </div>
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2">Ticket Médio (Estimativa)</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-bold">R$</span>
+                        <input 
+                          type="number"
+                          value={profile?.avg_ticket || 0}
+                          onChange={e => setProfile(p => p ? {...p, avg_ticket: Number(e.target.value)} : null)}
+                          className="bg-white/10 text-lg font-bold text-white px-3 py-1.5 rounded-xl outline-none w-full border border-transparent focus:border-white/20 transition-all"
+                        />
+                      </div>
+                    </div>
 
                   <div className="pt-4 border-t border-white/10">
                     <button type="button" className="text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-all">
