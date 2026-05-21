@@ -6,8 +6,7 @@ export const PropertyOwnersService = {
     const { data, error } = await supabase
       .from('property_owners')
       .select('*')
-      .eq('property_id', propertyId)
-      .order('created_at');
+      .eq('property_id', propertyId);
     if (error) throw error;
     return data as PropertyOwner[];
   },
