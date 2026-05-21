@@ -24,7 +24,7 @@ interface SaleModalProps {
 }
 
 export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initialData }: SaleModalProps) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(false);
   const [peopleList, setPeopleList] = useState<Person[]>([]);
@@ -72,7 +72,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
 
         // Load people (contacts) if not provided
         if (!lead) {
-          const allPeople = await PeopleService.getAll();
+          const allPeople = await PeopleService.getAll(user?.id, profile?.role || "broker");
           setPeopleList(allPeople || []);
         }
       } catch (err) {

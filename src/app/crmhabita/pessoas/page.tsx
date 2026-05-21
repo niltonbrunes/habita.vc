@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PeopleService } from '@/services/people.service';
+import { useAuth } from '@/context/AuthContext';
 import { Person } from '@/types/people';
 import { Search, Plus, User, Building2, Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function PeopleListPage() {
+  const { user, profile } = useAuth();
   const [people, setPeople] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -15,7 +17,7 @@ export default function PeopleListPage() {
   const loadPeople = async () => {
     setLoading(true);
     try {
-      const data = await PeopleService.getAll({ search, role: filterRole });
+      const data = await PeopleService.getAll(user?.id, profile?.role || "broker", { search, role: filterRole });
       setPeople(data);
     } catch (err) {
       console.error(err);

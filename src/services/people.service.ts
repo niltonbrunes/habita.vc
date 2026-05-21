@@ -2,11 +2,15 @@ import { supabase } from '@/lib/supabase';
 import { Person } from '@/types/people';
 
 export const PeopleService = {
-  async getAll(filters?: { role?: string; search?: string; type?: 'PF' | 'PJ' }) {
+  async getAll(userId?: string, userRole?: string, filters?: { role?: string; search?: string; type?: 'PF' | 'PJ' }) {
     let query = supabase
       .from('people')
       .select('*')
       .order('created_at', { ascending: false });
+
+    if (userId && userRole && !['admin', 'manager', 'director'].includes(userRole)) {
+      query = query.or('assigned_to_id.eq.' + userId + ',registered_by_id.eq.' + userId);
+    }
 
     if (filters?.role) {
       query = query.contains('roles', [filters.role]);
