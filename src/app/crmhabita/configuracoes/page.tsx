@@ -127,7 +127,7 @@ export default function SettingsPage() {
                   </h4>
                   
                     <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2">Meta de Ganhos</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2">Meta de Ganhos Mensais</p>
                       <div className="flex items-center gap-2">
                         <span className="text-2xl font-black">R$</span>
                         <input 
