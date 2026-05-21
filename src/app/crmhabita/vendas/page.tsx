@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SalesService } from '@/services/sales.service';
+import { useAuth } from '@/context/AuthContext';
 import { SaleModal } from '@/components/leads/SaleModal';
 import {
   DollarSign,
@@ -21,6 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function VendasPage() {
+  const { user, profile } = useAuth();
   const [sales, setSales] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -225,7 +227,9 @@ export default function VendasPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center gap-2">
-                          <button
+                          {(sale.broker_id === user?.id || ['admin', 'manager', 'director'].includes(profile?.role || '')) && (
+                            <>
+                              <button
                             onClick={() => { setEditingSale(sale); setIsSaleModalOpen(true); }}
                             className="p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all"
                             title="Editar venda"
@@ -239,6 +243,8 @@ export default function VendasPage() {
                           >
                             <Trash2 size={15} />
                           </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
