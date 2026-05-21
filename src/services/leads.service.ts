@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { Lead, LeadStatus } from '@/types/database';
+import { GamificationService } from './gamification.service';
 
 export const LeadsService = {
   async getAll() {
@@ -87,6 +88,7 @@ export const LeadsService = {
       .single();
 
     if (error) throw error;
+    if (data && data.assigned_to_id) { GamificationService.handleLeadCreated(data.assigned_to_id).catch(console.error); }
     return data as Lead;
   },
 
@@ -120,6 +122,9 @@ export const LeadsService = {
       .select();
 
     if (error) throw error;
+    (data || []).forEach(lead => {
+      if (lead.assigned_to_id) GamificationService.handleLeadCreated(lead.assigned_to_id).catch(console.error);
+    });
     return data as Lead[];
   },
 

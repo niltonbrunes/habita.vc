@@ -1,6 +1,8 @@
 import { supabase } from '@/lib/supabase';
 import { Sale } from '@/types/database';
 
+import { GamificationService } from './gamification.service';
+
 export const SalesService = {
   async getAll() {
     const { data: sales, error: salesErr } = await supabase
