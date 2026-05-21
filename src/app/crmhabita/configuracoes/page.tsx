@@ -70,7 +70,7 @@ export default function SettingsPage() {
       await ProfilesService.update(user.id, { avatar_url: url });
     } catch (err) {
       console.error(err);
-      alert('Erro ao fazer upload da foto.');
+      alert('Erro ao fazer upload da foto. Detalhes: ' + (err as any)?.message);
     } finally {
       setUploading(false);
     }
