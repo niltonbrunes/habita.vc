@@ -28,6 +28,14 @@ export default function RegisterPage() {
       }
     });
 
+    if (!error && data.user) {
+      // Create profile automatically
+      await supabase.from('profiles').insert([{
+        id: data.user.id,
+        full_name: fullName,
+        email: email
+      }]);
+    }
     if (error) {
       setError(error.message);
       setLoading(false);

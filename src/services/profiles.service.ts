@@ -9,7 +9,27 @@ export const ProfilesService = {
       .eq('id', id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === 'PGRST116') { // No rows returned
+        // Attempt to auto-create the profile using auth context
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user && user.id === id) {
+          const newProfile = {
+            id: user.id,
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Novo Usuário',
+            email: user.email
+          };
+          const { data: created, error: createError } = await supabase
+            .from('profiles')
+            .insert([newProfile])
+            .select()
+            .single();
+          if (createError) throw createError;
+          return created as Profile;
+        }
+      }
+      throw error;
+    }
     return data as Profile;
   },  async getBySlug(slug: string) {
     const { data, error } = await supabase
