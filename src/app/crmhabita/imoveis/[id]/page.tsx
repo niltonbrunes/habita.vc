@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { useAuth } from '@/context/AuthContext';
 import { PropertiesService } from '@/services/properties.service';
 import { Property } from '@/types/database';
 import { 
@@ -14,6 +15,7 @@ import { ConfirmModal } from '@/components/common/ConfirmModal';
 import { LeadFormModal } from '@/components/leads/LeadFormModal';
 
 export default function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { user, profile } = useAuth();
   const { id } = React.use(params);
   const router = useRouter();
   const [property, setProperty] = useState<Property | null>(null);
@@ -133,6 +135,8 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
     </DashboardLayout>
   );
 
+  const canEdit = property.registered_by_id === user?.id || ['admin', 'manager', 'director'].includes(profile?.role || '');
+
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto space-y-8 pb-20">
@@ -244,12 +248,14 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               </button>
 
               <div className="grid grid-cols-2 gap-3">
-                <Link 
-                  href={`/crmhabita/imoveis/${id}/editar`}
-                  className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-border text-primary font-black rounded-2xl hover:border-primary/30 transition-all uppercase tracking-widest text-[10px]"
-                >
-                  <Pencil size={16} /> Editar
-                </Link>
+                {canEdit && (
+                  <Link 
+                    href={`/crmhabita/imoveis/${id}/editar`}
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-border text-primary font-black rounded-2xl hover:border-primary/30 transition-all uppercase tracking-widest text-[10px]"
+                  >
+                    <Pencil size={16} /> Editar
+                  </Link>
+                )}
                 
                 {property.status === 'inactive' ? (
                   <button 

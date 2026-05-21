@@ -16,6 +16,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { ImportService } from '@/services/import.service';
+import { PropertyMap } from '@/components/properties/PropertyMap';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 
@@ -130,20 +131,8 @@ export default function PropertiesPage() {
           </section>
 
           {/* Map Section */}
-          <section className="hidden md:block flex-1 bg-muted/10 relative">
-             <div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/light-v10/static/-46.6333,-23.5505,12/800x800?access_token=pk.xxx')] bg-cover bg-center">
-                <div className="absolute inset-0 bg-primary/5 backdrop-grayscale-[0.2]" />
-                
-                {/* Mock Markers */}
-                <div className="absolute top-[45%] left-[50%] animate-pulse">
-                   <div className="bg-primary w-4 h-4 rounded-full border-2 border-white shadow-xl" />
-                </div>
-                
-                <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-border/40">
-                   <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">Visualização Geográfica</p>
-                   <p className="text-xs text-muted-foreground font-medium italic">O mapa ajuda você a organizar rotas de visita para seus leads.</p>
-                </div>
-             </div>
+          <section className="hidden md:block flex-1 bg-muted/10 relative z-0">
+            <PropertyMap properties={filtered} />
           </section>
         </div>
       </div>

@@ -33,6 +33,7 @@ export interface WizardFormData {
   reference?: string;
   status: 'available' | 'reserved' | 'sold' | 'inactive';
   pattern: 'economic' | 'medium' | 'high_end';
+    show_in_vitrine: boolean;
   // Address
   development_id?: string;
   address_street: string;
@@ -71,6 +72,7 @@ const INITIAL_DATA: WizardFormData = {
   description: '',
   status: 'available',
   pattern: 'medium',
+  show_in_vitrine: true,
   address_street: '',
   address_city: '',
   address_state: 'GO',
@@ -123,6 +125,7 @@ export function PropertyWizard({ initialData }: PropertyWizardProps) {
         reference: initialData.reference || '',
         status: initialData.status || 'available',
         pattern: initialData.pattern || 'medium',
+        show_in_vitrine: initialData.show_in_vitrine ?? true,
         development_id: initialData.development_id,
         address_street: initialData.address_street || '',
         address_number: initialData.address_number || '',

@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     earnings_goal_monthly DECIMAL(12, 2) DEFAULT 0,
     avg_ticket DECIMAL(15, 2) DEFAULT 0,
     avg_commission_percent DECIMAL(5, 2) DEFAULT 0,
+      total_points INT DEFAULT 0,
+      badges JSONB DEFAULT '[]',
     conversion_rates JSONB DEFAULT '{"lead_to_contact": 0, "contact_to_visit": 0, "visit_to_proposal": 0, "proposal_to_sale": 0}',
     focus TEXT CHECK (focus IN ('resale', 'launch', 'hybrid')) DEFAULT 'hybrid',
     high_end_mode BOOLEAN DEFAULT FALSE,
@@ -154,6 +156,7 @@ CREATE TABLE IF NOT EXISTS public.performance_stats (
     vgv_achieved DECIMAL(15, 2) DEFAULT 0,
     leads_converted INT DEFAULT 0,
     visits_done INT DEFAULT 0,
+      monthly_points INT DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 

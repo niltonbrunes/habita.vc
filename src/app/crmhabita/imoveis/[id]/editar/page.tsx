@@ -5,10 +5,12 @@ import { PropertiesService } from '@/services/properties.service';
 import { PropertyOwnersService } from '@/services/property-owners.service';
 import { PropertyWizard } from '@/components/properties/wizard/PropertyWizard';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { useAuth } from '@/context/AuthContext';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
+  const { user, profile } = useAuth();
   const { id } = React.use(params);
   const router = useRouter();
   const [property, setProperty] = useState<any>(null);
@@ -20,8 +22,14 @@ export default function EditPropertyPage({ params }: { params: Promise<{ id: str
         const [propData, ownersData] = await Promise.all([
           PropertiesService.getById(id as string),
           PropertyOwnersService.getByPropertyId(id as string)
-        ]);
-        
+          ]);
+
+          const canEdit = propData.registered_by_id === user?.id || ['admin', 'manager', 'director'].includes(profile?.role || '');
+          if (!canEdit) {
+            alert('Você não tem permissão para editar este imóvel.');
+            throw new Error('Acesso negado');
+          }
+          
         setProperty({
           ...propData,
           owners: ownersData
