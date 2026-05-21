@@ -34,18 +34,15 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       // Only send fields that are safe to update (avoid id, email, role, and complex objects)
+      // Only include columns that actually exist in the 'profiles' table
       const updatableFields: Record<string, any> = {
         full_name: profile.full_name,
         whatsapp: profile.whatsapp || null,
-        phone: profile.phone || null,
-        creci: profile.creci || null,
         bio: profile.bio || null,
         slug: profile.slug || null,
         avatar_url: profile.avatar_url || null,
         earnings_goal_monthly: profile.earnings_goal_monthly || 0,
         avg_ticket: profile.avg_ticket || 0,
-        avg_commission_percent: profile.avg_commission_percent || 0,
-        focus: profile.focus || 'hybrid',
         high_end_mode: profile.high_end_mode || false,
       };
       await ProfilesService.update(user.id, updatableFields);
