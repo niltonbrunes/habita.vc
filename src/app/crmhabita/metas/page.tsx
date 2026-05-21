@@ -267,6 +267,64 @@ export default function TeamManagementPage() {
                 <InventoryBar label="Econômico" value={properties.filter(p => p.pattern === 'economic').length} total={totalProperties} color="bg-green-500" />
               </div>
             </div>
+
+          {/* Funil por Origem */}
+          <div className="bg-white rounded-[2.5rem] p-8 border-2 border-border shadow-soft mt-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                <Target size={24} />
+              </div>
+              <div>
+                <h3 className="text-2xl font-black text-primary">Funil por Origem de Lead</h3>
+                <p className="text-sm font-bold text-muted-foreground">Métricas de conversão por canal de captação.</p>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-border">
+                    <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground">Origem</th>
+                    <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-center">Total de Leads</th>
+                    <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-center">Em Negociação</th>
+                    <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-center">Vendas Fechadas</th>
+                    <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-muted-foreground text-center">Taxa de Conversão</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/50">
+                  {Object.entries(
+                    leads.reduce((acc, lead) => {
+                      const source = lead.source || 'Não Informado';
+                      if (!acc[source]) acc[source] = { total: 0, negoc: 0, vendas: 0 };
+                      acc[source].total++;
+                      if (lead.status === 'proposal' || lead.status === 'visit') acc[source].negoc++;
+                      if (lead.status === 'sale') acc[source].vendas++;
+                      return acc;
+                    }, {} as Record<string, { total: number, negoc: number, vendas: number }>)
+                  ).map(([source, stats]) => {
+                    const convRate = stats.total > 0 ? Math.round((stats.vendas / stats.total) * 100) : 0;
+                    return (
+                      <tr key={source} className="hover:bg-muted/20 transition-colors">
+                        <td className="px-6 py-4 font-bold text-primary capitalize">{source.replace('_', ' ')}</td>
+                        <td className="px-6 py-4 text-center font-bold">{stats.total}</td>
+                        <td className="px-6 py-4 text-center font-bold text-orange-500">{stats.negoc}</td>
+                        <td className="px-6 py-4 text-center font-black text-green-600">{stats.vendas}</td>
+                        <td className="px-6 py-4 text-center font-black">
+                          <div className="flex items-center justify-center gap-2">
+                            <span className={convRate > 5 ? 'text-green-600' : 'text-primary'}>{convRate}%</span>
+                            <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                              <div className="h-full bg-primary" style={{ width: `${convRate}%` }} />
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           </div>
         </div>
       </div>

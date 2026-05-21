@@ -69,16 +69,16 @@ export function ClassificationStep({ data, onChange }: Props) {
             <select
               value={data.commercial_info.lead_source || ''}
               onChange={e => onChange({ commercial_info: { ...data.commercial_info, lead_source: e.target.value } })}
-              className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary transition-all"
-            >
-              <option value="">Selecione...</option>
-              <option value="portal">Portal Habita</option>
-              <option value="instagram">Instagram</option>
-              <option value="google">Google Ads</option>
-              <option value="indicacao">Indicação</option>
-              <option value="placa">Placa</option>
-              <option value="outros">Outros</option>
-            </select>
+                className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary transition-all"
+              >
+                    <option value="">Selecione...</option>
+                    <option value="indicacao">Indicação</option>
+                    <option value="redes_sociais">Redes Sociais</option>
+                    <option value="base_clientes">Base de Clientes</option>
+                    <option value="network">Network</option>
+                    <option value="ponto_avancado">Ponto Avançado</option>
+                    <option value="plantao">Plantão</option>
+                  </select>
           </div>
           <div className="space-y-2">
             <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Interesse</label>

@@ -38,7 +38,8 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
             name: p.name,
             email: p.contacts?.find(c => (c.type as string) === 'email')?.value || '',
             phone: p.contacts?.find(c => (c.type as string) === 'whatsapp' || (c.type as string) === 'phone')?.value || ''
-          }));
+          ,
+              source: p.commercial_info?.lead_source || 'Manual'}));
         }
       });
     }
@@ -195,7 +196,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                             name: p.name, 
                             email: p.contacts?.find((c: any) => c.type === 'email')?.value || '',
                             phone: p.contacts?.find((c: any) => c.type === 'whatsapp' || c.type === 'phone')?.value || '',
-                          });
+                              source: p.commercial_info?.lead_source || 'Manual'});
                           setSelectedPersonId(p.id);
                           setSearchResults([]);
                         }}
@@ -443,15 +444,15 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                 <select
                   value={formData.source}
                   onChange={e => setFormData({ ...formData, source: e.target.value })}
-                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none cursor-pointer"
-                >
-                  <option value="Manual">Manual</option>
-                  <option value="Instagram">Instagram</option>
-                  <option value="Facebook">Facebook</option>
-                  <option value="Google">Google</option>
-                  <option value="Indicação">Indicação</option>
-                  <option value="Portal">Portal Imobiliário</option>
-                </select>
+                  >
+                    <option value="">Selecione...</option>
+                    <option value="indicacao">Indicação</option>
+                    <option value="redes_sociais">Redes Sociais</option>
+                    <option value="base_clientes">Base de Clientes</option>
+                    <option value="network">Network</option>
+                    <option value="ponto_avancado">Ponto Avançado</option>
+                    <option value="plantao">Plantão</option>
+                  </select>
               </div>
             </div>
 
