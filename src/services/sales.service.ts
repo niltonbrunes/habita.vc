@@ -132,6 +132,10 @@ export const SalesService = {
 
     if (saleError) throw saleError;
 
+    if (saleData.broker_id) {
+      GamificationService.handleSale(saleData.broker_id, saleData.total_price).catch(console.error);
+    }
+
     // 2. Create the commission and split details record
     try {
       const brokerPercent = sale.split_metadata?.broker_percent || 50;
