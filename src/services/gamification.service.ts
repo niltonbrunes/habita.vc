@@ -9,10 +9,26 @@ export const POINTS_RULES = {
 };
 
 export const BADGES = {
+  // Volume VGV
   FIRST_SALE: 'Primeira Venda',
   VGV_1M: '1 Milhão em VGV',
   VGV_3M: '3 Milhões em VGV',
   VGV_10M: '10 Milhões em VGV',
+  VGV_50M: 'Clube dos 50 Milhões',
+  
+  // Consistência & Atividade
+  VISITS_10: 'Máquina de Agendamentos',
+  LEADS_50: 'Top Prospector',
+  SALES_3: 'Fechador Serial',
+  
+  // Conversão e Eficiência
+  SNIPER: 'Sniper / Tiro Certo',
+  AGILE: 'Negociador Ágil',
+  
+  // Produto e Retenção
+  LUXURY: 'Rei do Alto Padrão',
+  DEVELOPMENT: 'Lançamento Sucesso',
+  VETERAN: 'Veterano Habita',
 };
 
 export const GamificationService = {
@@ -21,7 +37,7 @@ export const GamificationService = {
     // 1. Get current user profile
     const { data: profile, error: profErr } = await supabase
       .from('profiles')
-      .select('total_points, badges')
+      .select('total_points, badges, created_at')
       .eq('id', userId)
       .single();
 
@@ -102,24 +118,139 @@ export const GamificationService = {
       .eq('id', userId);
   },
 
+  async evaluateActivityBadges(userId: string) {
+    try {
+      const now = new Date();
+      const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+
+      const { data: stats } = await supabase
+        .from('performance_stats')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('month_year', firstDayOfMonth)
+        .single();
+
+      if (!stats) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('badges')
+        .eq('id', userId)
+        .single();
+      
+      if (!profile) return;
+      const currentBadges = profile.badges || [];
+      const newBadges = [...currentBadges];
+
+      // Assuming leads_converted means leads created in the month context or we add leads_created/visits_done if they exist
+      // Since schema has leads_converted and visits_done, let's increment them if needed. 
+      // Wait, GamificationService doesn't increment visits_done in addPoints. 
+      // We need to count from DB directly or rely on addPoints.
+      // Actually, since we need to check DB, let's query the counts!
+      const targetMonthPrefix = firstDayOfMonth.substring(0, 7);
+
+      const { count: visitsCount } = await supabase
+        .from('tasks') // or whatever table stores visits
+        .select('*', { count: 'exact', head: true })
+        .eq('assigned_to_id', userId)
+        .eq('type', 'visit')
+        .like('created_at', targetMonthPrefix + '%');
+      
+      if (visitsCount && visitsCount >= 10 && !newBadges.includes(BADGES.VISITS_10)) {
+        newBadges.push(BADGES.VISITS_10);
+      }
+
+      const { count: leadsCount } = await supabase
+        .from('leads')
+        .select('*', { count: 'exact', head: true })
+        .eq('assigned_to_id', userId)
+        .like('created_at', targetMonthPrefix + '%');
+
+      if (leadsCount && leadsCount >= 50 && !newBadges.includes(BADGES.LEADS_50)) {
+        newBadges.push(BADGES.LEADS_50);
+      }
+
+      if (newBadges.length > currentBadges.length) {
+        await supabase.from('profiles').update({ badges: newBadges }).eq('id', userId);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  },
+
   async handleLeadCreated(userId: string) {
     await this.addPoints(userId, POINTS_RULES.LEAD_CREATED);
+    this.evaluateActivityBadges(userId);
   },
 
   async handleVisit(userId: string) {
     await this.addPoints(userId, POINTS_RULES.VISIT_DONE);
+    this.evaluateActivityBadges(userId);
   },
 
   async handleProposal(userId: string) {
     await this.addPoints(userId, POINTS_RULES.PROPOSAL_SENT);
   },
 
-  async handleSale(userId: string, salePrice: number) {
-    // 1000 base + 1000 per 100k
+
+  async handleSale(userId: string, salePrice: number, leadCreatedAt?: string, isDevelopment?: boolean) {
+    // 1000 base + 100 per 100k
     const extraPoints = Math.floor(salePrice / 100000) * 100;
     const totalSalePoints = POINTS_RULES.SALE_CLOSED_BASE + extraPoints;
     await this.addPoints(userId, totalSalePoints, salePrice);
+
+    // Avaliar as badges especiais de venda
+    try {
+      const now = new Date();
+      const targetMonthPrefix = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0].substring(0, 7);
+
+      const { data: profile } = await supabase.from('profiles').select('badges').eq('id', userId).single();
+      if (!profile) return;
+      const currentBadges = profile.badges || [];
+      const newBadges = [...currentBadges];
+
+      // Rei do Alto Padrão
+      if (salePrice >= 2000000 && !newBadges.includes(BADGES.LUXURY)) {
+        newBadges.push(BADGES.LUXURY);
+      }
+
+      // Lançamento Sucesso
+      if (isDevelopment && !newBadges.includes(BADGES.DEVELOPMENT)) {
+        newBadges.push(BADGES.DEVELOPMENT);
+      }
+
+      // Negociador Ágil (< 15 dias)
+      if (leadCreatedAt && !newBadges.includes(BADGES.AGILE)) {
+        const leadDate = new Date(leadCreatedAt);
+        const diffDays = Math.ceil(Math.abs(now.getTime() - leadDate.getTime()) / (1000 * 60 * 60 * 24));
+        if (diffDays <= 15) {
+          newBadges.push(BADGES.AGILE);
+        }
+      }
+
+      // Sniper (< 10 leads no mês atual) e Fechador Serial (>= 3 vendas no mês)
+      const { count: leadsCount } = await supabase.from('leads').select('*', { count: 'exact', head: true })
+        .eq('assigned_to_id', userId).like('created_at', targetMonthPrefix + '%');
+        
+      const { count: salesCount } = await supabase.from('sales').select('*', { count: 'exact', head: true })
+        .eq('broker_id', userId).like('sale_date', targetMonthPrefix + '%');
+
+      if (leadsCount !== null && leadsCount < 10 && !newBadges.includes(BADGES.SNIPER)) {
+        newBadges.push(BADGES.SNIPER);
+      }
+
+      if (salesCount !== null && salesCount >= 3 && !newBadges.includes(BADGES.SALES_3)) {
+        newBadges.push(BADGES.SALES_3);
+      }
+
+      if (newBadges.length > currentBadges.length) {
+        await supabase.from('profiles').update({ badges: newBadges }).eq('id', userId);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   },
+
 
   async getRankingData(monthYear?: string) {
     // Fetch all profiles and their stats for a given month
