@@ -166,7 +166,7 @@ export class DashboardService {
         ticket: rowData.avg_ticket ? Number(rowData.avg_ticket) : (rowData.funnel_config?.ticket || 500000)
       };
     }
-    return data?.funnel_config;
+    return null;
   }
 
 
