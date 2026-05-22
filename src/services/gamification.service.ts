@@ -116,6 +116,9 @@ export const GamificationService = {
         badges: newBadges
       })
       .eq('id', userId);
+    } catch (err) {
+      console.error('Gamification Error:', err);
+    }
   },
 
   async evaluateActivityBadges(userId: string) {
