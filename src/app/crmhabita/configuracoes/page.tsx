@@ -151,6 +151,20 @@ export default function SettingsPage() {
                         />
                       </div>
                     </div>
+                      <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2 mt-4">Comissão Média</p>
+                        <div className="flex items-center gap-2">
+                          <input 
+                            type="number"
+                            step="0.01"
+                            value={profile?.avg_commission_percent || 0}
+                            onChange={e => setProfile(p => p ? {...p, avg_commission_percent: Number(e.target.value)} : null)}
+                            className="bg-white/10 text-lg font-bold text-white px-3 py-1.5 rounded-xl outline-none w-24 border border-transparent focus:border-white/20 transition-all"
+                          />
+                          <span className="text-lg font-bold">%</span>
+                        </div>
+                      </div>
+
 
                   <div className="pt-4 border-t border-white/10">
                     <button type="button" className="text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-all">
