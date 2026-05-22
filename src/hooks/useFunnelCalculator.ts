@@ -4,6 +4,7 @@ import { FunnelCalculationResult } from '@/types/funnel';
 interface FunnelParams {
   quarterlyGoal: number;
   avgTicket: number;
+  avgCommission: number;
   callToPresentation: number;
   presentationToProposal: number;
   proposalToSale: number;
@@ -12,6 +13,7 @@ interface FunnelParams {
 export function useFunnelCalculator({
   quarterlyGoal,
   avgTicket,
+  avgCommission,
   callToPresentation,
   presentationToProposal,
   proposalToSale
@@ -19,7 +21,8 @@ export function useFunnelCalculator({
   
   return useMemo(() => {
     // 1. Vendas necessárias (Base)
-    const salesNeeded = Math.ceil(quarterlyGoal / (avgTicket || 1));
+    const vgvNeeded = quarterlyGoal / ((avgCommission || 1.25) / 100);
+    const salesNeeded = Math.ceil(vgvNeeded / (avgTicket || 1));
 
     // 2. Propostas necessárias (Vendas / Taxa de Fechamento)
     const proposalsNeeded = Math.ceil(salesNeeded / (proposalToSale || 0.01));
@@ -40,5 +43,5 @@ export function useFunnelCalculator({
       callsNeeded,
       dailyLeadGoal
     };
-  }, [quarterlyGoal, avgTicket, callToPresentation, presentationToProposal, proposalToSale]);
+  }, [quarterlyGoal, avgTicket, avgCommission, callToPresentation, presentationToProposal, proposalToSale]);
 }

@@ -162,7 +162,8 @@ export class DashboardService {
       const rowData = data as any;
       return {
         ...(rowData.funnel_config || {}),
-        goal: rowData.earnings_goal_monthly ? Math.round((Number(rowData.earnings_goal_monthly) * 3) / ((Number(rowData.avg_commission_percent) || 2) / 100)) : (rowData.funnel_config?.goal || 3000000),
+        goal: rowData.earnings_goal_monthly ? Number(rowData.earnings_goal_monthly) * 3 : (rowData.funnel_config?.goal || 3000000),
+          commission: Number(rowData.avg_commission_percent) || 1.25,
         ticket: rowData.avg_ticket ? Number(rowData.avg_ticket) : (rowData.funnel_config?.ticket || 500000)
       };
     }

@@ -22,6 +22,7 @@ export function FunnelSimulator() {
   // Estados para os inputs (Personalizáveis por Corretor)
   const [goal, setGoal] = useState(3000000);
   const [ticket, setTicket] = useState(500000);
+  const [commission, setCommission] = useState(1.25);
   const [rateCallToApres, setRateCallToApres] = useState(0.20);
   const [rateApresToProp, setRateApresToProp] = useState(0.30);
   const [ratePropToSale, setRatePropToSale] = useState(0.40);
@@ -38,6 +39,7 @@ export function FunnelSimulator() {
         if (config) {
           setGoal(config.goal || 3000000);
           setTicket(config.ticket || 500000);
+          setCommission(config.commission || 1.25);
           setRateCallToApres(config.rateCallToApres || 0.20);
           setRateApresToProp(config.rateApresToProp || 0.30);
           setRatePropToSale(config.ratePropToSale || 0.40);
@@ -74,6 +76,7 @@ export function FunnelSimulator() {
   } = useFunnelCalculator({
     quarterlyGoal: goal,
     avgTicket: ticket,
+    avgCommission: commission,
     callToPresentation: rateCallToApres,
     presentationToProposal: rateApresToProp,
     proposalToSale: ratePropToSale
