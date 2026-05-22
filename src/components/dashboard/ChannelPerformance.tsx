@@ -54,7 +54,7 @@ export function ChannelPerformance() {
           <thead>
             <tr className="border-b border-border/50">
               <th className="pb-3 text-xs font-black text-muted-foreground uppercase tracking-wider">Canal (Origem)</th>
-              <th className="pb-3 text-xs font-black text-muted-foreground uppercase tracking-wider text-center">Volume (Leads -> Opps)</th>
+              <th className="pb-3 text-xs font-black text-muted-foreground uppercase tracking-wider text-center">Volume (Leads ➔ Opps)</th>
               <th className="pb-3 text-xs font-black text-muted-foreground uppercase tracking-wider text-center">Conversão Real</th>
               <th className="pb-3 text-xs font-black text-muted-foreground uppercase tracking-wider text-center">Meta (Benchmark)</th>
               <th className="pb-3 text-xs font-black text-muted-foreground uppercase tracking-wider text-right">Status</th>
