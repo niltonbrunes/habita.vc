@@ -157,14 +157,33 @@ export class DashboardService {
       console.error('Error fetching funnel config:', error);
       return null;
     }
+
+    if (data) {
+      return {
+        ...(data.funnel_config || {}),
+        goal: data.earnings_goal_monthly ? Number(data.earnings_goal_monthly) * 3 : (data.funnel_config?.goal || 3000000),
+        ticket: data.avg_ticket ? Number(data.avg_ticket) : (data.funnel_config?.ticket || 500000)
+      };
+    }
     return data?.funnel_config;
   }
 
-  static async saveFunnelConfig(userId: string, config: any) {
-    const { error } = await supabase
-      .from('profiles')
-      .update({ funnel_config: config })
-      .eq('id', userId);
+
+    static async saveFunnelConfig(userId: string, config: any) {
+      const updateData: any = { funnel_config: config };
+      
+      // Sincronizar de volta para o perfil
+      if (config.goal) {
+        updateData.earnings_goal_monthly = config.goal / 3;
+      }
+      if (config.ticket) {
+        updateData.avg_ticket = config.ticket;
+      }
+
+      const { error } = await supabase
+        .from('profiles')
+        .update(updateData)
+        .eq('id', userId);
     
     if (error) {
       console.error('Error saving funnel config:', error);
