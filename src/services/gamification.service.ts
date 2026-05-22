@@ -17,14 +17,18 @@ export const BADGES = {
 
 export const GamificationService = {
   async addPoints(userId: string, points: number, vgv: number = 0) {
+    try {
     // 1. Get current user profile
-    const { data: profile } = await supabase
+    const { data: profile, error: profErr } = await supabase
       .from('profiles')
       .select('total_points, badges')
       .eq('id', userId)
       .single();
 
-    if (!profile) return;
+    if (!profile) {
+      console.error('Profile not found for Gamification:', userId, profErr);
+      return;
+    }
 
     let currentTotalPoints = profile.total_points || 0;
     let currentBadges = profile.badges || [];
