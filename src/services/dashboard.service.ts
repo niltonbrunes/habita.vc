@@ -170,7 +170,64 @@ export class DashboardService {
   }
 
 
-    static async saveFunnelConfig(userId: string, config: any) {
+  
+  static async getChannelPerformance(userId: string) {
+    const { data: leads, error } = await supabase
+      .from('leads')
+      .select('source, status')
+      .eq('assigned_to_id', userId);
+
+    if (error) {
+      console.error('Error fetching channel performance:', error);
+      return [];
+    }
+
+    const benchmarks: Record<string, number> = {
+      'Indicação': 70,
+      'Base de clientes': 45,
+      'Network': 40,
+      'Portais': 10,
+      'Redes sociais': 15,
+      'Ligação ativa': 5,
+      'Ponto avançado': 30
+    };
+
+    const stats: Record<string, { total: number; opps: number }> = {};
+    Object.keys(benchmarks).forEach(k => {
+      stats[k] = { total: 0, opps: 0 };
+    });
+
+    const oppStatuses = ['presentation', 'visit', 'proposal', 'sale'];
+
+    (leads || []).forEach(lead => {
+      const source = lead.source || 'Outros';
+      if (!stats[source]) {
+        stats[source] = { total: 0, opps: 0 };
+      }
+      stats[source].total += 1;
+      
+      if (oppStatuses.includes(lead.status)) {
+        stats[source].opps += 1;
+      }
+    });
+
+    const results = Object.keys(stats).map(source => {
+      const { total, opps } = stats[source];
+      const convReal = total > 0 ? Math.round((opps / total) * 100) : 0;
+      const benchmark = benchmarks[source] || 0;
+      return {
+        source,
+        total,
+        opps,
+        convReal,
+        benchmark
+      };
+    }).sort((a, b) => b.total - a.total); // Sort by volume
+
+    return results;
+  }
+
+  static async saveFunnelConfig(userId: string, config: any) {
       const updateData: any = { funnel_config: config };
       
       // Sincronizar de volta para o perfil

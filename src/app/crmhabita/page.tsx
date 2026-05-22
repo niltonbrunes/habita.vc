@@ -19,6 +19,7 @@ import { Lead, Task } from '@/types/database';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FunnelSimulator } from '@/components/dashboard/FunnelSimulator';
+import { ChannelPerformance } from '@/components/dashboard/ChannelPerformance';
 import { SaleModal } from '@/components/leads/SaleModal';
 
 export default function DashboardPage() {
@@ -92,6 +93,10 @@ export default function DashboardPage() {
             <div className="h-px bg-border flex-1" />
           </div>
           <FunnelSimulator />
+        </section>
+
+        <section>
+          <ChannelPerformance />
         </section>
 
         {/* Stats Grid */}

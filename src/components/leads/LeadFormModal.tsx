@@ -444,14 +444,16 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                 <select
                   value={formData.source}
                   onChange={e => setFormData({ ...formData, source: e.target.value })}
+                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
                   >
                     <option value="">Selecione...</option>
-                    <option value="indicacao">Indicação</option>
-                    <option value="redes_sociais">Redes Sociais</option>
-                    <option value="base_clientes">Base de Clientes</option>
-                    <option value="network">Network</option>
-                    <option value="ponto_avancado">Ponto Avançado</option>
-                    <option value="plantao">Plantão</option>
+                    <option value="Indicação">Indicação</option>
+                    <option value="Base de clientes">Base de clientes</option>
+                    <option value="Network">Network</option>
+                    <option value="Portais">Portais</option>
+                    <option value="Redes sociais">Redes sociais</option>
+                    <option value="Ligação ativa">Ligação ativa</option>
+                    <option value="Ponto avançado">Ponto avançado</option>
                   </select>
               </div>
             </div>
