@@ -146,17 +146,7 @@ export function FunnelSimulator() {
           {isSaving ? 'Salvo!' : 'Salvar Minhas Metas'}
         </button>
 
-        {/* Distribuição por Canais */}
-        <div className="pt-8 space-y-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Distribuição Sugerida</p>
-          <div className="space-y-3">
-            <ChannelItem name="Indicação" percentage={25} leads={Math.ceil(callsNeeded * 0.25)} />
-            <ChannelItem name="Redes Sociais" percentage={25} leads={Math.ceil(callsNeeded * 0.25)} />
-            <ChannelItem name="Base de Clientes" percentage={20} leads={Math.ceil(callsNeeded * 0.20)} />
-            <ChannelItem name="Network / Ponto" percentage={30} leads={Math.ceil(callsNeeded * 0.30)} />
-          </div>
         </div>
-      </div>
 
       {/* Coluna do Funil Visual */}
       <div className="lg:col-span-2 space-y-10 lg:pl-8 pl-0">
