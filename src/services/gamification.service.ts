@@ -4,14 +4,14 @@
 export const POINTS_RULES = {
   LEAD_CREATED: 10,
   VISIT_DONE: 50,
-  PROPOSAL_SENT: 100,
+  PROPOSAL_SENT: 80,
   SALE_CLOSED_BASE: 1000,
 };
 
 export const BADGES = {
   FIRST_SALE: 'Primeira Venda',
   VGV_1M: '1 Milhão em VGV',
-  VGV_5M: '5 Milhões em VGV',
+  VGV_3M: '3 Milhões em VGV',
   VGV_10M: '10 Milhões em VGV',
 };
 
@@ -85,8 +85,8 @@ export const GamificationService = {
     if (totalVgv >= 1000000 && !newBadges.includes(BADGES.VGV_1M)) {
       newBadges.push(BADGES.VGV_1M);
     }
-    if (totalVgv >= 5000000 && !newBadges.includes(BADGES.VGV_5M)) {
-      newBadges.push(BADGES.VGV_5M);
+    if (totalVgv >= 3000000 && !newBadges.includes(BADGES.VGV_3M)) {
+      newBadges.push(BADGES.VGV_3M);
     }
     if (totalVgv >= 10000000 && !newBadges.includes(BADGES.VGV_10M)) {
       newBadges.push(BADGES.VGV_10M);
@@ -116,7 +116,7 @@ export const GamificationService = {
 
   async handleSale(userId: string, salePrice: number) {
     // 1000 base + 1000 per 100k
-    const extraPoints = Math.floor(salePrice / 100000) * 1000;
+    const extraPoints = Math.floor(salePrice / 100000) * 100;
     const totalSalePoints = POINTS_RULES.SALE_CLOSED_BASE + extraPoints;
     await this.addPoints(userId, totalSalePoints, salePrice);
   },
