@@ -149,7 +149,7 @@ export class DashboardService {
   static async getFunnelConfig(userId: string) {
     const { data, error } = await supabase
       .from('profiles')
-      .select('funnel_config')
+      .select('funnel_config, earnings_goal_monthly, avg_ticket')
       .eq('id', userId)
       .single();
     
