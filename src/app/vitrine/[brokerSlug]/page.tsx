@@ -31,9 +31,7 @@ export default function BrokerShowcasePage({ params }: { params: Promise<{ broke
         setProfile(profileData);
         
         // Buscar imoveis deste corretor
-        const { data: props } = await (PropertiesService as any).getAllFiltered({
-          brokerId: profileData.id
-        });
+        const { data: props } = await (PropertiesService as any).getAllFiltered({});
         setProperties((props || []).filter((p: any) => p.show_in_vitrine !== false));
       } catch (err) {
         console.error('Erro ao carregar vitrine:', err);
