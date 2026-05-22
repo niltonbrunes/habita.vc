@@ -170,7 +170,7 @@ export function FunnelSimulator() {
         <div className="relative py-10 flex flex-col items-center lg:pr-32 xl:pr-40 w-full">
           {/* Camada: Ligações */}
           <FunnelLayer 
-            label="Leads" 
+            label="Oportunidades" 
             value={callsNeeded} 
             color="bg-primary/5" 
             width="w-full"
