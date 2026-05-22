@@ -149,7 +149,7 @@ export class DashboardService {
   static async getFunnelConfig(userId: string) {
     const { data, error } = await supabase
       .from('profiles')
-      .select('funnel_config, earnings_goal_monthly, avg_ticket')
+      .select('funnel_config, earnings_goal_monthly, avg_ticket, avg_commission_percent')
       .eq('id', userId)
       .single();
     
@@ -162,7 +162,7 @@ export class DashboardService {
       const rowData = data as any;
       return {
         ...(rowData.funnel_config || {}),
-        goal: rowData.earnings_goal_monthly ? Number(rowData.earnings_goal_monthly) * 3 : (rowData.funnel_config?.goal || 3000000),
+        goal: rowData.earnings_goal_monthly ? Math.round((Number(rowData.earnings_goal_monthly) * 3) / ((Number(rowData.avg_commission_percent) || 2) / 100)) : (rowData.funnel_config?.goal || 3000000),
         ticket: rowData.avg_ticket ? Number(rowData.avg_ticket) : (rowData.funnel_config?.ticket || 500000)
       };
     }
