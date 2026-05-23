@@ -206,17 +206,21 @@ export default function RankingPage() {
                 {availableBadgesList.map((badgeName, i) => {
                   const unlocked = myBadges.includes(badgeName);
                   return (
-                    <div 
-                      key={i} 
-                      title={badgeName}
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all cursor-help border ${
-                        unlocked 
-                          ? 'bg-accent/10 text-accent border-accent/20' 
-                          : 'bg-muted text-muted-foreground grayscale opacity-50 border-transparent'
-                      }`}
-                    >
-                      <Medal size={24} />
-                    </div>
+                                          <div key={i} className="flex flex-col items-center gap-1 w-[72px]">
+                        <div 
+                          title={badgeName}
+                          className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all border ${
+                            unlocked 
+                              ? 'bg-accent/10 text-accent border-accent/20' 
+                              : 'bg-muted text-muted-foreground grayscale opacity-50 border-transparent'
+                          }`}
+                        >
+                          <Medal size={24} />
+                        </div>
+                        <span className={`text-[9px] font-bold text-center leading-tight ${unlocked ? 'text-primary' : 'text-muted-foreground opacity-50'}`}>
+                          {badgeName}
+                        </span>
+                      </div>
                   );
                 })}
               </div>
