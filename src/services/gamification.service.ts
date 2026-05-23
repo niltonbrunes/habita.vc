@@ -261,7 +261,7 @@ export const GamificationService = {
 
     const { data: profiles } = await supabase
       .from('profiles')
-      .select('id, full_name, avatar_url, earnings_goal_monthly, badges, conversion_rates');
+      .select('id, full_name, avatar_url, earnings_goal_monthly, badges, conversion_rates, avg_commission_percent');
 
     const { data: stats } = await supabase
       .from('performance_stats')
@@ -291,7 +291,7 @@ export const GamificationService = {
         badges: profile.badges || [],
         points: pStats?.monthly_points || 0,
         vgv: pStats?.vgv_achieved || 0,
-        goal: profile.earnings_goal_monthly || 0,
+        goal: profile.earnings_goal_monthly ? Math.round(Number(profile.earnings_goal_monthly) / ((Number(profile.avg_commission_percent) || 1.25) / 100)) : 0,
         conversion: profile.conversion_rates?.proposal_to_sale || 0,
         salesCount: salesCountMap[profile.id] || 0
       };
