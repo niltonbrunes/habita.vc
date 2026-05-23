@@ -454,7 +454,10 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                     <option value="Redes sociais">Redes sociais</option>
                     <option value="Ligação ativa">Ligação ativa</option>
                     <option value="Ponto avançado">Ponto avançado</option>
-                  </select>
+                  
+                    <option value="IA Prospec??o">IA Prospec??o</option>
+                    <option value="Manual">Manual</option>
+                    </select>
               </div>
             </div>
 

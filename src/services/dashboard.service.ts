@@ -190,7 +190,9 @@ export class DashboardService {
       'Portais': 10,
       'Redes sociais': 15,
       'Ligação ativa': 5,
-      'Ponto avançado': 30
+      'Ponto avan\u00E7ado': 30,
+      'IA Prospec\u00E7\u00E3o': 15,
+      'Manual': 15
     };
 
     const stats: Record<string, { total: number; opps: number }> = {};
