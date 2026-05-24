@@ -1,5 +1,16 @@
 ﻿import { supabase } from '@/lib/supabase';
-import { Profile, TeamNode } from '@/types/database';
+import { Profile } from '@/types/database';
+
+export interface TeamNode {
+  profile: Profile;
+  directReports: TeamNode[];
+  stats?: {
+    activeLeads: number;
+    monthlySales: number;
+    monthlyVgv: number;
+    conversionRate: number;
+  };
+}
 
 
 export const ProfilesService = {
