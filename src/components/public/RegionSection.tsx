@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, MapPin } from 'lucide-react';
 
@@ -38,11 +39,7 @@ export const RegionSection = () => {
               className="group relative h-[350px] rounded-[3rem] overflow-hidden shadow-premium hover:shadow-luxury transition-all duration-700"
             >
               {/* Background Image */}
-              <img 
-                src={region.image} 
-                alt={region.name}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-              />
+              <Image src={region.image} alt={region.name} fill className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" sizes="(max-width: 768px) 100vw, 50vw" />
               
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />

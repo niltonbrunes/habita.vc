@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/context/AuthContext';
-import { useTheme } from '@/context/ThemeContext';
+
 import { ProfilesService } from '@/services/profiles.service';
 import { 
   User, 
@@ -20,7 +20,7 @@ import {
 
 export default function SettingsPage() {
   const { profile, user } = useAuth();
-  const { isLuxury, toggleLuxury } = useTheme();
+
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   
@@ -293,15 +293,15 @@ export default function SettingsPage() {
               
               <button
                 type="button"
-                onClick={toggleLuxury}
+                
                 className={`
                   relative inline-flex h-10 w-20 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-500 ease-in-out focus:outline-none
-                  ${isLuxury ? 'bg-primary shadow-luxury' : 'bg-muted'}
+                  bg-primary shadow-luxury
                 `}
               >
                 <span className={`
                   pointer-events-none inline-block h-9 w-9 transform rounded-full bg-white shadow-lg ring-0 transition duration-500 ease-in-out
-                  ${isLuxury ? 'translate-x-10' : 'translate-x-0'}
+                  translate-x-10
                 `} />
               </button>
             </div>

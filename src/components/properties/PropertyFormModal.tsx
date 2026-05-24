@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { 
   X, 
   MapPin, 
@@ -587,7 +588,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                   {/* Image Previews */}
                   {formData.images.map((url, i) => (
                     <div key={i} className="relative aspect-square rounded-[2rem] overflow-hidden group border border-border">
-                      <img src={url} className="w-full h-full object-cover" />
+                      <Image src={url} alt="" fill className="w-full h-full object-cover" sizes="200px" />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                         <button 
                           type="button"

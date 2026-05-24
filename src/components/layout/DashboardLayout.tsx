@@ -30,13 +30,11 @@ interface DashboardLayoutProps {
   actions?: React.ReactNode;
 }
 
-import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/context/NotificationContext';
 import { useState } from 'react';
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, actions }) => {
-  const { isLuxury, toggleLuxury } = useTheme();
   const { profile, signOut, isRole } = useAuth();
   const { notifications, unreadCount, markAsRead } = useNotifications();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -44,7 +42,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
   const pathname = usePathname();
 
   return (
-    <div className={`flex h-screen bg-background font-sans transition-colors duration-500 ${isLuxury ? 'luxury-mode' : ''}`}>
+    <div className={`flex h-screen bg-background font-sans transition-colors duration-500 luxury-mode`}>
       {/* Mobile Backdrop */}
       {isMobileMenuOpen && (
         <div 
@@ -56,7 +54,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
       {/* Sidebar */}
       <aside className={`
         fixed inset-y-0 left-0 z-50 w-60 flex flex-col shadow-[20px_0_40px_-15px_rgba(0,0,0,0.05)] transition-transform duration-300
-        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        
         lg:static lg:translate-x-0 lg:flex
         bg-card border-r border-border
       `}>
@@ -129,16 +127,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
           </div>
           
           <div className="flex items-center gap-6">
-            <div 
-              onClick={toggleLuxury}
+            <div
               className={`
                 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all border group
-                ${isLuxury 
-                  ? 'bg-accent text-white border-accent shadow-[0_0_15px_rgba(217,119,6,0.4)]' 
-                  : 'bg-luxury-gold/10 text-luxury-gold border-luxury-gold/20 hover:bg-luxury-gold/20'}
+                
               `}
             >
-              <Crown size={16} className={`group-hover:scale-110 transition-transform ${isLuxury ? 'fill-white' : ''}`} />
+              <Crown size={16} className={`group-hover:scale-110 transition-transform fill-white`} />
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">Modo Premium</span>
             </div>
             
@@ -146,7 +141,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
               <Bell 
                 size={20} 
                 onClick={() => setIsNotifOpen(!isNotifOpen)}
-                className={`cursor-pointer transition-colors ${isNotifOpen ? 'text-accent' : 'text-muted-foreground hover:text-primary'}`} 
+                className={`cursor-pointer transition-colors `} 
               />
               {unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent text-[9px] font-black text-primary rounded-full flex items-center justify-center border-2 border-white">
@@ -164,7 +159,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
                       <div 
                         key={n.id} 
                         onClick={() => markAsRead(n.id)}
-                        className={`p-5 border-b border-border hover:bg-muted/30 transition-colors cursor-pointer ${!n.read ? 'bg-primary/5' : ''}`}
+                        className={`p-5 border-b border-border hover:bg-muted/30 transition-colors cursor-pointer `}
                       >
                         <p className="font-bold text-xs text-primary mb-1">{n.title}</p>
                         <p className="text-xs text-muted-foreground font-medium">{n.message}</p>
@@ -196,9 +191,7 @@ const SidebarItem = ({ icon, label, href, active = false }: { icon: React.ReactN
     href={href} 
     className={`
       flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all
-      ${active 
-        ? 'bg-accent text-white shadow-lg' 
-        : 'text-muted-foreground hover:bg-muted hover:text-primary'}
+      
     `}
   >
     {icon}

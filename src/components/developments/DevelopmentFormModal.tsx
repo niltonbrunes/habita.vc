@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { 
   X, 
   Upload, 
@@ -303,7 +304,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                     <div className="flex gap-4">
                       <div className="w-24 h-24 rounded-2xl bg-muted overflow-hidden border border-border flex items-center justify-center flex-shrink-0">
                         {formData.image_url ? (
-                          <img src={formData.image_url} className="w-full h-full object-cover" />
+                          <Image src={formData.image_url} alt="" fill className="w-full h-full object-cover" sizes="200px" />
                         ) : (
                           <ImageIcon className="text-muted-foreground" size={24} />
                         )}

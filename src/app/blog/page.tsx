@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { 
@@ -27,11 +28,7 @@ const ArticleCard = ({ post }: { post: any }) => (
     className="group bg-[#0c0c0c] rounded-[2.5rem] overflow-hidden border border-white/10 hover:border-accent/40 hover:shadow-luxury transition-all duration-700 flex flex-col h-full relative"
   >
     <div className="relative h-64 overflow-hidden">
-      <img 
-        src={post.cover_image || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa'} 
-        alt={post.title}
-        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
-      />
+      <Image src={post.cover_image || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa'} alt={post.title} fill className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" sizes="(max-width: 768px) 100vw, 50vw" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] via-transparent to-transparent opacity-60" />
       <div className="absolute top-6 left-6">
         <span className="px-4 py-2 bg-[#0c0c0c]/80 backdrop-blur-md border border-white/10 rounded-full text-[10px] font-black uppercase tracking-widest text-accent shadow-sm">
@@ -160,11 +157,7 @@ export default function ConteudosPage() {
                 className="group grid lg:grid-cols-12 bg-[#0c0c0c] border border-white/10 rounded-[3rem] overflow-hidden hover:border-accent/40 hover:shadow-luxury transition-all duration-700 relative"
               >
                 <div className="lg:col-span-7 relative h-72 lg:h-[480px] overflow-hidden">
-                  <img 
-                    src={featuredPost.cover_image || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa'} 
-                    alt={featuredPost.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1200ms]"
-                  />
+                  <Image src={featuredPost.cover_image || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa'} alt={featuredPost.title} fill className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1200ms]" sizes="(max-width: 768px) 100vw, 50vw" />
                   <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#0c0c0c] via-transparent to-transparent opacity-90 lg:opacity-60" />
                   <div className="absolute top-8 left-8">
                     <span className="px-5 py-2.5 bg-[#0c0c0c]/90 border border-white/10 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest text-accent flex items-center gap-1.5 shadow-lg">

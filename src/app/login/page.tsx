@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import { Home, Mail, Lock, ArrowRight, Loader2, AlertCircle, TrendingUp, Handshake } from 'lucide-react';
 import Link from 'next/link';
@@ -151,7 +152,7 @@ export default function LoginPage() {
               <div key={property.id} className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden group hover:border-primary/20 transition-all">
                 <div className="aspect-[4/3] bg-muted relative overflow-hidden">
                   {(property.main_image || (property.images && property.images.length > 0)) ? (
-                    <img src={property.main_image || property.images[0]} alt={property.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <Image src={property.main_image || property.images[0]} alt={property.title} fill className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 100vw, 50vw" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-muted">
                       <Home className="text-muted-foreground/30" size={32} />

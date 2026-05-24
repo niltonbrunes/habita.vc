@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Search, MapPin, ArrowRight, Star } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -24,7 +25,7 @@ export const Hero = () => {
     <section className="relative min-h-[85vh] lg:min-h-screen flex items-center pt-20 pb-20 overflow-x-hidden">
       {/* Background Image with Dark Gradient Mask */}
       <div className="absolute inset-0 z-0">
-        <img src="/hero_luxury.png" alt="Luxury Real Estate" className="w-full h-full object-cover" />
+        <Image src="/hero_luxury.png" alt="Luxury Real Estate" fill className="w-full h-full object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-black/40" />
       </div>
       

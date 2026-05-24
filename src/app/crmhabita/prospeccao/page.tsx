@@ -21,12 +21,12 @@ import {
 import { PropertiesService } from '@/services/properties.service';
 import { LeadsService } from '@/services/leads.service';
 import { useAuth } from '@/context/AuthContext';
-import { useTheme } from '@/context/ThemeContext';
+
 import Link from 'next/link';
 
 export default function ProspeccaoPage() {
   const { user } = useAuth();
-  const { isLuxury } = useTheme();
+
   const [loading, setLoading] = useState(true);
   const [properties, setProperties] = useState<any[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<any>(null);
@@ -146,7 +146,7 @@ export default function ProspeccaoPage() {
             </div>
             <span className="text-xs font-black text-accent uppercase tracking-[0.2em]">Habita Intelligence Hub</span>
           </div>
-          <h1 className={`text-4xl font-black ${isLuxury ? 'text-white' : 'text-primary'}`}>
+          <h1 className={`text-4xl font-black ${'text-white'}`}>
             Prospecção <span className="text-accent">IA</span>
           </h1>
           <p className="text-muted-foreground font-medium mt-1">Gere leads qualificados e estratégias de venda com um clique.</p>
@@ -176,7 +176,7 @@ export default function ProspeccaoPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left: Property Selection */}
         <div className="lg:col-span-4 space-y-6">
-          <div className={`p-8 rounded-[2.5rem] border ${isLuxury ? 'bg-white/5 border-white/10' : 'bg-white border-border shadow-luxury'}`}>
+          <div className={`p-8 rounded-[2.5rem] border ${'bg-white/5 border-white/10'}`}>
             <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
               <Home className="w-5 h-5 text-accent" />
               1. Selecione o Imóvel
@@ -290,7 +290,7 @@ export default function ProspeccaoPage() {
                 className="space-y-6"
               >
                 {/* Persona Card */}
-                <div className={`p-8 rounded-[2.5rem] border ${isLuxury ? 'bg-white/5 border-white/10' : 'bg-white border-border shadow-luxury'}`}>
+                <div className={`p-8 rounded-[2.5rem] border ${'bg-white/5 border-white/10'}`}>
                   <div className="flex items-center gap-3 mb-6">
                     <div className="p-3 bg-accent/20 rounded-2xl text-accent">
                       <UserPlus size={24} />
@@ -316,7 +316,7 @@ export default function ProspeccaoPage() {
 
                 {/* Strategy Card */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className={`p-8 rounded-[2.5rem] border ${isLuxury ? 'bg-white/5 border-white/10' : 'bg-white border-border shadow-luxury'}`}>
+                  <div className={`p-8 rounded-[2.5rem] border ${'bg-white/5 border-white/10'}`}>
                     <h4 className="font-black text-lg mb-6 flex items-center gap-2">
                       <TrendingUp className="text-accent" size={20} />
                       Estratégia de Venda
@@ -331,7 +331,7 @@ export default function ProspeccaoPage() {
                     </ul>
                   </div>
 
-                  <div className={`p-8 rounded-[2.5rem] border ${isLuxury ? 'bg-white/5 border-white/10' : 'bg-white border-border shadow-luxury'}`}>
+                  <div className={`p-8 rounded-[2.5rem] border ${'bg-white/5 border-white/10'}`}>
                     <h4 className="font-black text-lg mb-6 flex items-center gap-2">
                       <MessageSquare className="text-accent" size={20} />
                       Script WhatsApp

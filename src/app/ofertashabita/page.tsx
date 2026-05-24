@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { PropertiesService } from '@/services/properties.service';
 import { Property } from '@/types/database';
 import { ArrowRight, Clock, Star, Flame, MapPin, CheckCircle2 } from 'lucide-react';
@@ -83,7 +84,7 @@ export default function OfertasPage() {
               <div key={property.id} className="bg-white rounded-3xl overflow-hidden shadow-premium border border-border group hover:-translate-y-2 transition-all duration-300">
                 <div className="aspect-[4/3] relative overflow-hidden">
                   {(property.main_image || (property.images && property.images.length > 0)) ? (
-                    <img src={property.main_image || property.images[0]} alt={property.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <Image src={property.main_image || property.images[0]} alt={property.title} fill className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" />
                   ) : (
                     <div className="w-full h-full bg-muted flex items-center justify-center">
                       <span className="text-muted-foreground font-bold">Sem imagem</span>

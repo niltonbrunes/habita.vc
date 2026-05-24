@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Navbar } from '@/components/layout/Navbar';
 import { DevelopmentsService } from '@/services/developments.service';
 import { Building2, MapPin, ArrowRight, RefreshCw, Star } from 'lucide-react';

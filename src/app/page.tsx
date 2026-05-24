@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Metadata } from 'next';
 import { Navbar } from "@/components/layout/Navbar";
 import { Hero } from "@/components/layout/Hero";
@@ -53,7 +54,7 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[1,2,3,4].map(i => (
                   <div key={i} className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-premium">
-                    <img src={`/katedral_hero_1778094352027.png`} alt="Launch" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <Image src={`/katedral_hero_1778094352027.png`} alt="Launch" fill className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" sizes="(max-width: 768px) 100vw, 50vw" />
                     <div className="absolute inset-0 bg-gradient-to-t from-primary via-transparent opacity-80" />
                     <div className="absolute inset-0 p-8 flex flex-col justify-end text-white">
                       <span className="text-[9px] font-black uppercase tracking-[0.3em] text-accent mb-2">Exclusivo Habita.vc</span>
