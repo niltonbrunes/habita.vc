@@ -1,10 +1,6 @@
 ﻿import { supabase } from '@/lib/supabase';
-import { Profile } from '@/types/database';
+import { Profile, TeamNode } from '@/types/database';
 
-export interface TeamNode {
-  profile: Profile;
-  directReports: TeamNode[];
-}
 
 export const ProfilesService = {
   async getById(id: string) {
@@ -115,8 +111,9 @@ export const ProfilesService = {
 
     const roots: TeamNode[] = [];
     all.forEach(p => {
-      if (p.manager_id && map.has(p.manager_id)) {
-        map.get(p.manager_id)!.directReports.push(map.get(p.id)!);
+      const mid = (p as Profile & { manager_id?: string }).manager_id;
+      if (mid && map.has(mid)) {
+        map.get(mid!)!.directReports.push(map.get(p.id)!);
       } else {
         roots.push(map.get(p.id)!);
       }
