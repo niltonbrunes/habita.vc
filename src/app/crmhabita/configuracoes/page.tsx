@@ -8,7 +8,7 @@ import { Profile } from '@/types/database';
 import { 
   User, Mail, Phone, ShieldCheck, Globe, 
   FileText, Camera, Loader2, CheckCircle2,
-  Trophy, Target, BarChart3, Save
+  Trophy, Target, BarChart3, Save, Briefcase
 } from 'lucide-react';
 
 export default function SettingsPage() {
@@ -33,7 +33,6 @@ export default function SettingsPage() {
     if (!user || !profile) return;
     setSaving(true);
     try {
-      // Only send fields that are safe to update (avoid id, email, role, and complex objects)
       const updatableFields: Record<string, any> = {
         full_name: profile.full_name,
         whatsapp: profile.whatsapp || null,
@@ -53,8 +52,7 @@ export default function SettingsPage() {
       setTimeout(() => setSaved(false), 3000);
     } catch (err: any) {
       console.error('Erro ao salvar perfil:', err);
-      const msg = err?.message || 'Erro desconhecido ao salvar.';
-      alert('Erro ao salvar perfil: ' + msg);
+      alert('Erro ao salvar perfil: ' + (err?.message || 'Erro desconhecido ao salvar.'));
     } finally {
       setSaving(false);
     }
@@ -79,218 +77,219 @@ export default function SettingsPage() {
   if (loading) return (
     <DashboardLayout>
       <div className="h-full flex items-center justify-center">
-        <Loader2 className="animate-spin text-primary" size={40} />
+        <Loader2 className="animate-spin text-blue-primary" size={40} />
       </div>
     </DashboardLayout>
   );
 
   return (
     <DashboardLayout>
-      <div className="max-w-5xl mx-auto pb-20">
-        <div className="mb-10">
-          <h1 className="text-4xl font-black text-primary tracking-tight">Configurações de Perfil</h1>
-          <p className="text-muted-foreground font-medium">Gerencie sua identidade profissional e metas no Habita.vc</p>
+      <div className="max-w-5xl mx-auto p-6 space-y-6">
+        
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-heading">Configurações de Perfil</h1>
+          <p className="text-[13px] text-muted mt-1">Gerencie sua identidade profissional e metas no Habita.vc</p>
         </div>
 
-        <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Coluna Esquerda: Avatar e Status */}
-          <div className="space-y-8">
-            <div className="bg-white rounded-[2.5rem] p-8 shadow-premium border-2 border-border text-center">
-              <div className="relative w-32 h-32 mx-auto mb-6 group">
-                <div className="w-full h-full bg-muted rounded-[2.5rem] overflow-hidden border-2 border-primary/10 shadow-inner flex items-center justify-center">
+          {/* Coluna Esquerda: Avatar e Metas */}
+          <div className="space-y-6">
+            
+            {/* Avatar Card */}
+            <div className="bg-surface border border-border rounded-xl p-6 text-center shadow-card">
+              <div className="relative w-28 h-28 mx-auto mb-5 group">
+                <div className="w-full h-full rounded-full overflow-hidden bg-bg border-4 border-surface shadow-sm">
                   {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt="" className="w-full h-full object-cover" />
+                    <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
                   ) : (
-                    <User size={48} className="text-primary/20" />
+                    <div className="w-full h-full flex items-center justify-center bg-blue-soft text-blue-primary text-3xl font-bold">
+                      {profile?.full_name?.charAt(0) || 'U'}
+                    </div>
                   )}
                 </div>
-                <label className="absolute inset-0 flex items-center justify-center bg-black/40 text-white rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition-all cursor-pointer">
-                  {uploading ? <Loader2 className="animate-spin" /> : <Camera size={24} />}
-                  <input type="file" className="hidden" onChange={handleAvatarUpload} accept="image/*" />
+                <label className="absolute inset-0 flex items-center justify-center bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                  {uploading ? <Loader2 className="animate-spin" size={24} /> : <Camera size={24} />}
+                  <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={uploading} />
                 </label>
               </div>
+              <h2 className="text-lg font-bold text-heading">{profile?.full_name}</h2>
+              <p className="text-[11px] font-bold text-muted uppercase tracking-wider mt-1">{profile?.role}</p>
               
-              <h3 className="text-xl font-black text-primary mb-1">{profile?.full_name}</h3>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-6">{profile?.role}</p>
-              
-              <div className="flex items-center justify-center gap-2 px-4 py-2 bg-green-50 text-green-600 rounded-xl text-xs font-black uppercase tracking-widest border border-green-100">
+              <div className="mt-4 flex items-center justify-center gap-1.5 text-[11px] font-bold text-green-primary bg-green-soft py-1.5 px-3 rounded-md w-max mx-auto">
                 <ShieldCheck size={14} /> Conta Ativa
               </div>
             </div>
 
-            {/* Metas e Performance */}
-            <div className="bg-primary rounded-[2.5rem] p-8 text-white shadow-luxury relative overflow-hidden">
-               <div className="relative z-10 space-y-6">
-                  <h4 className="font-black flex items-center gap-2 opacity-80">
-                    <Target size={20} /> Metas Mensais
-                  </h4>
-                  
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2">Meta de Ganhos Mensais</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl font-black">R$</span>
-                        <input 
-                          type="number"
-                          value={profile?.earnings_goal_monthly || 0}
-                          onChange={e => setProfile(p => p ? {...p, earnings_goal_monthly: Number(e.target.value)} : null)}
-                          className="bg-white/10 text-xl md:text-2xl font-black text-white px-4 py-2 rounded-xl outline-none w-full border border-transparent focus:border-white/20 transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2">Ticket Médio (Estimativa)</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold">R$</span>
-                        <input 
-                          type="number"
-                          value={profile?.avg_ticket || 0}
-                          onChange={e => setProfile(p => p ? {...p, avg_ticket: Number(e.target.value)} : null)}
-                          className="bg-white/10 text-lg font-bold text-white px-3 py-1.5 rounded-xl outline-none w-full border border-transparent focus:border-white/20 transition-all"
-                        />
-                      </div>
-                    </div>
-                      <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2 mt-4">Comissão Média</p>
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="number"
-                            step="0.01"
-                            value={profile?.avg_commission_percent || 0}
-                            onChange={e => setProfile(p => p ? {...p, avg_commission_percent: Number(e.target.value)} : null)}
-                            className="bg-white/10 text-lg font-bold text-white px-3 py-1.5 rounded-xl outline-none w-24 border border-transparent focus:border-white/20 transition-all"
-                          />
-                          <span className="text-lg font-bold">%</span>
-                        </div>
-                      </div>
-
-
-                  <div className="pt-4 border-t border-white/10">
-                    <button type="button" className="text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-all">
-                      <BarChart3 size={16} /> Ver Painel de Metas
-                    </button>
+            {/* Metas Card */}
+            <div className="bg-surface border border-border rounded-xl p-6 shadow-card">
+              <div className="flex items-center gap-2 mb-5 pb-3 border-b border-border-light">
+                <Target size={18} className="text-blue-primary" />
+                <h3 className="text-[13px] font-bold text-heading">Metas Mensais</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">Meta de Ganhos</label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 text-subtle font-semibold text-[13px]">R$</span>
+                    <input 
+                      type="number"
+                      value={profile?.earnings_goal_monthly || 0}
+                      onChange={e => setProfile(p => p ? {...p, earnings_goal_monthly: Number(e.target.value)} : null)}
+                      className="w-full pl-9 pr-3 py-2 text-[13px] font-semibold text-heading bg-bg border border-border focus:border-blue-primary focus:ring-1 focus:ring-blue-primary rounded-lg outline-none transition-all"
+                    />
                   </div>
-               </div>
-               <Trophy className="absolute -bottom-4 -right-4 text-white/5" size={140} />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">Ticket Médio (Est.)</label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-3 text-subtle font-semibold text-[13px]">R$</span>
+                    <input 
+                      type="number"
+                      value={profile?.avg_ticket || 0}
+                      onChange={e => setProfile(p => p ? {...p, avg_ticket: Number(e.target.value)} : null)}
+                      className="w-full pl-9 pr-3 py-2 text-[13px] font-semibold text-heading bg-bg border border-border focus:border-blue-primary focus:ring-1 focus:ring-blue-primary rounded-lg outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">Comissão Média</label>
+                  <div className="relative flex items-center">
+                    <input 
+                      type="number"
+                      step="0.01"
+                      value={profile?.avg_commission_percent || 0}
+                      onChange={e => setProfile(p => p ? {...p, avg_commission_percent: Number(e.target.value)} : null)}
+                      className="w-full pl-3 pr-8 py-2 text-[13px] font-semibold text-heading bg-bg border border-border focus:border-blue-primary focus:ring-1 focus:ring-blue-primary rounded-lg outline-none transition-all"
+                    />
+                    <span className="absolute right-3 text-subtle font-semibold text-[13px]">%</span>
+                  </div>
+                </div>
+              </div>
             </div>
+
           </div>
 
           {/* Coluna Direita: Formulários */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6">
             
-            {/* Dados Profissionais */}
-            <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-premium border-2 border-border">
-              <h3 className="text-2xl font-black text-primary mb-8 flex items-center gap-3">
-                <Briefcase size={24} className="text-accent" /> Perfil Profissional
-              </h3>
+            {/* Perfil Profissional Card */}
+            <div className="bg-surface border border-border rounded-xl shadow-card overflow-hidden">
+              <div className="px-6 py-4 border-b border-border-light flex items-center gap-2">
+                <Briefcase size={18} className="text-blue-primary" />
+                <h3 className="text-[14px] font-bold text-heading">Perfil Profissional</h3>
+              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-primary uppercase tracking-widest ml-1">Nome Completo</label>
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">Nome Completo</label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
                     <input 
                       type="text" 
                       value={profile?.full_name} 
                       onChange={e => setProfile(p => p ? {...p, full_name: e.target.value} : null)}
-                      className="w-full pl-12 pr-4 py-4 bg-muted/30 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl font-bold transition-all outline-none"
+                      className="w-full pl-9 pr-3 py-2.5 text-[13px] font-semibold text-heading bg-bg border border-border focus:border-blue-primary focus:ring-1 focus:ring-blue-primary rounded-lg outline-none transition-all"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-primary uppercase tracking-widest ml-1">E-mail de Acesso</label>
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">E-mail de Acesso</label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
                     <input 
                       type="email" 
                       value={profile?.email} 
                       disabled
-                      className="w-full pl-12 pr-4 py-4 bg-muted/50 border-2 border-transparent rounded-2xl font-bold text-muted-foreground cursor-not-allowed outline-none"
+                      className="w-full pl-9 pr-3 py-2.5 text-[13px] font-semibold text-subtle bg-bg border border-border rounded-lg outline-none cursor-not-allowed opacity-70"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-primary uppercase tracking-widest ml-1">WhatsApp Profissional</label>
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">WhatsApp Profissional</label>
                   <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
                     <input 
                       type="text" 
                       value={profile?.whatsapp || ''} 
                       onChange={e => setProfile(p => p ? {...p, whatsapp: e.target.value} : null)}
                       placeholder="(00) 0 0000-0000"
-                      className="w-full pl-12 pr-4 py-4 bg-muted/30 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl font-bold transition-all outline-none"
+                      className="w-full pl-9 pr-3 py-2.5 text-[13px] font-semibold text-heading bg-bg border border-border focus:border-blue-primary focus:ring-1 focus:ring-blue-primary rounded-lg outline-none transition-all"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-black text-primary uppercase tracking-widest ml-1">CRECI / Registro</label>
+                <div>
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">CRECI / Registro</label>
                   <div className="relative">
-                    <FileText className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                    <FileText className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
                     <input 
                       type="text" 
                       value={profile?.creci || ''} 
                       onChange={e => setProfile(p => p ? {...p, creci: e.target.value} : null)}
                       placeholder="Ex: 00000-F"
-                      className="w-full pl-12 pr-4 py-4 bg-muted/30 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl font-bold transition-all outline-none"
+                      className="w-full pl-9 pr-3 py-2.5 text-[13px] font-semibold text-heading bg-bg border border-border focus:border-blue-primary focus:ring-1 focus:ring-blue-primary rounded-lg outline-none transition-all"
                     />
                   </div>
                 </div>
-              </div>
-              
-              <div className="mt-8 space-y-2">
-                <label className="text-xs font-black text-primary uppercase tracking-widest ml-1">Sua Bio (Aparecerá no seu site)</label>
-                <textarea 
-                  rows={4}
-                  value={profile?.bio || ''}
-                  onChange={e => setProfile(p => p ? {...p, bio: e.target.value} : null)}
-                  placeholder="Conte um pouco sobre sua experiência no mercado imobiliário..."
-                  className="w-full p-6 bg-muted/30 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-[2rem] font-medium leading-relaxed transition-all outline-none"
-                />
+
+                <div className="md:col-span-2">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">Sua Bio (Aparecerá no site)</label>
+                  <textarea 
+                    rows={4}
+                    value={profile?.bio || ''}
+                    onChange={e => setProfile(p => p ? {...p, bio: e.target.value} : null)}
+                    placeholder="Conte um pouco sobre sua experiência..."
+                    className="w-full p-3 text-[13px] text-body bg-bg border border-border focus:border-blue-primary focus:ring-1 focus:ring-blue-primary rounded-lg outline-none transition-all resize-none"
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Presença Digital */}
-            <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-premium border-2 border-border">
-               <h3 className="text-2xl font-black text-primary mb-8 flex items-center gap-3">
-                <Globe size={24} className="text-accent" /> Presença Digital
-              </h3>
+            {/* Presença Digital Card */}
+            <div className="bg-surface border border-border rounded-xl shadow-card overflow-hidden">
+              <div className="px-6 py-4 border-b border-border-light flex items-center gap-2">
+                <Globe size={18} className="text-blue-primary" />
+                <h3 className="text-[14px] font-bold text-heading">Presença Digital</h3>
+              </div>
 
-              <div className="space-y-4">
-                <label className="text-xs font-black text-primary uppercase tracking-widest ml-1">Link da sua Vitrine de Imóveis</label>
-                <div className="flex items-center">
-                  <div className="px-6 py-4 bg-muted font-bold text-muted-foreground rounded-l-2xl border-2 border-r-0 border-transparent">
+              <div className="p-6">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-muted mb-1.5">Link da sua Vitrine</label>
+                <div className="flex">
+                  <div className="px-4 py-2.5 bg-bg text-[13px] font-semibold text-subtle border border-r-0 border-border rounded-l-lg">
                     habita.vc/
                   </div>
                   <input 
                     type="text" 
                     value={profile?.slug || ''} 
-                    onChange={e => setProfile(p => p ? {...p, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')} : null)}
+                    onChange={e => setProfile(p => p ? {...p, slug: e.target.value.toLowerCase().replace(/s+/g, '-')} : null)}
                     placeholder="seu-nome"
-                    className="flex-1 px-6 py-4 bg-muted/30 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-r-2xl font-black text-primary transition-all outline-none"
+                    className="flex-1 px-3 py-2.5 text-[13px] font-semibold text-heading bg-surface border border-border focus:border-blue-primary focus:ring-1 focus:ring-blue-primary rounded-r-lg outline-none transition-all"
                   />
                 </div>
-                <p className="text-[10px] font-medium text-muted-foreground px-1">Este link é por onde seus clientes verão seus imóveis exclusivos.</p>
+                <p className="text-[11px] text-subtle mt-2">Este link é por onde seus clientes verão seus imóveis exclusivos.</p>
               </div>
             </div>
 
             {/* Botão de Ação */}
-            <div className="flex items-center justify-end gap-4">
+            <div className="flex items-center justify-end gap-4 pt-4">
                {saved && (
-                 <span className="flex items-center gap-2 text-green-600 font-bold animate-in fade-in slide-in-from-right">
-                    <CheckCircle2 size={20} /> Perfil atualizado!
+                 <span className="flex items-center gap-1.5 text-[13px] text-green-primary font-bold">
+                    <CheckCircle2 size={16} /> Perfil atualizado!
                  </span>
                )}
                <button
                 type="submit"
                 disabled={saving}
-                className="px-10 py-5 bg-primary text-white font-black rounded-2xl hover:bg-primary-light transition-all shadow-luxury flex items-center gap-2 disabled:opacity-50"
+                className="px-6 py-2.5 bg-blue-primary text-white text-[13px] font-semibold rounded-lg hover:bg-blue-hover transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50"
                >
-                 {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
-                 Salvar Alterações Profissionais
+                 {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                 Salvar Alterações
                </button>
             </div>
 
@@ -300,7 +299,3 @@ export default function SettingsPage() {
     </DashboardLayout>
   );
 }
-
-const Briefcase = (props: any) => (
-  <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-);
