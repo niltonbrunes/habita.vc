@@ -13,7 +13,6 @@ import {
   Settings, 
   LogOut,
   Bell,
-  Crown,
   Calendar,
   Briefcase,
   Sparkles,
@@ -127,15 +126,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
           </div>
           
           <div className="flex items-center gap-6">
-            <div
-              className={`
-                hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer transition-all border group
-                
-              `}
-            >
-              <Crown size={16} className={`group-hover:scale-110 transition-transform fill-white`} />
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">Modo Premium</span>
-            </div>
             
             <div className="relative">
               <Bell 
