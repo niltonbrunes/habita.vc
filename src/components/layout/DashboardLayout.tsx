@@ -1,37 +1,21 @@
 'use client';
 
 import React from 'react';
-// Layout de alto padrão Habita.vc - Atualizado para SaaS
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Home, 
-  TrendingUp, 
-  Target, 
-  Settings, 
-  LogOut,
-  Bell,
-  Calendar,
-  Briefcase,
-  Sparkles,
-  Layers,
-  ShoppingBag,
-  Trophy,
-  Globe,
-  Menu,
-  X
+import {
+  LayoutDashboard, Users, Home, TrendingUp, Target,
+  Settings, LogOut, Bell, Calendar, Briefcase,
+  Sparkles, Globe, Menu, ShoppingBag, Trophy
 } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { useNotifications } from '@/context/NotificationContext';
+import { useState } from 'react';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
   actions?: React.ReactNode;
 }
-
-import { useAuth } from '@/context/AuthContext';
-import { useNotifications } from '@/context/NotificationContext';
-import { useState } from 'react';
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, actions }) => {
   const { profile, signOut, isRole } = useAuth();
@@ -40,124 +24,104 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  const initials = profile?.full_name?.split(' ').map((n: string) => n[0]).slice(0, 2).join('') || 'HB';
+  const firstName = profile?.full_name?.split(' ')[0] || 'Corretor';
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
+
   return (
-    <div className={`flex h-screen bg-background font-sans transition-colors duration-500 luxury-mode`}>
-      {/* Mobile Backdrop */}
+    <div className="flex h-screen bg-[#F8FAFC] font-sans overflow-hidden">
+
       {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-sm transition-opacity"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsMobileMenuOpen(false)} />
       )}
 
-      {/* Sidebar */}
+      {/* SIDEBAR */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-60 flex flex-col shadow-[20px_0_40px_-15px_rgba(0,0,0,0.05)] transition-transform duration-300
-        
-        lg:static lg:translate-x-0 lg:flex
-        bg-card border-r border-border
+        fixed inset-y-0 left-0 z-50 flex flex-col items-center
+        w-[60px] bg-[#0F172A] py-4 gap-0.5 flex-shrink-0 transition-transform duration-300
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:static lg:translate-x-0
       `}>
-        <div className="p-8 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-accent p-2 rounded-xl shadow-lg shadow-accent/20">
-              <Home className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-lg font-black tracking-tighter text-primary">Habita<span className="text-accent">.vc</span></span>
-          </div>
-          <button className="lg:hidden text-muted-foreground hover:text-primary" onClick={() => setIsMobileMenuOpen(false)}>
-            <X size={20} />
-          </button>
+        <div className="w-[34px] h-[34px] rounded-[9px] bg-blue-600 flex items-center justify-center mb-5 flex-shrink-0">
+          <Home className="w-[17px] h-[17px] text-white" />
         </div>
 
-        <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto scrollbar-hide">
-          <SidebarItem icon={<LayoutDashboard size={18} />} label="Dashboard" href="/crmhabita" active={pathname === '/crmhabita'} />
-          <SidebarItem icon={<Target size={18} />} label="Gestão de Leads" href="/crmhabita/leads" active={pathname.startsWith('/crmhabita/leads')} />
-          <SidebarItem icon={<Trophy size={18} />} label="Performance" href="/crmhabita/ranking" active={pathname === '/crmhabita/ranking'} />
-          <SidebarItem icon={<Layers size={18} />} label="Empreendimentos" href="/crmhabita/empreendimentos" active={pathname.startsWith('/crmhabita/empreendimentos')} />
-          <SidebarItem icon={<Calendar size={18} />} label="Agenda" href="/crmhabita/agenda" active={pathname === '/crmhabita/agenda'} />
-          <SidebarItem icon={<Users size={18} />} label="Contatos" href="/crmhabita/pessoas" active={pathname.startsWith('/crmhabita/pessoas')} />
-          <SidebarItem icon={<Sparkles size={18} />} label="Prospecção IA" href="/crmhabita/prospeccao" active={pathname.startsWith('/crmhabita/prospeccao')} />
-          <SidebarItem icon={<Home size={18} />} label="Meus Imóveis" href="/crmhabita/imoveis" active={pathname.startsWith('/crmhabita/imoveis')} />
-          <SidebarItem icon={<Globe size={18} />} label="Publicação" href="/crmhabita/publicacao" active={pathname === '/crmhabita/publicacao'} />
-          <SidebarItem icon={<TrendingUp size={18} />} label="Vendas" href="/crmhabita/vendas" active={pathname.startsWith('/crmhabita/vendas')} />
-          <SidebarItem icon={<TrendingUp size={18} />} label="Comissões" href="/crmhabita/comissoes" active={pathname.startsWith('/crmhabita/comissoes')} />
-          <SidebarItem icon={<Target size={18} />} label="BI & Metas" href="/crmhabita/metas" active={pathname.startsWith('/crmhabita/metas')} />
-          {isRole(['admin', 'manager', 'director']) && (
-            <SidebarItem icon={<Briefcase size={18} />} label="Equipe" href="/crmhabita/equipe" active={pathname.startsWith('/crmhabita/equipe')} />
-          )}
-          <SidebarItem icon={<Settings size={18} />} label="Meu Perfil" href="/crmhabita/configuracoes" active={pathname.startsWith('/crmhabita/configuracoes')} />
-        </nav>
+        <NavIcon icon={<LayoutDashboard size={17} />} href="/crmhabita"             label="Dashboard"    active={pathname === '/crmhabita'} />
+        <NavIcon icon={<Target size={17} />}           href="/crmhabita/leads"       label="Leads"        active={pathname.startsWith('/crmhabita/leads')} />
+        <NavIcon icon={<Trophy size={17} />}           href="/crmhabita/ranking"     label="Ranking"      active={pathname === '/crmhabita/ranking'} />
+        <NavIcon icon={<Home size={17} />}             href="/crmhabita/imoveis"     label="Imóveis"      active={pathname.startsWith('/crmhabita/imoveis')} />
+        <NavIcon icon={<Calendar size={17} />}         href="/crmhabita/agenda"      label="Agenda"       active={pathname === '/crmhabita/agenda'} />
+        <NavIcon icon={<Users size={17} />}            href="/crmhabita/pessoas"     label="Contatos"     active={pathname.startsWith('/crmhabita/pessoas')} />
+        <NavIcon icon={<Sparkles size={17} />}         href="/crmhabita/prospeccao"  label="IA"           active={pathname.startsWith('/crmhabita/prospeccao')} />
+        <NavIcon icon={<Globe size={17} />}            href="/crmhabita/publicacao"  label="Publicação"   active={pathname === '/crmhabita/publicacao'} />
+        <NavIcon icon={<TrendingUp size={17} />}       href="/crmhabita/vendas"      label="Vendas"       active={pathname.startsWith('/crmhabita/vendas')} />
+        <NavIcon icon={<ShoppingBag size={17} />}      href="/crmhabita/comissoes"   label="Comissões"    active={pathname.startsWith('/crmhabita/comissoes')} />
+        <NavIcon icon={<Target size={17} />}           href="/crmhabita/metas"       label="BI & Metas"   active={pathname.startsWith('/crmhabita/metas')} />
+        {isRole(['admin', 'manager', 'director']) && (
+          <NavIcon icon={<Briefcase size={17} />}      href="/crmhabita/equipe"      label="Equipe"       active={pathname.startsWith('/crmhabita/equipe')} />
+        )}
 
-        <div className="p-6">
-          <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-2xl border border-border group hover:bg-muted transition-all cursor-pointer">
-            <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center font-black text-white shadow-lg">
-              {profile?.full_name?.substring(0, 2) || 'HB'}
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <p className="text-xs font-black truncate text-primary">{profile?.full_name || 'Carregando...'}</p>
-              <p className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest truncate">{profile?.role || 'Corretor'}</p>
-            </div>
-            <LogOut 
-              size={14} 
-              className="text-muted-foreground cursor-pointer hover:text-red-500 transition-colors" 
-              onClick={() => signOut()}
-            />
-          </div>
+        <div className="w-[28px] h-[1px] bg-white/10 my-2" />
+        <NavIcon icon={<Settings size={17} />}         href="/crmhabita/configuracoes" label="Configurações" active={pathname.startsWith('/crmhabita/configuracoes')} />
+
+        <div className="mt-auto">
+          <button
+            title="Sair"
+            onClick={() => signOut()}
+            className="w-[32px] h-[32px] rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[11px] font-bold border-2 border-white/15 hover:opacity-80 transition-opacity"
+          >
+            {initials}
+          </button>
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col overflow-hidden w-full relative">
-        <header className="h-16 border-b border-border flex items-center justify-between px-4 lg:px-8 z-30 transition-colors duration-500 bg-card/80 backdrop-blur-md">
-          <div className="flex items-center gap-3 lg:gap-4 flex-1">
-            <button 
-              className="lg:hidden p-1 -ml-1 text-primary hover:text-accent"
-              onClick={() => setIsMobileMenuOpen(true)}
-            >
-              <Menu size={24} />
-            </button>
-            <h2 className="text-sm md:text-lg font-bold truncate text-primary">
-              {isRole(['director', 'manager']) ? 'Painel Gestão' : 'Dashboard Corretor'}
-            </h2>
-            {actions && (
-              <div className="hidden md:flex items-center gap-2 ml-4 px-4 border-l border-border/50 h-8">
-                {actions}
-              </div>
-            )}
-          </div>
-          
-          <div className="flex items-center gap-6">
-            
-            <div className="relative">
-              <Bell 
-                size={20} 
-                onClick={() => setIsNotifOpen(!isNotifOpen)}
-                className={`cursor-pointer transition-colors `} 
-              />
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-accent text-[9px] font-black text-primary rounded-full flex items-center justify-center border-2 border-white">
-                  {unreadCount}
-                </span>
-              )}
+      {/* MAIN */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
+        {/* TOPBAR */}
+        <header className="h-[58px] bg-white border-b border-[#E2E8F0] px-5 flex items-center justify-between flex-shrink-0 gap-4">
+          <div className="flex items-center gap-3">
+            <button className="lg:hidden text-slate-500 hover:text-slate-800" onClick={() => setIsMobileMenuOpen(true)}>
+              <Menu size={20} />
+            </button>
+            <div>
+              <h1 className="text-[15px] font-bold text-slate-900 leading-tight">
+                {greeting}, {firstName} 👋
+              </h1>
+              <p className="text-[11px] text-slate-400 font-medium">
+                {isRole(['director', 'manager']) ? 'Painel de Gestão' : 'Seu painel de performance'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 flex-shrink-0">
+            {actions}
+            <div className="relative">
+              <button
+                onClick={() => setIsNotifOpen(!isNotifOpen)}
+                className="w-[32px] h-[32px] rounded-[8px] border border-[#E2E8F0] bg-white flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-colors relative"
+              >
+                <Bell size={15} />
+                {unreadCount > 0 && (
+                  <span className="absolute top-[7px] right-[7px] w-[6px] h-[6px] bg-orange-500 rounded-full border border-white" />
+                )}
+              </button>
               {isNotifOpen && (
-                <div className="absolute top-full right-0 mt-4 w-80 bg-white rounded-3xl shadow-luxury border border-border overflow-hidden animate-in fade-in zoom-in duration-300">
-                  <div className="p-5 border-b border-border bg-muted/10">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-primary">Notificações Recentes</p>
+                <div className="absolute top-full right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-[#E2E8F0] overflow-hidden z-50">
+                  <div className="px-4 py-3 border-b border-[#E2E8F0]">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400">Notificações</p>
                   </div>
-                  <div className="max-h-80 overflow-y-auto">
+                  <div className="max-h-72 overflow-y-auto">
                     {notifications.length > 0 ? notifications.map(n => (
-                      <div 
-                        key={n.id} 
-                        onClick={() => markAsRead(n.id)}
-                        className={`p-5 border-b border-border hover:bg-muted/30 transition-colors cursor-pointer `}
-                      >
-                        <p className="font-bold text-xs text-primary mb-1">{n.title}</p>
-                        <p className="text-xs text-muted-foreground font-medium">{n.message}</p>
-                        <p className="text-[9px] text-muted-foreground/40 mt-2 font-bold">{new Date(n.created_at).toLocaleTimeString()}</p>
+                      <div key={n.id} onClick={() => markAsRead(n.id)}
+                        className="px-4 py-3 border-b border-[#F1F5F9] hover:bg-slate-50 cursor-pointer transition-colors">
+                        <p className="text-[12px] font-semibold text-slate-800">{n.title}</p>
+                        <p className="text-[11px] text-slate-400 mt-0.5">{n.message}</p>
                       </div>
                     )) : (
-                      <div className="p-8 text-center">
-                        <p className="text-xs text-muted-foreground">Tudo limpo por aqui.</p>
+                      <div className="px-4 py-6 text-center">
+                        <p className="text-[12px] text-slate-400">Tudo em dia por aqui.</p>
                       </div>
                     )}
                   </div>
@@ -167,24 +131,21 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
           </div>
         </header>
 
-        {/* Scrollable Area */}
-        <div className="flex-1 overflow-y-auto p-4 lg:p-8">
+        {/* CONTENT */}
+        <div className="flex-1 overflow-y-auto">
           {children}
         </div>
-      </main>
+      </div>
     </div>
   );
 };
 
-const SidebarItem = ({ icon, label, href, active = false }: { icon: React.ReactNode, label: string, href: string, active?: boolean }) => (
-  <Link 
-    href={href} 
-    className={`
-      flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all
-      
-    `}
+const NavIcon = ({ icon, href, label, active }: { icon: React.ReactNode; href: string; label: string; active: boolean }) => (
+  <Link href={href} title={label}
+    className={`w-[38px] h-[38px] rounded-[9px] flex items-center justify-center transition-all duration-150 ${
+      active ? 'bg-blue-600 text-white' : 'text-white/40 hover:text-white/80 hover:bg-white/5'
+    }`}
   >
     {icon}
-    {label}
   </Link>
 );

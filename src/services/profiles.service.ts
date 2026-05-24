@@ -1,5 +1,10 @@
-import { supabase } from '@/lib/supabase';
+﻿import { supabase } from '@/lib/supabase';
 import { Profile } from '@/types/database';
+
+export interface TeamNode {
+  profile: Profile;
+  directReports: TeamNode[];
+}
 
 export const ProfilesService = {
   async getById(id: string) {
@@ -16,7 +21,7 @@ export const ProfilesService = {
         if (user && user.id === id) {
           const newProfile = {
             id: user.id,
-            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Novo Usuário',
+            full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Novo UsuÃ¡rio',
             email: user.email
           };
           const { data: created, error: createError } = await supabase
@@ -71,5 +76,99 @@ export const ProfilesService = {
       .eq('id', id);
 
     if (error) throw error;
-  }
+  },
+
+  /** Busca todos os corretores vinculados a um gerente */
+  async getTeamByManager(managerId: string) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('manager_id', managerId)
+      .order('full_name', { ascending: true });
+    if (error) throw error;
+    return (data || []) as Profile[];
+  },
+
+  /** Busca todos os gerentes vinculados a um diretor */
+  async getManagersByDirector(directorId: string) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('manager_id', directorId)
+      .in('role', ['manager'])
+      .order('full_name', { ascending: true });
+    if (error) throw error;
+    return (data || []) as Profile[];
+  },
+
+  /** Retorna toda a arvore hierarquica para admin/diretor */
+  async getOrgChart(): Promise<TeamNode[]> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('full_name', { ascending: true });
+    if (error) throw error;
+
+    const all = (data || []) as Profile[];
+    const map = new Map<string, TeamNode>();
+    all.forEach(p => map.set(p.id, { profile: p, directReports: [] }));
+
+    const roots: TeamNode[] = [];
+    all.forEach(p => {
+      if (p.manager_id && map.has(p.manager_id)) {
+        map.get(p.manager_id)!.directReports.push(map.get(p.id)!);
+      } else {
+        roots.push(map.get(p.id)!);
+      }
+    });
+    return roots;
+  },
+
+  /** Atribui um gerente a um corretor (ou remove com null) */
+  async assignManager(brokerId: string, managerId: string | null) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ manager_id: managerId })
+      .eq('id', brokerId)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as Profile;
+  },
+
+  /** Agrega stats da equipe de um gerente no mes corrente */
+  async getTeamStats(managerId: string) {
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+    const { data: team } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('manager_id', managerId);
+
+    const teamIds = (team || []).map((t: any) => t.id);
+    teamIds.push(managerId); // inclui o proprio gerente
+
+    if (teamIds.length === 0) {
+      return { activeLeads: 0, monthlySales: 0, monthlyVgv: 0, teamSize: 0 };
+    }
+
+    const { count: activeLeads } = await supabase
+      .from('leads')
+      .select('*', { count: 'exact', head: true })
+      .in('assigned_to_id', teamIds)
+      .not('status', 'in', '("sale","lost")');
+
+    const { data: sales } = await supabase
+      .from('sales')
+      .select('total_price')
+      .in('broker_id', teamIds)
+      .gte('sale_date', firstDay);
+
+    const monthlySales = (sales || []).length;
+    const monthlyVgv = (sales || []).reduce((acc: number, s: any) => acc + Number(s.total_price || 0), 0);
+
+    return { activeLeads: activeLeads || 0, monthlySales, monthlyVgv, teamSize: teamIds.length - 1 };
+  },
 };
+
