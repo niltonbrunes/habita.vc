@@ -1,41 +1,52 @@
 @import "tailwindcss";
 
-:root {
-  /* Habita.vc Core Palette - Refined for Soft Light Mode */
-  --primary: #1e293b; /* Deep Slate instead of harsh dark green */
-  --primary-light: #334155;
-  --accent: #d97706; /* Gold/Amber */
-  --accent-light: #f59e0b;
-  --background: #f8fafc; /* Very soft slate background to make white cards pop */
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --card-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --border: #e2e8f0;
+@theme {
+  /* Fonts */
+  --font-sans: "Inter", system-ui, sans-serif;
   
-  /* High-End Mode (Luxury/Dark) - Initial variables */
-  --luxury-gold: #D4AF37; /* Brighter, classic luxury gold */
-  --luxury-black: #050505; /* Obsidian */
-}
-
-@theme inline {
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --color-primary: var(--primary);
-  --color-primary-light: var(--primary-light);
-  --color-accent: var(--accent);
-  --color-accent-light: var(--accent-light);
-  --color-luxury-gold: var(--luxury-gold);
+  /* Brand Colors */
+  --color-blue-primary: #2563EB;
+  --color-blue-hover: #1D4ED8;
+  --color-blue-soft: #EFF6FF;
   
-  --shadow-premium: 0 10px 30px -10px rgba(26, 60, 52, 0.1);
-  --shadow-luxury: 0 20px 40px -15px rgba(15, 23, 42, 0.15);
+  /* Semantic Colors */
+  --color-orange-primary: #EA580C;
+  --color-orange-soft: #FFF7ED;
+  --color-green-primary: #16A34A;
+  --color-green-soft: #F0FDF4;
+  --color-purple-primary: #7C3AED;
+  --color-purple-soft: #F5F3FF;
+  --color-pink-primary: #DB2777;
+  --color-pink-soft: #FDF2F8;
 
+  /* Layout / UI Colors */
+  --color-bg: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
+  
+  /* Text Colors */
+  --color-heading: #0F172A;
+  --color-body: #334155;
+  --color-subtle: #64748B;
+  --color-muted: #94A3B8;
+
+  /* Global Shadows */
+  --shadow-card: 0 4px 24px rgba(15, 23, 42, 0.04);
+  --shadow-popover: 0 8px 32px rgba(15, 23, 42, 0.08);
+
+  /* Animations */
   --animate-float: float 6s ease-in-out infinite;
   --animate-float-delayed: float 6s ease-in-out 3s infinite;
-
+  --animate-toast: toastIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
   @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }
+  }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 }
 
@@ -46,96 +57,31 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-body);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Premium Typography */
+/* Typography Standards */
 h1, h2, h3, h4, h5, h6 {
-  color: var(--primary);
+  color: var(--color-heading);
   font-weight: 700;
   letter-spacing: -0.025em;
 }
 
-/* Glassmorphism utility - Enhanced */
-.glass {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+/* Base scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-
-.glass-dark {
-  background: rgba(5, 5, 5, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+::-webkit-scrollbar-track {
+  background: transparent;
 }
-
-/* Luxury Mode Transitions */
-.luxury-transition {
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 6px;
 }
-
-.luxury-mode {
-  --background: #050505; /* Obsidian Black */
-  --foreground: #f8fafc;
-  --primary: #0a0a0a;
-  --primary-light: #171717;
-  --accent: #D4AF37; /* Brighter gold */
-  --accent-light: #fcd34d;
-  --muted: #111111;
-  --muted-foreground: #94a3b8;
-  --border: #1e1e1e;
-  --card: #0c0c0c;
-  --shadow-premium: 0 20px 40px -15px rgba(0, 0, 0, 0.8);
-  --shadow-luxury: 0 0 50px -12px rgba(212, 175, 55, 0.15); /* Match new gold */
-}
-
-.luxury-mode body {
-  background-color: var(--background);
-  color: var(--foreground);
-}
-
-.luxury-mode .bg-white,
-.luxury-mode .bg-card {
-  background-color: var(--card) !important;
-}
-
-.luxury-mode .border-border,
-.luxury-mode .border {
-  border-color: var(--border) !important;
-}
-
-.luxury-mode h1,
-.luxury-mode h2,
-.luxury-mode h3,
-.luxury-mode h4,
-.luxury-mode h5,
-.luxury-mode h6,
-.luxury-mode .text-primary {
-  color: #f8fafc !important;
-}
-
-.luxury-mode .text-muted-foreground {
-  color: var(--muted-foreground) !important;
-}
-
-.luxury-mode .bg-muted {
-  background-color: var(--muted) !important;
-}
-
-.luxury-mode aside {
-  background-color: #000000 !important;
-  border-right: 1px solid var(--border) !important;
-}
-
-.luxury-mode header {
-  background-color: rgba(5, 5, 5, 0.8) !important;
-  backdrop-filter: blur(12px) !important;
-  border-bottom: 1px solid var(--border) !important;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
 }
