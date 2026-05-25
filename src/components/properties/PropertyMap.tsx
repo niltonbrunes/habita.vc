@@ -1,44 +1,38 @@
 "use client";
 
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
 import { Property } from '@/types/database';
 import 'leaflet/dist/leaflet.css';
 
-const MapComponent = ({ properties }: { properties: Property[] }) => {
+const MapComponent = ({ properties, hoveredPropertyId, setHoveredPropertyId }: { properties: Property[], hoveredPropertyId?: string | null, setHoveredPropertyId?: (id: string | null) => void }) => {
   const { MapContainer, TileLayer, Marker, Popup } = require('react-leaflet');
   const L = require('leaflet');
   
-  // Helper safely parses coords (handling comma vs dot)
   const parseCoord = (coord: any) => {
     if (!coord) return NaN;
     return Number(String(coord).replace(',', '.'));
   };
 
-  // Função para gerar uma posição "fictícia" em Goiânia baseada no ID do imóvel
-  // (Usado enquanto não temos lat/lng reais no banco, igual ao site público)
   const getFallbackCoords = (id: string) => {
     const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    // Lat range: -16.75 to -16.60 (span 0.15)
-    // Lng range: -49.35 to -49.20 (span 0.15)
     const lat = -16.75 + ((hash % 150) / 1000);
     const lng = -49.35 + (((hash * 7) % 150) / 1000);
     return [lat, lng];
   };
 
-  // Center on Goiania as default
   const center = [-16.686891, -49.264794];
 
   // Helper to create custom price pill icon
-  const createPriceIcon = (price: number) => {
-    const validPrice = Number(price) || 0;
+  const createPriceIcon = (prop: Property) => {
+    const validPrice = Number(prop.price) || 0;
     const formattedPrice = validPrice > 0 ? (validPrice / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 0 }) + 'k' : 'Consulte';
     const displayHtml = validPrice > 0 ? `R$ ${formattedPrice}` : formattedPrice;
     
     return L.divIcon({
-      className: 'custom-leaflet-marker',
+      className: `custom-leaflet-marker property-marker-${prop.id}`,
       html: `
-        <div style="
+        <div class="price-pill-inner" style="
           background-color: white; 
           color: #0f172a; 
           font-weight: 900; 
@@ -50,7 +44,8 @@ const MapComponent = ({ properties }: { properties: Property[] }) => {
           text-align: center; 
           min-width: max-content;
           cursor: pointer;
-        " onmouseover="this.style.backgroundColor='#1e40af'; this.style.color='white'; this.style.transform='scale(1.05)';" onmouseout="this.style.backgroundColor='white'; this.style.color='#0f172a'; this.style.transform='scale(1)';">
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        ">
           ${displayHtml}
         </div>
       `,
@@ -62,6 +57,30 @@ const MapComponent = ({ properties }: { properties: Property[] }) => {
 
   return (
     <div style={{ height: '100%', width: '100%', position: 'relative' }}>
+      {/* CSS Injetado para animação e sincronia instantânea do hover sem re-renderizar o mapa inteiro */}
+      <style>{`
+        .property-marker-${hoveredPropertyId} {
+          z-index: 9999 !important;
+        }
+        .property-marker-${hoveredPropertyId} > .price-pill-inner {
+          background-color: #1e40af !important;
+          color: white !important;
+          transform: scale(1.15) !important;
+          border-color: #1e40af !important;
+          box-shadow: 0 20px 25px -5px rgba(30, 64, 175, 0.4) !important;
+        }
+        .custom-leaflet-marker:hover {
+          z-index: 9999 !important;
+        }
+        .custom-leaflet-marker:hover > .price-pill-inner {
+          background-color: #1e40af !important;
+          color: white !important;
+          transform: scale(1.15) !important;
+          border-color: #1e40af !important;
+          box-shadow: 0 20px 25px -5px rgba(30, 64, 175, 0.4) !important;
+        }
+      `}</style>
+
       <MapContainer center={center} zoom={12} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -73,7 +92,6 @@ const MapComponent = ({ properties }: { properties: Property[] }) => {
           let lat = parseCoord(prop.latitude);
           let lng = parseCoord(prop.longitude);
           
-          // Se as coordenadas reais são inválidas ou inexistentes, injeta o gerador fictício de localização (simulando a vitrine)
           if (isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) {
             const fallback = getFallbackCoords(prop.id);
             lat = fallback[0];
@@ -84,7 +102,11 @@ const MapComponent = ({ properties }: { properties: Property[] }) => {
             <Marker 
               key={prop.id} 
               position={[lat, lng]}
-              icon={createPriceIcon(prop.price)}
+              icon={createPriceIcon(prop)}
+              eventHandlers={{
+                mouseover: () => setHoveredPropertyId && setHoveredPropertyId(prop.id),
+                mouseout: () => setHoveredPropertyId && setHoveredPropertyId(null),
+              }}
             >
               <Popup className="property-map-popup">
                 <div className="flex flex-col gap-2 min-w-[200px] max-w-[250px]">

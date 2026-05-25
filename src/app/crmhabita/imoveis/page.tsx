@@ -28,6 +28,7 @@ export default function PropertiesPage() {
   const [search, setSearch] = React.useState('');
   const [patternFilter, setPatternFilter] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState('');
+  const [hoveredPropertyId, setHoveredPropertyId] = React.useState<string | null>(null);
 
   const filtered = properties.filter(p => {
     const q = search.toLowerCase();
@@ -119,7 +120,9 @@ export default function PropertiesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {filtered.length > 0 ? (
                 filtered.map(property => (
-                  <PropertyCard key={property.id} property={property} />
+                  <div key={property.id} onMouseEnter={() => setHoveredPropertyId(property.id)} onMouseLeave={() => setHoveredPropertyId(null)}>
+                    <PropertyCard property={property} isHovered={hoveredPropertyId === property.id} />
+                  </div>
                 ))
               ) : !loading && (
                 <div className="col-span-full py-20 text-center bg-muted/5 rounded-xl border-2 border-dashed border-border/20 flex flex-col items-center justify-center">
@@ -132,7 +135,7 @@ export default function PropertiesPage() {
 
           {/* Map Section */}
           <section className="hidden md:block flex-1 bg-muted/10 relative z-0">
-            <PropertyMap properties={filtered} />
+            <PropertyMap properties={filtered} hoveredPropertyId={hoveredPropertyId} setHoveredPropertyId={setHoveredPropertyId} />
           </section>
         </div>
       </div>
@@ -159,7 +162,7 @@ const FilterPill = ({ label, value, onChange, options }: any) => (
   </div>
 );
 
-const PropertyCard = ({ property }: { property: any }) => {
+const PropertyCard = ({ property, isHovered }: { property: any, isHovered?: boolean }) => {
   const formattedPrice = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -167,7 +170,7 @@ const PropertyCard = ({ property }: { property: any }) => {
   }).format(property.price);
 
   return (
-    <Link href={`/crmhabita/imoveis/${property.id}`} className="group block bg-surface border border-border/60 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
+    <Link href={`/crmhabita/imoveis/${property.id}`} className={`group block bg-surface border rounded-xl overflow-hidden transition-all duration-300 ${isHovered ? 'ring-2 ring-blue-600 border-blue-600 scale-[1.02] shadow-xl' : 'border-border/60 hover:shadow-lg'}`}>
       <div className="relative aspect-[1.5/1] overflow-hidden bg-muted">
         <img 
           src={property.main_image || property.images?.[0] || "/hero_luxury.png"} 
