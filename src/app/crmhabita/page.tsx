@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FunnelSimulator } from '@/components/dashboard/FunnelSimulator';
 import { ChannelPerformance } from '@/components/dashboard/ChannelPerformance';
+import { PropertyTypeChart } from '@/components/dashboard/PropertyTypeChart';
 import { SaleModal } from '@/components/leads/SaleModal';
 import confetti from 'canvas-confetti';
 import { supabase } from '@/lib/supabase';
@@ -169,7 +170,7 @@ export default function DashboardPage() {
           </SectionCard>
 
           {/* FUNIL REAL E CANAIS */}
-          <div className="grid grid-cols-1 xl:grid-cols-[330px_1fr] gap-5 mt-5">
+          <div className="grid grid-cols-1 xl:grid-cols-[330px_1fr_1fr] gap-5 mt-5">
              <SectionCard title="Funil de Vendas (Realizado)">
                 <div className="p-4">
                   <FunnelBar label="Base"        color="bg-blue-primary"   pct={100} count={metrics?.activeLeads || 0} loading={loading} />

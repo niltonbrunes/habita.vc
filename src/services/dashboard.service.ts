@@ -252,4 +252,32 @@ export class DashboardService {
     }
     return true;
   }
+
+  static async getPropertiesByType(): Promise<{ name: string, value: number, color: string }[]> {
+    const { data, error } = await supabase
+      .from('properties')
+      .select('type');
+      
+    if (error) {
+      console.error('Error fetching properties types:', error);
+      return [];
+    }
+    
+    const counts: Record<string, number> = {};
+    data.forEach(p => {
+      const t = p.type || 'Outros';
+      counts[t] = (counts[t] || 0) + 1;
+    });
+
+    const colors = ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#2563eb', '#1d4ed8', '#1e40af', '#172554'];
+    
+    return Object.entries(counts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, value], i) => ({
+        name,
+        value,
+        color: colors[i % colors.length]
+      }));
+  }
+
 }
