@@ -213,7 +213,7 @@ export function PropertyWizard({ initialData }: PropertyWizardProps) {
         area_useful,
         area_total: area_total || area_useful,
         is_unit_of_development: !!data.development_id,
-        updated_at: new Date().toISOString(),
+        // updated_at: new Date().toISOString(), // Removido para evitar erro de schema cache
         metadata: {
           ...rawMetadata,
           commission_estimated_percent,
