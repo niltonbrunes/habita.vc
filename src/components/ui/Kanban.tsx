@@ -84,11 +84,11 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
   }).format(columnTotalValue);
 
   return (
-    <div className="flex flex-col w-[380px] shrink-0 h-full group/col pb-10">
-      <div className="flex flex-col mb-10 px-6">
+    <div className="flex flex-col w-[320px] shrink-0 h-full group/col pb-10">
+      <div className="flex flex-col mb-4 px-2">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-5">
-            <div className="w-14 h-14 rounded-[1.5rem] flex items-center justify-center text-2xl shadow-card border-2 border-white" style={{ backgroundColor: column.bg }}>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center text-lg shadow-card border-2 border-white" style={{ backgroundColor: column.bg }}>
               {column.emoji}
             </div>
             <div>
@@ -121,7 +121,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
           const leadId = e.dataTransfer.getData('leadId');
           if (leadId) onMoveLead(leadId, column.id);
         }}
-        className={`flex-1 space-y-6 p-6 rounded-[4rem] transition-all duration-500 border-2 scrollbar-hide overflow-y-auto ${
+        className={`flex-1 space-y-3 p-3 rounded-2xl transition-all duration-500 border-2 scrollbar-hide overflow-y-auto ${
           isOver ? 'border-accent bg-accent/5 scale-[1.02]' : 'border-transparent bg-muted/10'
         }`}
         style={{ backgroundColor: isOver ? undefined : column.bg + '08' }}

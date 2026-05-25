@@ -91,8 +91,8 @@ export default function LeadsPage() {
         {/* Page Header Area */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
           <div>
-            <h1 className="text-2xl font-bold text-heading tracking-tighter mb-2">GestÃ£o de Leads</h1>
-            <p className="text-muted-foreground font-medium">Pipeline de vendas e conversÃ£o em tempo real.</p>
+            <h1 className="text-2xl font-bold text-heading tracking-tighter mb-2">Gestão de Leads</h1>
+            <p className="text-muted-foreground font-medium">Pipeline de vendas e conversão em tempo real.</p>
           </div>
 
           <div className="flex items-center gap-3 w-full md:w-auto">
