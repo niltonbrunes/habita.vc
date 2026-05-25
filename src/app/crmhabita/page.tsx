@@ -107,36 +107,7 @@ export default function DashboardPage() {
       {/* ── 3-COLUMN LAYOUT ── */}
       <div className="flex h-full min-h-0">
 
-        {/* ── LEFT PANEL: Funil + Indicadores + Canais ── */}
-        <aside className="w-[220px] flex-shrink-0 bg-surface border-r border-border flex flex-col overflow-y-auto hidden lg:flex">
-
-          {/* FUNIL */}
-          <div className="p-4 border-b border-border-light">
-            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted mb-3">Funil de Vendas</p>
-            <FunnelBar label="Base"        color="bg-blue-primary"   pct={100} count={metrics?.activeLeads || 0} loading={loading} />
-            <FunnelBar label="Qualificação" color="bg-orange-primary" pct={60}  count={Math.round((metrics?.activeLeads || 0) * 0.6)} loading={loading} />
-            <FunnelBar label="Visita"      color="bg-purple-primary" pct={40}  count={Math.round((metrics?.activeLeads || 0) * 0.4)} loading={loading} />
-            <FunnelBar label="Proposta"    color="bg-pink-primary"   pct={25}  count={Math.round((metrics?.activeLeads || 0) * 0.25)} loading={loading} />
-            <FunnelBar label="Negociação"  color="bg-green-primary"  pct={11}  count={Math.round((metrics?.activeLeads || 0) * 0.11)} loading={loading} />
-          </div>
-
-          {/* INDICADORES */}
-          <div className="p-4 border-b border-border-light">
-            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted mb-3">Indicadores</p>
-            <div className="grid grid-cols-2 gap-2">
-              <MiniStat label="Meta" value={`${metrics?.goalProgress || 0}%`} color="text-blue-primary" sub="do mês" loading={loading} />
-              <MiniStat label="Contatos" value={metrics?.newLeadsToday?.toString() || '0'} color="text-green-primary" sub="hoje" loading={loading} />
-            </div>
-          </div>
-
-          {/* CANAIS */}
-          <div className="p-4 flex-1">
-            <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-muted mb-3">Canal de Origem</p>
-            <ChannelPerformance />
-          </div>
-        </aside>
-
-        {/* ── CENTER: Stats + Imóveis + Oportunidades ── */}
+        {/* 📊 CENTER: Stats + Imóveis + Oportunidades ── */}
         <div className="flex-1 min-w-0 overflow-y-auto p-5 space-y-5">
 
           {/* STATS BAR */}
@@ -189,12 +160,31 @@ export default function DashboardPage() {
             )}
           </SectionCard>
 
+          
           {/* FUNNEL SIMULATOR */}
-          <SectionCard title="Planejamento — Simulador de Funil">
+          <SectionCard title="Planejamento & Simulador de Funil">
             <div className="p-1">
               <FunnelSimulator />
             </div>
           </SectionCard>
+
+          {/* FUNIL REAL E CANAIS */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 mt-5">
+             <SectionCard title="Funil de Vendas (Realizado)">
+                <div className="p-4">
+                  <FunnelBar label="Base"        color="bg-blue-primary"   pct={100} count={metrics?.activeLeads || 0} loading={loading} />
+                  <FunnelBar label="Qualificação" color="bg-orange-primary" pct={60}  count={Math.round((metrics?.activeLeads || 0) * 0.6)} loading={loading} />
+                  <FunnelBar label="Visita"      color="bg-purple-primary" pct={40}  count={Math.round((metrics?.activeLeads || 0) * 0.4)} loading={loading} />
+                  <FunnelBar label="Proposta"    color="bg-pink-primary"   pct={25}  count={Math.round((metrics?.activeLeads || 0) * 0.25)} loading={loading} />
+                  <FunnelBar label="Negociação"  color="bg-green-primary"  pct={11}  count={Math.round((metrics?.activeLeads || 0) * 0.11)} loading={loading} />
+                </div>
+             </SectionCard>
+             <SectionCard title="Análise de Canais">
+                <div className="p-2">
+                  <ChannelPerformance />
+                </div>
+             </SectionCard>
+          </div>
 
         </div>
 
