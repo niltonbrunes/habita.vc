@@ -160,7 +160,7 @@ export function FunnelSimulator() {
           </div>
         </div>
 
-        <div className="relative py-10 flex flex-col items-center lg:pr-32 xl:pr-40 w-full">
+        <div className="relative py-10 flex flex-col items-center w-full">
           {/* Camada: Ligações */}
           <FunnelLayer 
             label="Oportunidades" 
@@ -200,7 +200,7 @@ export function FunnelSimulator() {
           </div>
 
           {/* Meta Diária Card */}
-          <div className="lg:absolute lg:top-20 lg:right-0 xl:right-2 mt-8 lg:mt-0 bg-surface border-2 border-accent p-6 rounded-3xl shadow-2xl lg:rotate-3 hover:rotate-0 transition-all duration-500 max-w-[180px] z-20 mx-auto w-full text-center lg:text-left">
+          <div className="mt-8 mb-4 bg-surface border-2 border-accent p-6 rounded-3xl shadow-2xl lg:rotate-3 hover:rotate-0 transition-all duration-500 max-w-[240px] z-20 mx-auto w-full text-center">
              <p className="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Ação Requerida</p>
              <p className="text-3xl font-black text-primary">{dailyLeadGoal}</p>
              <p className="text-xs font-bold text-muted-foreground leading-tight mt-1">contatos novos por dia útil</p>
