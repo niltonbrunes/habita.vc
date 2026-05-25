@@ -1,11 +1,11 @@
-import { supabase } from '@/lib/supabase';
+﻿import { supabase } from '@/lib/supabase';
 import { Lead, LeadStatus } from '@/types/database';
 import { GamificationService } from './gamification.service';
 
 export const LeadsService = {
   async getAll() {
     try {
-      // Tenta buscar com o vínculo mestre (Join triplo: Lead + Pessoa + Imóvel)
+      // Tenta buscar com o vÃ­nculo mestre (Join triplo: Lead + Pessoa + ImÃ³vel)
       const { data, error } = await supabase
         .from('leads')
         .select('*, person:people(*), property:properties(*)')
@@ -144,5 +144,35 @@ export const LeadsService = {
       .eq('id', id);
     
     if (error) throw error;
-  }
+  },
+
+  /** Busca leads da equipe de um gerente (os corretores subordinados + o proprio gerente) */
+  async getByTeamOf(managerId: string) {
+    // Primeiro busca os IDs da equipe
+    const { data: teamMembers } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('manager_id', managerId);
+
+    const teamIds = [(teamMembers || []).map((t: any) => t.id), managerId].flat();
+
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*, person:people(*), property:properties(*)')
+        .in('assigned_to_id', teamIds)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []) as Lead[];
+    } catch {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .in('assigned_to_id', teamIds)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []) as Lead[];
+    }
+  },
 };
+

@@ -1,4 +1,4 @@
-export type PropertyPattern = 'economic' | 'medium' | 'high_end';
+﻿export type PropertyPattern = 'economic' | 'medium' | 'high_end';
 export type PropertyStatus = 'available' | 'reserved' | 'sold' | 'inactive';
 export type LeadStatus = 'lead' | 'contact' | 'presentation' | 'visit' | 'proposal' | 'sale' | 'lost';
 export type UserRole = 'broker' | 'manager' | 'director' | 'admin';
@@ -10,6 +10,8 @@ export interface Profile {
   email: string;
   role: UserRole;
   earnings_goal_monthly: number;
+  team_goal_monthly?: number;
+  manager_id?: string;
   avg_ticket: number;
   avg_commission_percent: number;
   conversion_rates: {
@@ -29,6 +31,18 @@ export interface Profile {
   bio?: string;
   funnel_config?: any;
   created_at: string;
+}
+
+/** No da arvore hierarquica para o Org Chart */
+export interface TeamNode {
+  profile: Profile;
+  directReports: TeamNode[];
+  stats?: {
+    activeLeads: number;
+    monthlySales: number;
+    monthlyVgv: number;
+    conversionRate: number;
+  };
 }
 
 export interface Property {
@@ -95,9 +109,9 @@ export interface Lead {
   documents: any[];
   created_at: string;
   person?: any; // Dados da pessoa vinculada (carregados via join)
-  property_id?: string; // Link para imóvel da base (opcional)
-  interest_description?: string; // Descrição de imóvel externo/mercado
-  property?: any; // Dados do imóvel (carregados via join)
+  property_id?: string; // Link para imÃ³vel da base (opcional)
+  interest_description?: string; // DescriÃ§Ã£o de imÃ³vel externo/mercado
+  property?: any; // Dados do imÃ³vel (carregados via join)
 }
 
 export interface Developer {
@@ -184,3 +198,4 @@ export interface Sale {
   sale_date: string;
   created_at: string;
 }
+
