@@ -9,12 +9,22 @@ const MapComponent = ({ properties }: { properties: Property[] }) => {
   const { MapContainer, TileLayer, Marker, Popup } = require('react-leaflet');
   const L = require('leaflet');
   
+  // Helper safely parses coords (handling comma vs dot)
+  const parseCoord = (coord: any) => {
+    if (!coord) return NaN;
+    return Number(String(coord).replace(',', '.'));
+  };
+
   // Filter properties with valid coordinates
-  const validProperties = properties.filter(p => p.latitude && p.longitude && !isNaN(Number(p.latitude)) && !isNaN(Number(p.longitude)));
+  const validProperties = properties.filter(p => {
+    const lat = parseCoord(p.latitude);
+    const lng = parseCoord(p.longitude);
+    return !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
+  });
 
   // Center on Goiania as default
   const center = validProperties.length > 0 
-    ? [Number(validProperties[0].latitude), Number(validProperties[0].longitude)] 
+    ? [parseCoord(validProperties[0].latitude), parseCoord(validProperties[0].longitude)] 
     : [-16.686891, -49.264794];
 
   // Helper to create custom price pill icon
@@ -49,39 +59,51 @@ const MapComponent = ({ properties }: { properties: Property[] }) => {
   };
 
   return (
-    <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-      />
-      {validProperties.map((prop) => {
-        const imgSrc = prop.main_image || (prop.images && prop.images[0]) || "/hero_luxury.png";
-        const validPrice = Number(prop.price) || 0;
+    <div style={{ height: '100%', width: '100%', position: 'relative' }}>
+      <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+        />
+        {validProperties.map((prop) => {
+          const imgSrc = prop.main_image || (prop.images && prop.images[0]) || "/hero_luxury.png";
+          const validPrice = Number(prop.price) || 0;
+          const lat = parseCoord(prop.latitude);
+          const lng = parseCoord(prop.longitude);
 
-        return (
-          <Marker 
-            key={prop.id} 
-            position={[Number(prop.latitude), Number(prop.longitude)]}
-            icon={createPriceIcon(prop.price)}
-          >
-            <Popup className="property-map-popup">
-              <div className="flex flex-col gap-2 min-w-[200px] max-w-[250px]">
-                <img src={imgSrc} alt={prop.title || 'Imóvel'} className="w-full h-32 object-cover rounded-lg mb-1" />
-                <div>
-                  <p className="font-black text-sm text-slate-900 leading-tight mb-1">{prop.title || 'Imóvel sem título'}</p>
-                  <p className="font-bold text-xs text-slate-500 mb-2">{prop.address_neighborhood || prop.address_city || 'Endereço não informado'}</p>
-                  <p className="text-lg font-black text-blue-800">
-                    {validPrice > 0 
-                      ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(validPrice)
-                      : 'Valor sob consulta'}
-                  </p>
+          return (
+            <Marker 
+              key={prop.id} 
+              position={[lat, lng]}
+              icon={createPriceIcon(prop.price)}
+            >
+              <Popup className="property-map-popup">
+                <div className="flex flex-col gap-2 min-w-[200px] max-w-[250px]">
+                  <img src={imgSrc} alt={prop.title || 'Imóvel'} className="w-full h-32 object-cover rounded-lg mb-1" />
+                  <div>
+                    <p className="font-black text-sm text-slate-900 leading-tight mb-1">{prop.title || 'Imóvel sem título'}</p>
+                    <p className="font-bold text-xs text-slate-500 mb-2">{prop.address_neighborhood || prop.address_city || 'Endereço não informado'}</p>
+                    <p className="text-lg font-black text-blue-800">
+                      {validPrice > 0 
+                        ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(validPrice)
+                        : 'Valor sob consulta'}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </Popup>
-          </Marker>
-        );
-      })}
-    </MapContainer>
+              </Popup>
+            </Marker>
+          );
+        })}
+      </MapContainer>
+      {validProperties.length === 0 && (
+        <div className="absolute inset-0 z-[1000] bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+           <div className="bg-white p-6 rounded-2xl shadow-xl border border-red-100 max-w-sm">
+             <p className="text-red-500 font-black text-lg mb-2">Sem coordenadas!</p>
+             <p className="text-sm text-slate-600 font-medium">Nenhum dos imóveis listados possui coordenadas válidas (Latitude/Longitude) no banco de dados.</p>
+           </div>
+        </div>
+      )}
+    </div>
   );
 };
 
