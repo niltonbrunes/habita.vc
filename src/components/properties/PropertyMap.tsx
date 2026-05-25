@@ -1,48 +1,77 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Property } from '@/types/database';
 import 'leaflet/dist/leaflet.css';
 
-// Leaflet markers don't load correctly in React sometimes without this
-const fixLeafletIcon = () => {
-  const L = require('leaflet');
-  delete L.Icon.Default.prototype._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  });
-};
-
 const MapComponent = ({ properties }: { properties: Property[] }) => {
   const { MapContainer, TileLayer, Marker, Popup } = require('react-leaflet');
+  const L = require('leaflet');
   
-  useEffect(() => {
-    fixLeafletIcon();
-  }, []);
-
   // Filter properties with valid coordinates
   const validProperties = properties.filter(p => p.latitude && p.longitude && !isNaN(Number(p.latitude)) && !isNaN(Number(p.longitude)));
 
   // Center on Goiania as default
-  const center: [number, number] = validProperties.length > 0 
+  const center = validProperties.length > 0 
     ? [Number(validProperties[0].latitude), Number(validProperties[0].longitude)] 
     : [-16.686891, -49.264794];
 
+  // Helper to create custom price pill icon
+  const createPriceIcon = (price: number) => {
+    const formattedPrice = (price / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 0 }) + 'k';
+    
+    return L.divIcon({
+      className: 'custom-leaflet-marker',
+      html: `
+        <div style="
+          background-color: white; 
+          color: #0f172a; 
+          font-weight: 900; 
+          font-size: 11px; 
+          padding: 6px 10px; 
+          border-radius: 9999px; 
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
+          border: 1px solid #e2e8f0; 
+          text-align: center; 
+          min-width: max-content;
+          transform: translate(-50%, -50%);
+          transition: all 0.3s ease;
+          cursor: pointer;
+        " onmouseover="this.style.backgroundColor='#1e40af'; this.style.color='white'; this.style.transform='translate(-50%, -50%) scale(1.1)';" onmouseout="this.style.backgroundColor='white'; this.style.color='#0f172a'; this.style.transform='translate(-50%, -50%) scale(1)';">
+          R$ ${formattedPrice}
+        </div>
+      `,
+      iconSize: [0, 0],
+      iconAnchor: [0, 0],
+      popupAnchor: [0, -20]
+    });
+  };
+
   return (
-    <MapContainer center={center} zoom={12} style={{ height: '100%', width: '100%' }}>
+    <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
       {validProperties.map((prop) => (
-        <Marker key={prop.id} position={[Number(prop.latitude), Number(prop.longitude)]}>
-          <Popup>
-            <div className="text-xs font-bold text-primary">
-              <p className="mb-1">{prop.title}</p>
-              <p className="text-muted-foreground">{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(prop.price)}</p>
+        <Marker 
+          key={prop.id} 
+          position={[Number(prop.latitude), Number(prop.longitude)]}
+          icon={createPriceIcon(prop.price)}
+        >
+          <Popup className="property-map-popup">
+            <div className="flex flex-col gap-2 min-w-[200px]">
+              {prop.main_image && (
+                <img src={prop.main_image} alt={prop.title} className="w-full h-32 object-cover rounded-lg mb-1" />
+              )}
+              <div>
+                <p className="font-black text-sm text-slate-900 leading-tight mb-1">{prop.title}</p>
+                <p className="font-bold text-xs text-slate-500 mb-2">{prop.address_neighborhood || prop.address_city}</p>
+                <p className="text-lg font-black text-blue-800">
+                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(prop.price)}
+                </p>
+              </div>
             </div>
           </Popup>
         </Marker>
@@ -51,8 +80,7 @@ const MapComponent = ({ properties }: { properties: Property[] }) => {
   );
 };
 
-// Disable SSR for Map since it relies on window object
 export const PropertyMap = dynamic(() => Promise.resolve(MapComponent), { 
   ssr: false,
-  loading: () => <div className="w-full h-full flex items-center justify-center bg-muted/20"><p className="text-muted-foreground font-bold">Carregando mapa...</p></div>
+  loading: () => <div className="w-full h-full flex items-center justify-center bg-muted/10"><p className="text-muted-foreground font-black uppercase tracking-widest text-xs animate-pulse">Iniciando mapa interativo...</p></div>
 });
