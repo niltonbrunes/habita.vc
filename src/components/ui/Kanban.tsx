@@ -35,20 +35,20 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
       <div 
         draggable
         onDragStart={(e) => onDragStart(e, lead.id)}
-        className="bg-surface p-4 rounded-xl shadow-card hover:shadow-card transition-all duration-300 cursor-grab active:cursor-grabbing group relative border border-transparent hover:border-accent/10"
+        className="bg-surface p-2.5 rounded-xl shadow-card hover:shadow-card transition-all duration-300 cursor-grab active:cursor-grabbing group relative border border-transparent hover:border-accent/10"
       >
         {/* Top Header */}
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex justify-between items-start mb-2">
           <div className="flex items-center gap-4">
             <div 
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-black text-white shadow-lg border-2 border-white"
+              className="w-6 h-6 rounded-md flex items-center justify-center text-[8px] font-black text-white shadow-lg border-2 border-white"
               style={{ backgroundColor: getAvatarBg(displayName) }}
             >
               {getInitials(displayName)}
             </div>
             <div className="min-w-0">
               <Link href={lead.person_id ? `/crmhabita/pessoas/${lead.person_id}` : `/crmhabita/leads/${lead.id}`}>
-                <h4 className="font-black text-primary text-[13px] leading-tight hover:text-accent transition-colors truncate pr-2">{displayName}</h4>
+                <h4 className="font-black text-primary text-[11px] leading-tight hover:text-accent transition-colors truncate pr-2">{displayName}</h4>
               </Link>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">{lead.source || 'Portal'}</p>
@@ -63,47 +63,47 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
         </div>
 
         {/* Quick Contact Actions */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-2 mb-2">
           {lead.phone && (
             <a 
               href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="w-11 h-11 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center hover:bg-green-600 hover:text-white transition-all shadow-sm group/btn"
+              className="w-6 h-6 bg-green-50 text-green-600 rounded-md flex items-center justify-center hover:bg-green-600 hover:text-white transition-all shadow-sm group/btn"
               title="WhatsApp"
             >
-              <MessageCircle size={20} className="group-hover:scale-110 transition-transform" />
+              <MessageCircle size={12} className="group-hover:scale-110 transition-transform" />
             </a>
           )}
           {lead.phone && (
             <a 
               href={`tel:${lead.phone.replace(/\D/g, '')}`}
               onClick={(e) => e.stopPropagation()}
-              className="w-11 h-11 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+              className="w-6 h-6 bg-blue-50 text-blue-600 rounded-md flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm"
               title="Ligar"
             >
-              <Phone size={20} />
+              <Phone size={12} />
             </a>
           )}
           {lead.email && (
             <a 
               href={`mailto:${lead.email}`}
               onClick={(e) => e.stopPropagation()}
-              className="w-11 h-11 bg-blue-soft text-blue-primary rounded-2xl flex items-center justify-center hover:bg-blue-primary hover:text-white transition-all shadow-sm"
+              className="w-6 h-6 bg-blue-soft text-blue-primary rounded-md flex items-center justify-center hover:bg-blue-primary hover:text-white transition-all shadow-sm"
               title="E-mail"
             >
-              <Mail size={20} />
+              <Mail size={12} />
             </a>
           )}
         </div>
 
         {/* Property Interest */}
         {(lead.property || lead.interest_description) && (
-          <div className="mb-4 p-5 bg-muted/30 rounded-xl border border-border/10">
+          <div className="mb-2 p-2 bg-muted/30 rounded-md border border-border/10">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-surface rounded-xl shadow-sm shrink-0">
-                {lead.property ? <Building size={14} className="text-primary" /> : <MapPin size={14} className="text-accent" />}
+              <div className="p-1.5 bg-surface rounded-md shadow-sm shrink-0">
+                {lead.property ? <Building size={10} className="text-primary" /> : <MapPin size={10} className="text-accent" />}
               </div>
               <div className="min-w-0">
                 <p className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-widest mb-0.5">Interesse</p>
@@ -116,15 +116,15 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
         )}
 
         {/* Value & Score */}
-        <div className="flex items-end justify-between pt-6 border-t border-border/30">
+        <div className="flex items-end justify-between pt-2 mt-2 border-t border-border/30">
           <div>
             <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.15em] mb-1 block">Valor Previsto</span>
-            <p className="text-xl font-black text-primary tracking-tighter">{formattedValue}</p>
+            <p className="text-[12px] font-black text-primary tracking-tighter">{formattedValue}</p>
           </div>
           <div className="text-right">
             <div className="flex items-center gap-2 mb-1 justify-end">
-              <Sparkles size={12} className="text-accent" />
-              <span className="text-[10px] font-black text-primary">{lead.score} Score</span>
+              <Sparkles size={10} className="text-accent" />
+              <span className="text-[9px] font-black text-primary">{lead.score} Score</span>
             </div>
             <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
                <div 
@@ -145,9 +145,9 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
               onDeleteLead(lead.id);
             }
           }}
-          className="absolute top-4 right-4 p-2 text-muted-foreground/20 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+          className="absolute top-2.5 right-2.5 p-2 text-muted-foreground/20 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
         >
-          <Trash2 size={14} />
+          <Trash2 size={12} />
         </button>
       </div>
     </motion.div>
@@ -179,9 +179,9 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
           </div>
           <button 
             onClick={onAddLead}
-            className="w-11 h-11 flex items-center justify-center bg-surface shadow-card rounded-2xl text-muted-foreground/40 hover:text-primary hover:scale-110 transition-all"
+            className="w-6 h-6 flex items-center justify-center bg-surface shadow-card rounded-2xl text-muted-foreground/40 hover:text-primary hover:scale-110 transition-all"
           >
-             <Plus size={20} />
+             <Plus size={12} />
           </button>
         </div>
         
