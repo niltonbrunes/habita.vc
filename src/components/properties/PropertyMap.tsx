@@ -15,17 +15,19 @@ const MapComponent = ({ properties }: { properties: Property[] }) => {
     return Number(String(coord).replace(',', '.'));
   };
 
-  // Filter properties with valid coordinates
-  const validProperties = properties.filter(p => {
-    const lat = parseCoord(p.latitude);
-    const lng = parseCoord(p.longitude);
-    return !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
-  });
+  // Função para gerar uma posição "fictícia" em Goiânia baseada no ID do imóvel
+  // (Usado enquanto não temos lat/lng reais no banco, igual ao site público)
+  const getFallbackCoords = (id: string) => {
+    const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    // Lat range: -16.75 to -16.60 (span 0.15)
+    // Lng range: -49.35 to -49.20 (span 0.15)
+    const lat = -16.75 + ((hash % 150) / 1000);
+    const lng = -49.35 + (((hash * 7) % 150) / 1000);
+    return [lat, lng];
+  };
 
   // Center on Goiania as default
-  const center = validProperties.length > 0 
-    ? [parseCoord(validProperties[0].latitude), parseCoord(validProperties[0].longitude)] 
-    : [-16.686891, -49.264794];
+  const center = [-16.686891, -49.264794];
 
   // Helper to create custom price pill icon
   const createPriceIcon = (price: number) => {
@@ -52,24 +54,31 @@ const MapComponent = ({ properties }: { properties: Property[] }) => {
           ${displayHtml}
         </div>
       `,
-      iconSize: null, // Let CSS define size
-      iconAnchor: [30, 15], // Approximate center of the pill
+      iconSize: null,
+      iconAnchor: [30, 15], 
       popupAnchor: [0, -15]
     });
   };
 
   return (
     <div style={{ height: '100%', width: '100%', position: 'relative' }}>
-      <MapContainer center={center} zoom={13} style={{ height: '100%', width: '100%' }}>
+      <MapContainer center={center} zoom={12} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
-        {validProperties.map((prop) => {
+        {properties.map((prop) => {
           const imgSrc = prop.main_image || (prop.images && prop.images[0]) || "/hero_luxury.png";
           const validPrice = Number(prop.price) || 0;
-          const lat = parseCoord(prop.latitude);
-          const lng = parseCoord(prop.longitude);
+          let lat = parseCoord(prop.latitude);
+          let lng = parseCoord(prop.longitude);
+          
+          // Se as coordenadas reais são inválidas ou inexistentes, injeta o gerador fictício de localização (simulando a vitrine)
+          if (isNaN(lat) || isNaN(lng) || lat === 0 || lng === 0) {
+            const fallback = getFallbackCoords(prop.id);
+            lat = fallback[0];
+            lng = fallback[1];
+          }
 
           return (
             <Marker 
@@ -95,14 +104,6 @@ const MapComponent = ({ properties }: { properties: Property[] }) => {
           );
         })}
       </MapContainer>
-      {validProperties.length === 0 && (
-        <div className="absolute inset-0 z-[1000] bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
-           <div className="bg-white p-6 rounded-2xl shadow-xl border border-red-100 max-w-sm">
-             <p className="text-red-500 font-black text-lg mb-2">Sem coordenadas!</p>
-             <p className="text-sm text-slate-600 font-medium">Nenhum dos imóveis listados possui coordenadas válidas (Latitude/Longitude) no banco de dados.</p>
-           </div>
-        </div>
-      )}
     </div>
   );
 };
