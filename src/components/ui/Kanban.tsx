@@ -35,120 +35,39 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
       <div 
         draggable
         onDragStart={(e) => onDragStart(e, lead.id)}
-        className="bg-surface p-2.5 rounded-xl shadow-card hover:shadow-card transition-all duration-300 cursor-grab active:cursor-grabbing group relative border border-transparent hover:border-accent/10"
+        className="bg-surface p-2.5 rounded-[10px] shadow-sm hover:shadow-card transition-all duration-300 cursor-grab active:cursor-grabbing group relative border border-border-light hover:border-accent/30 flex flex-col gap-2"
       >
-        {/* Top Header */}
-        <div className="flex justify-between items-start mb-2">
-          <div className="flex items-center gap-4">
+        <div className="flex justify-between items-start gap-2">
+          <div className="flex items-center gap-2 min-w-0">
             <div 
-              className="w-6 h-6 rounded-md flex items-center justify-center text-[8px] font-black text-white shadow-lg border-2 border-white"
+              className="w-6 h-6 rounded-md flex items-center justify-center text-[9px] font-black text-white flex-shrink-0"
               style={{ backgroundColor: getAvatarBg(displayName) }}
             >
               {getInitials(displayName)}
             </div>
-            <div className="min-w-0">
-              <Link href={lead.person_id ? `/crmhabita/pessoas/${lead.person_id}` : `/crmhabita/leads/${lead.id}`}>
-                <h4 className="font-black text-primary text-[11px] leading-tight hover:text-accent transition-colors truncate pr-2">{displayName}</h4>
-              </Link>
-              <div className="flex items-center gap-2 mt-1">
-                <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">{lead.source || 'Portal'}</p>
-                {lead.person_id && (
-                  <span className="flex items-center gap-1 text-[7px] font-black uppercase text-green-600 bg-green-50 px-2 py-0.5 rounded-md">
-                    <Sparkles size={8} /> Verificado
-                  </span>
-                )}
-              </div>
-            </div>
+            <Link href={lead.person_id ? `/crmhabita/pessoas/${lead.person_id}` : `/crmhabita/leads/${lead.id}`} className="min-w-0">
+              <h4 className="font-bold text-heading text-[12px] leading-tight hover:text-accent transition-colors truncate">{displayName}</h4>
+            </Link>
           </div>
+          
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm('Excluir esta oportunidade?')) onDeleteLead(lead.id);
+            }}
+            className="text-muted/40 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
+          >
+            <Trash2 size={12} />
+          </button>
         </div>
 
-        {/* Quick Contact Actions */}
-        <div className="flex items-center gap-2 mb-2">
-          {lead.phone && (
-            <a 
-              href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="w-6 h-6 bg-green-50 text-green-600 rounded-md flex items-center justify-center hover:bg-green-600 hover:text-white transition-all shadow-sm group/btn"
-              title="WhatsApp"
-            >
-              <MessageCircle size={12} className="group-hover:scale-110 transition-transform" />
-            </a>
-          )}
-          {lead.phone && (
-            <a 
-              href={`tel:${lead.phone.replace(/\D/g, '')}`}
-              onClick={(e) => e.stopPropagation()}
-              className="w-6 h-6 bg-blue-50 text-blue-600 rounded-md flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all shadow-sm"
-              title="Ligar"
-            >
-              <Phone size={12} />
-            </a>
-          )}
-          {lead.email && (
-            <a 
-              href={`mailto:${lead.email}`}
-              onClick={(e) => e.stopPropagation()}
-              className="w-6 h-6 bg-blue-soft text-blue-primary rounded-md flex items-center justify-center hover:bg-blue-primary hover:text-white transition-all shadow-sm"
-              title="E-mail"
-            >
-              <Mail size={12} />
-            </a>
-          )}
-        </div>
-
-        {/* Property Interest */}
-        {(lead.property || lead.interest_description) && (
-          <div className="mb-2 p-2 bg-muted/30 rounded-md border border-border/10">
-            <div className="flex items-center gap-3">
-              <div className="p-1.5 bg-surface rounded-md shadow-sm shrink-0">
-                {lead.property ? <Building size={10} className="text-primary" /> : <MapPin size={10} className="text-accent" />}
-              </div>
-              <div className="min-w-0">
-                <p className="text-[8px] font-black text-muted-foreground/40 uppercase tracking-widest mb-0.5">Interesse</p>
-                <p className="text-[11px] font-black text-primary truncate leading-tight">
-                  {lead.property?.title || lead.interest_description}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Value & Score */}
-        <div className="flex items-end justify-between pt-2 mt-2 border-t border-border/30">
-          <div>
-            <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.15em] mb-1 block">Valor Previsto</span>
-            <p className="text-[12px] font-black text-primary tracking-tighter">{formattedValue}</p>
-          </div>
-          <div className="text-right">
-            <div className="flex items-center gap-2 mb-1 justify-end">
-              <Sparkles size={10} className="text-accent" />
-              <span className="text-[9px] font-black text-primary">{lead.score} Score</span>
-            </div>
-            <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
-               <div 
-                 className={`h-full rounded-full transition-all duration-1000 ${
-                    (lead.probability || 0) > 70 ? 'bg-green-500' : 
-                    (lead.probability || 0) > 40 ? 'bg-accent' : 'bg-slate-300'
-                 }`}
-                 style={{ width: `${lead.probability}%` }}
-               />
-            </div>
+        <div className="flex items-center justify-between mt-1">
+          <p className="text-[12px] font-black text-primary">{formattedValue}</p>
+          <div className="flex items-center gap-1">
+             <Sparkles size={10} className="text-accent" />
+             <span className="text-[10px] font-bold text-muted">{lead.score} pts</span>
           </div>
         </div>
-        
-        {/* Floating Delete Button */}
-        <button 
-          onClick={() => {
-            if (window.confirm('Excluir esta oportunidade? O contato da pessoa continuará salvo.')) {
-              onDeleteLead(lead.id);
-            }
-          }}
-          className="absolute top-2.5 right-2.5 p-2 text-muted-foreground/20 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-        >
-          <Trash2 size={12} />
-        </button>
       </div>
     </motion.div>
   );
