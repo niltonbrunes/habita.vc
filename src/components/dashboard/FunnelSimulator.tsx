@@ -95,7 +95,7 @@ export function FunnelSimulator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8 bg-card p-10 rounded-xl shadow-card border border-border/50">
+    <div className="grid lg:grid-cols-[280px_1fr] gap-8 bg-card p-10 rounded-xl shadow-card border border-border/50">
       {/* Coluna de Configuração */}
       <div className="space-y-8 lg:border-r border-r-0 lg:border-border border-transparent lg:pr-8 pr-0">
         <div>
@@ -152,7 +152,7 @@ export function FunnelSimulator() {
         </div>
 
       {/* Coluna do Funil Visual */}
-      <div className="lg:col-span-2 space-y-10 lg:pl-8 pl-0">
+      <div className="space-y-10 lg:pl-8 pl-0">
         <div className="flex justify-between items-center">
           <h3 className="text-xl font-black text-primary">Seu Funil Necessário</h3>
           <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full text-[10px] font-black uppercase tracking-widest">

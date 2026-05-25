@@ -169,7 +169,7 @@ export default function DashboardPage() {
           </SectionCard>
 
           {/* FUNIL REAL E CANAIS */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 mt-5">
+          <div className="grid grid-cols-1 xl:grid-cols-[330px_1fr] gap-5 mt-5">
              <SectionCard title="Funil de Vendas (Realizado)">
                 <div className="p-4">
                   <FunnelBar label="Base"        color="bg-blue-primary"   pct={100} count={metrics?.activeLeads || 0} loading={loading} />
