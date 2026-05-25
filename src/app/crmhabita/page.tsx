@@ -185,6 +185,11 @@ export default function DashboardPage() {
                   <ChannelPerformance />
                 </div>
              </SectionCard>
+             <SectionCard title="Quantidade por Tipo de Imóvel">
+                <div className="p-2 h-full flex flex-col justify-center min-h-[300px]">
+                  <PropertyTypeChart />
+                </div>
+             </SectionCard>
           </div>
 
         </div>
