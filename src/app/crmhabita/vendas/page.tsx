@@ -94,7 +94,7 @@ export default function VendasPage() {
           </div>
           <button
             onClick={() => { setEditingSale(null); setIsSaleModalOpen(true); }}
-            className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl font-black hover:bg-primary-light transition-all shadow-premium"
+            className="flex items-center gap-2 bg-blue-primary text-white px-6 py-3 rounded-2xl font-black hover:bg-blue-primary-light transition-all shadow-card"
           >
             <Plus size={20} /> Nova Venda
           </button>
@@ -102,31 +102,31 @@ export default function VendasPage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-[1.5rem] shadow-premium border border-border flex items-center gap-4">
+          <div className="bg-surface p-6 rounded-[1.5rem] shadow-card border border-border flex items-center gap-4">
             <div className="p-3 rounded-2xl shrink-0 text-green-600 bg-green-50">
               <DollarSign size={22} />
             </div>
             <div>
               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Volume Total</p>
-              <p className="text-2xl font-black text-primary">{formatCurrency(totalRevenue)}</p>
+              <p className="text-xl font-bold text-heading">{formatCurrency(totalRevenue)}</p>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-[1.5rem] shadow-premium border border-border flex items-center gap-4">
+          <div className="bg-surface p-6 rounded-[1.5rem] shadow-card border border-border flex items-center gap-4">
             <div className="p-3 rounded-2xl shrink-0 text-blue-600 bg-blue-50">
               <Percent size={22} />
             </div>
             <div>
               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Comissao Acumulada</p>
-              <p className="text-2xl font-black text-primary">{formatCurrency(totalCommission)}</p>
+              <p className="text-xl font-bold text-heading">{formatCurrency(totalCommission)}</p>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-[1.5rem] shadow-premium border border-border flex items-center gap-4">
+          <div className="bg-surface p-6 rounded-[1.5rem] shadow-card border border-border flex items-center gap-4">
             <div className="p-3 rounded-2xl shrink-0 text-purple-600 bg-purple-50">
               <TrendingUp size={22} />
             </div>
             <div>
               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Ticket Medio</p>
-              <p className="text-2xl font-black text-primary">{formatCurrency(avgTicket)}</p>
+              <p className="text-xl font-bold text-heading">{formatCurrency(avgTicket)}</p>
             </div>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function VendasPage() {
         )}
 
         {/* Table */}
-        <div className="bg-white rounded-[2rem] shadow-premium border border-border overflow-hidden">
+        <div className="bg-surface rounded-xl shadow-card border border-border overflow-hidden">
           <div className="p-6 border-b border-border flex items-center gap-3">
             <div className="relative flex-1 max-w-sm">
               <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -185,7 +185,7 @@ export default function VendasPage() {
                     <tr key={sale.id} className="hover:bg-muted/20 transition-colors group">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                          <div className="w-9 h-9 bg-blue-primary/10 rounded-xl flex items-center justify-center shrink-0">
                             <User size={16} className="text-primary" />
                           </div>
                           <span className="font-bold text-primary text-sm">{sale.leads?.name || 'N/A'}</span>
@@ -231,7 +231,7 @@ export default function VendasPage() {
                             <>
                               <button
                             onClick={() => { setEditingSale(sale); setIsSaleModalOpen(true); }}
-                            className="p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all"
+                            className="p-2 rounded-xl bg-blue-primary/10 text-primary hover:bg-blue-primary hover:text-white transition-all"
                             title="Editar venda"
                           >
                             <Pencil size={15} />
@@ -259,8 +259,8 @@ export default function VendasPage() {
       {/* Confirm Delete Modal */}
       {confirmDelete && (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-primary/40 backdrop-blur-md" onClick={() => setConfirmDelete(null)} />
-          <div className="relative bg-white rounded-[2rem] shadow-luxury border border-border p-8 max-w-md w-full animate-in fade-in zoom-in duration-200">
+          <div className="absolute inset-0 bg-blue-primary/40 backdrop-blur-md" onClick={() => setConfirmDelete(null)} />
+          <div className="relative bg-surface rounded-xl shadow-card border border-border p-8 max-w-md w-full animate-in fade-in zoom-in duration-200">
             <div className="flex flex-col items-center text-center gap-4">
               <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
                 <Trash2 size={28} className="text-red-500" />

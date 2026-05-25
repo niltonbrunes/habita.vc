@@ -28,7 +28,7 @@ export function BasicInfoStep({ data, onChange }: Props) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-black text-primary mb-1">Informações Básicas</h2>
+        <h2 className="text-xl font-bold text-heading mb-1">Informações Básicas</h2>
         <p className="text-muted-foreground text-sm">Tipo, finalidade e identificação do imóvel.</p>
       </div>
 
@@ -40,7 +40,7 @@ export function BasicInfoStep({ data, onChange }: Props) {
             <button key={t} type="button"
               onClick={() => onChange({ type: t })}
               className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${
-                data.type === t ? 'bg-primary text-white border-primary' : 'bg-white text-primary border-border hover:border-primary/40'
+                data.type === t ? 'bg-blue-primary text-white border-primary' : 'bg-surface text-primary border-border hover:border-primary/40'
               }`}
             >{t}</button>
           ))}
@@ -55,7 +55,7 @@ export function BasicInfoStep({ data, onChange }: Props) {
             <button key={t.value} type="button"
               onClick={() => onChange({ transaction_type: t.value as any })}
               className={`py-4 rounded-2xl text-sm font-black border-2 transition-all ${
-                data.transaction_type === t.value ? 'bg-primary text-white border-primary' : 'bg-white text-primary border-border hover:border-primary/40'
+                data.transaction_type === t.value ? 'bg-blue-primary text-white border-primary' : 'bg-surface text-primary border-border hover:border-primary/40'
               }`}
             >{t.label}</button>
           ))}
@@ -70,7 +70,7 @@ export function BasicInfoStep({ data, onChange }: Props) {
           value={data.title}
           onChange={e => onChange({ title: e.target.value })}
           placeholder="Ex: Apartamento 3 suítes com vista panorâmica no Setor Bueno"
-          className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
+          className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
         />
         <p className="text-xs text-muted-foreground">{data.title.length}/120 caracteres</p>
       </div>
@@ -83,7 +83,7 @@ export function BasicInfoStep({ data, onChange }: Props) {
           onChange={e => onChange({ description: e.target.value })}
           rows={5}
           placeholder="Descreva o imóvel destacando seus diferenciais, localização privilegiada, acabamentos..."
-          className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary placeholder:text-muted-foreground/40 transition-all resize-none"
+          className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary placeholder:text-muted-foreground/40 transition-all resize-none"
         />
       </div>
 
@@ -96,7 +96,7 @@ export function BasicInfoStep({ data, onChange }: Props) {
             value={data.reference || ''}
             onChange={e => onChange({ reference: e.target.value })}
             placeholder="Ex: APT-001"
-            className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
+            className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
           />
         </div>
         <div className="space-y-2">
@@ -104,7 +104,7 @@ export function BasicInfoStep({ data, onChange }: Props) {
           <select
             value={data.pattern}
             onChange={e => onChange({ pattern: e.target.value as any })}
-            className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary transition-all"
+            className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary transition-all"
           >
             {PATTERN_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
@@ -116,7 +116,7 @@ export function BasicInfoStep({ data, onChange }: Props) {
               <button key={s.value} type="button"
                 onClick={() => onChange({ status: s.value as any })}
                 className={`flex-1 py-4 rounded-2xl text-xs font-black border-2 transition-all ${
-                  data.status === s.value ? s.color + ' border-current' : 'bg-white text-muted-foreground border-border hover:border-muted-foreground'
+                  data.status === s.value ? s.color + ' border-current' : 'bg-surface text-muted-foreground border-border hover:border-muted-foreground'
                 }`}
               >{s.label}</button>
             ))}

@@ -31,7 +31,7 @@ export function ClassificationStep({ data, onChange }: Props) {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
       <div>
-        <h2 className="text-2xl font-black text-primary mb-1">Classificação</h2>
+        <h2 className="text-xl font-bold text-heading mb-1">Classificação</h2>
         <p className="text-muted-foreground text-sm">Quais papéis essa pessoa/empresa exerce no sistema? (Selecione múltiplos se necessário)</p>
       </div>
 
@@ -43,11 +43,11 @@ export function ClassificationStep({ data, onChange }: Props) {
               key={role.id}
               onClick={() => toggleRole(role.id)}
               className={`p-4 rounded-2xl border-2 cursor-pointer transition-all flex items-start gap-3 ${
-                isActive ? 'border-primary bg-primary/5' : 'border-border bg-white hover:border-primary/30'
+                isActive ? 'border-primary bg-blue-primary/5' : 'border-border bg-surface hover:border-primary/30'
               }`}
             >
               <div className={`mt-0.5 w-5 h-5 rounded-md flex items-center justify-center shrink-0 border-2 transition-all ${
-                isActive ? 'bg-primary border-primary text-white' : 'border-muted-foreground/30'
+                isActive ? 'bg-blue-primary border-primary text-white' : 'border-muted-foreground/30'
               }`}>
                 {isActive && <Check size={14} strokeWidth={4} />}
               </div>
@@ -69,7 +69,7 @@ export function ClassificationStep({ data, onChange }: Props) {
             <select
               value={data.commercial_info.lead_source || ''}
               onChange={e => onChange({ commercial_info: { ...data.commercial_info, lead_source: e.target.value } })}
-                className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary transition-all"
+                className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary transition-all"
               >
                     <option value="">Selecione...</option>
                     <option value="indicacao">Indicação</option>
@@ -85,7 +85,7 @@ export function ClassificationStep({ data, onChange }: Props) {
             <select
               value={data.commercial_info.interests?.[0] || ''}
               onChange={e => onChange({ commercial_info: { ...data.commercial_info, interests: [e.target.value] } })}
-              className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary transition-all"
+              className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary transition-all"
             >
               <option value="">Selecione...</option>
               <option value="buy">Comprar</option>
@@ -100,7 +100,7 @@ export function ClassificationStep({ data, onChange }: Props) {
               onChange={e => onChange({ commercial_info: { ...data.commercial_info, notes: e.target.value } })}
               rows={3}
               placeholder="Anotações sobre o perfil, necessidades, etc."
-              className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary transition-all resize-none"
+              className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary transition-all resize-none"
             />
           </div>
         </div>

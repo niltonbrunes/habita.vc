@@ -70,14 +70,14 @@ export default function PublicationDashboard() {
           <div className="flex gap-3">
             <button 
               onClick={fetchProperties}
-              className="p-4 bg-white rounded-2xl border border-border hover:bg-muted transition-all text-primary"
+              className="p-4 bg-surface rounded-2xl border border-border hover:bg-muted transition-all text-primary"
             >
               <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
             </button>
             <Link 
               href="/imoveis" 
               target="_blank"
-              className="bg-primary text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-primary-dark transition-all shadow-premium"
+              className="bg-blue-primary text-white px-8 py-4 rounded-2xl font-bold flex items-center gap-2 hover:bg-blue-primary-dark transition-all shadow-card"
             >
               <ExternalLink size={20} /> Ver Portal Vivo
             </Link>
@@ -106,7 +106,7 @@ export default function PublicationDashboard() {
         </div>
 
         {/* Filters & Search */}
-        <div className="bg-white p-4 rounded-[2rem] border border-border flex flex-col md:flex-row gap-4 items-center justify-between shadow-sm">
+        <div className="bg-surface p-4 rounded-xl border border-border flex flex-col md:flex-row gap-4 items-center justify-between shadow-sm">
           <div className="flex gap-2 p-1 bg-muted rounded-2xl w-full md:w-auto">
             <FilterBtn active={filter === 'all'} onClick={() => setFilter('all')}>Todos</FilterBtn>
             <FilterBtn active={filter === 'published'} onClick={() => setFilter('published')}>Publicados</FilterBtn>
@@ -117,13 +117,13 @@ export default function PublicationDashboard() {
             <input 
               type="text" 
               placeholder="Buscar por referência ou título..."
-              className="w-full pl-12 pr-6 py-3 bg-muted/50 border border-transparent rounded-xl focus:bg-white focus:border-accent/20 transition-all outline-none font-bold text-sm" style={{ paddingLeft: "3rem" }}
+              className="w-full pl-12 pr-6 py-3 bg-muted/50 border border-transparent rounded-xl focus:bg-surface focus:border-accent/20 transition-all outline-none font-bold text-sm" style={{ paddingLeft: "3rem" }}
             />
           </div>
         </div>
 
         {/* Properties Table */}
-        <div className="bg-white rounded-[2.5rem] shadow-premium border border-border overflow-hidden">
+        <div className="bg-surface rounded-xl shadow-card border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
@@ -187,7 +187,7 @@ export default function PublicationDashboard() {
                         <Link 
                           href={`/imoveis/${prop.address_city?.toLowerCase() || 'goiania'}/${prop.slug}`}
                           target="_blank"
-                          className="p-3 hover:bg-primary hover:text-white rounded-xl transition-all text-muted-foreground"
+                          className="p-3 hover:bg-blue-primary hover:text-white rounded-xl transition-all text-muted-foreground"
                           title="Ver no Portal"
                         >
                           <Eye size={18} />
@@ -205,7 +205,7 @@ export default function PublicationDashboard() {
           
           {filteredProperties.length === 0 && (
             <div className="p-20 text-center">
-              <div className="w-20 h-20 bg-muted rounded-[2rem] flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-muted rounded-xl flex items-center justify-center mx-auto mb-6">
                 <Globe size={40} className="text-muted-foreground/30" />
               </div>
               <h3 className="text-xl font-bold text-primary mb-2">Nenhum imóvel encontrado</h3>
@@ -218,9 +218,9 @@ export default function PublicationDashboard() {
   );
 }
 
-const StatMiniCard = ({ label, value, icon, color = 'bg-white' }: any) => (
-  <div className={`${color} p-6 rounded-[2rem] border border-border shadow-sm flex items-center gap-6`}>
-    <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center border border-border">
+const StatMiniCard = ({ label, value, icon, color = 'bg-surface' }: any) => (
+  <div className={`${color} p-6 rounded-xl border border-border shadow-sm flex items-center gap-6`}>
+    <div className="w-12 h-12 rounded-2xl bg-surface shadow-sm flex items-center justify-center border border-border">
       {icon}
     </div>
     <div>
@@ -234,7 +234,7 @@ const FilterBtn = ({ children, active, onClick }: any) => (
   <button 
     onClick={onClick}
     className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-      active ? 'bg-white text-primary shadow-sm' : 'text-muted-foreground hover:text-primary'
+      active ? 'bg-surface text-primary shadow-sm' : 'text-muted-foreground hover:text-primary'
     }`}
   >
     {children}

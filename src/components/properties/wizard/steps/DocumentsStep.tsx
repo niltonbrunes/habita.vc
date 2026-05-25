@@ -54,13 +54,13 @@ export function DocumentsStep({ documents, onChange }: Props) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-black text-primary mb-1">Documentos do Imóvel</h2>
+        <h2 className="text-xl font-bold text-heading mb-1">Documentos do Imóvel</h2>
         <p className="text-muted-foreground text-sm">Escritura, matrícula, IPTU e outros documentos. Esta etapa é opcional.</p>
       </div>
 
       {/* Drop zone */}
       <div
-        className="border-2 border-dashed border-border rounded-[2rem] p-10 flex flex-col items-center gap-4 cursor-pointer hover:border-primary/40 bg-muted/20 transition-all"
+        className="border-2 border-dashed border-border rounded-xl p-10 flex flex-col items-center gap-4 cursor-pointer hover:border-primary/40 bg-muted/20 transition-all"
         onClick={() => inputRef.current?.click()}
       >
         <Upload className="text-primary/30" size={36} />
@@ -76,7 +76,7 @@ export function DocumentsStep({ documents, onChange }: Props) {
       {documents.length > 0 && (
         <div className="space-y-3">
           {documents.map(doc => (
-            <div key={doc.id} className="flex items-center gap-4 p-4 bg-white border-2 border-border rounded-2xl">
+            <div key={doc.id} className="flex items-center gap-4 p-4 bg-surface border-2 border-border rounded-2xl">
               <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center shrink-0">
                 {doc.uploading ? (
                   <Loader2 className="animate-spin text-primary" size={22} />
@@ -93,7 +93,7 @@ export function DocumentsStep({ documents, onChange }: Props) {
               <select
                 value={doc.doc_type}
                 onChange={e => updateType(doc.id, e.target.value)}
-                className="px-3 py-2 text-xs font-bold border border-border rounded-xl bg-white outline-none focus:border-primary"
+                className="px-3 py-2 text-xs font-bold border border-border rounded-xl bg-surface outline-none focus:border-primary"
               >
                 {DOC_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>

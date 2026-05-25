@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -91,27 +91,27 @@ export default function LeadsPage() {
         {/* Page Header Area */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
           <div>
-            <h1 className="text-4xl font-black text-primary tracking-tighter mb-2">Gestão de Leads</h1>
-            <p className="text-muted-foreground font-medium">Pipeline de vendas e conversão em tempo real.</p>
+            <h1 className="text-2xl font-bold text-heading tracking-tighter mb-2">GestÃ£o de Leads</h1>
+            <p className="text-muted-foreground font-medium">Pipeline de vendas e conversÃ£o em tempo real.</p>
           </div>
 
           <div className="flex items-center gap-3 w-full md:w-auto">
             <button 
               onClick={handleExport}
-              className="flex-1 md:flex-none p-4 bg-white border border-border/40 rounded-2xl text-muted-foreground hover:text-primary transition-all shadow-sm"
+              className="flex-1 md:flex-none p-4 bg-surface border border-border/40 rounded-2xl text-muted-foreground hover:text-primary transition-all shadow-sm"
               title="Exportar CSV"
             >
               <Download size={20} />
             </button>
             <button 
               onClick={() => setIsImportModalOpen(true)}
-              className="flex-1 md:flex-none px-6 py-4 bg-white border border-border/40 rounded-2xl text-sm font-black text-muted-foreground hover:text-primary transition-all shadow-sm flex items-center gap-2"
+              className="flex-1 md:flex-none px-6 py-4 bg-surface border border-border/40 rounded-2xl text-sm font-black text-muted-foreground hover:text-primary transition-all shadow-sm flex items-center gap-2"
             >
               <Upload size={18} /> Importar
             </button>
             <button 
               onClick={() => setIsLeadModalOpen(true)}
-              className="flex-1 md:flex-none px-8 py-4 bg-primary text-white rounded-2xl text-sm font-black hover:bg-primary-light transition-all shadow-premium flex items-center gap-2"
+              className="flex-1 md:flex-none px-8 py-4 bg-blue-primary text-white rounded-2xl text-sm font-black hover:bg-blue-primary-light transition-all shadow-card flex items-center gap-2"
             >
               <Plus size={20} /> Novo Lead
             </button>
@@ -138,11 +138,11 @@ export default function LeadsPage() {
         />
 
         {error && (
-          <div className="bg-red-50 border border-red-100 p-6 rounded-[2rem] flex items-center gap-4 text-red-600 mb-8 animate-in fade-in duration-500">
+          <div className="bg-red-50 border border-red-100 p-6 rounded-xl flex items-center gap-4 text-red-600 mb-8 animate-in fade-in duration-500">
             <AlertCircle size={24} />
             <div>
               <p className="font-bold text-sm">Erro ao carregar leads</p>
-              <p className="text-xs opacity-80">Não foi possível conectar ao banco de dados ou a tabela não existe.</p>
+              <p className="text-xs opacity-80">NÃ£o foi possÃ­vel conectar ao banco de dados ou a tabela nÃ£o existe.</p>
             </div>
           </div>
         )}
@@ -150,7 +150,7 @@ export default function LeadsPage() {
         {/* Kanban Board Container */}
         <div className="flex-1 overflow-x-auto pb-10 scrollbar-thin scrollbar-thumb-primary/10 relative min-h-[600px] -mx-8 px-8">
           {loading && (
-            <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-20 flex items-center justify-center">
+            <div className="absolute inset-0 bg-surface/50 backdrop-blur-[1px] z-20 flex items-center justify-center">
               <RefreshCw className="animate-spin text-primary" size={32} />
             </div>
           )}
@@ -172,3 +172,4 @@ export default function LeadsPage() {
     </DashboardLayout>
   );
 }
+

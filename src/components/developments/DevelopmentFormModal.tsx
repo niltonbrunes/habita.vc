@@ -122,20 +122,20 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-primary/20 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-blue-primary/20 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="bg-white w-full max-w-5xl rounded-[2.5rem] shadow-luxury border border-border relative overflow-hidden animate-in fade-in zoom-in duration-300 flex flex-col max-h-[90vh]">
+      <div className="bg-surface w-full max-w-5xl rounded-xl shadow-card border border-border relative overflow-hidden animate-in fade-in zoom-in duration-300 flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="p-8 border-b border-border flex justify-between items-center bg-muted/30 shrink-0">
           <div>
-            <h2 className="text-2xl font-black text-primary mb-1">
+            <h2 className="text-xl font-bold text-heading mb-1">
               {development ? 'Editar Empreendimento' : 'Novo Empreendimento'}
             </h2>
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
               Área do Incorporador • Gestão de Lançamentos
             </p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white rounded-xl transition-colors text-muted-foreground">
+          <button onClick={onClose} className="p-2 hover:bg-surface rounded-xl transition-colors text-muted-foreground">
             <X size={24} />
           </button>
         </div>
@@ -159,7 +159,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                       type="text"
                       value={formData.name}
                       onChange={e => setFormData({ ...formData, name: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       placeholder="Ex: ParqVille Cerejeira"
                     />
                   </div>
@@ -170,7 +170,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                       type="text"
                       value={formData.slug}
                       onChange={e => setFormData({ ...formData, slug: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-medium text-primary text-xs"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-medium text-primary text-xs"
                       placeholder="auto-gerado-se-vazio"
                     />
                   </div>
@@ -181,7 +181,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                       type="text"
                       value={formData.tagline}
                       onChange={e => setFormData({ ...formData, tagline: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       placeholder="Ex: O seu refúgio na cidade"
                     />
                   </div>
@@ -193,7 +193,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                         required
                         value={formData.developer_id}
                         onChange={e => setFormData({ ...formData, developer_id: e.target.value })}
-                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       >
                         {developers.map(d => (
                           <option key={d.id} value={d.id}>{d.name}</option>
@@ -206,7 +206,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                       <select
                         value={formData.commercial_stage}
                         onChange={e => setFormData({ ...formData, commercial_stage: e.target.value as any })}
-                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       >
                         <option value="pre_launch">Pré-Lançamento</option>
                         <option value="launch">Lançamento</option>
@@ -229,7 +229,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                       type="text"
                       value={formData.location_address}
                       onChange={e => setFormData({ ...formData, location_address: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       placeholder="Ex: Av. T-10, 123"
                     />
                   </div>
@@ -240,7 +240,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                         type="text"
                         value={formData.location_neighborhood}
                         onChange={e => setFormData({ ...formData, location_neighborhood: e.target.value })}
-                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       />
                     </div>
                     <div className="space-y-2">
@@ -249,7 +249,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                         type="text"
                         value={formData.location_city}
                         onChange={e => setFormData({ ...formData, location_city: e.target.value })}
-                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       />
                     </div>
                   </div>
@@ -264,7 +264,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
 
                 <div className="grid grid-cols-1 gap-4">
                   {/* Upload de Plantas */}
-                  <div className={`p-6 rounded-[2rem] border-2 border-dashed transition-all flex flex-col items-center justify-center gap-3 ${
+                  <div className={`p-6 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-3 ${
                     formData.plans_url ? 'border-green-200 bg-green-50' : 'border-muted-foreground/20 bg-muted/30'
                   }`}>
                     <FileDown size={32} className={formData.plans_url ? 'text-green-500' : 'text-muted-foreground'} />
@@ -272,14 +272,14 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                       <p className="text-xs font-black text-primary uppercase tracking-widest">Planta do Empreendimento</p>
                       <p className="text-[10px] text-muted-foreground mt-1">{formData.plans_url ? 'Arquivo Carregado' : 'PDF ou Imagem da Planta'}</p>
                     </div>
-                    <label className="px-4 py-2 bg-white rounded-xl text-[10px] font-black text-primary shadow-sm hover:shadow-md transition-all cursor-pointer border border-border uppercase tracking-widest">
+                    <label className="px-4 py-2 bg-surface rounded-xl text-[10px] font-black text-primary shadow-sm hover:shadow-md transition-all cursor-pointer border border-border uppercase tracking-widest">
                       {uploading ? 'Enviando...' : formData.plans_url ? 'Alterar Arquivo' : 'Escolher Arquivo'}
                       <input type="file" className="hidden" accept=".pdf,image/*" onChange={e => handleFileUpload(e, 'plans_url')} disabled={uploading} />
                     </label>
                   </div>
 
                   {/* Upload de Tabela de Preços */}
-                  <div className={`p-6 rounded-[2rem] border-2 border-dashed transition-all flex flex-col items-center justify-center gap-3 ${
+                  <div className={`p-6 rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-3 ${
                     formData.price_table_url ? 'border-blue-200 bg-blue-50' : 'border-muted-foreground/20 bg-muted/30'
                   }`}>
                     <Activity size={32} className={formData.price_table_url ? 'text-blue-500' : 'text-muted-foreground'} />
@@ -287,7 +287,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                       <p className="text-xs font-black text-primary uppercase tracking-widest">Tabela de Preços</p>
                       <p className="text-[10px] text-muted-foreground mt-1">{formData.price_table_url ? 'Arquivo Carregado' : 'Excel ou PDF com Valores'}</p>
                     </div>
-                    <label className="px-4 py-2 bg-white rounded-xl text-[10px] font-black text-primary shadow-sm hover:shadow-md transition-all cursor-pointer border border-border uppercase tracking-widest">
+                    <label className="px-4 py-2 bg-surface rounded-xl text-[10px] font-black text-primary shadow-sm hover:shadow-md transition-all cursor-pointer border border-border uppercase tracking-widest">
                       {uploading ? 'Enviando...' : formData.price_table_url ? 'Alterar Arquivo' : 'Escolher Arquivo'}
                       <input type="file" className="hidden" accept=".pdf,.xls,.xlsx,image/*" onChange={e => handleFileUpload(e, 'price_table_url')} disabled={uploading} />
                     </label>
@@ -314,10 +314,10 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                           type="text"
                           value={formData.image_url}
                           onChange={e => setFormData({ ...formData, image_url: e.target.value })}
-                          className="block w-full px-4 py-2.5 bg-muted/50 border border-transparent rounded-xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-xs"
+                          className="block w-full px-4 py-2.5 bg-muted/50 border border-transparent rounded-xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-xs"
                           placeholder="Cole a URL da imagem ou use o botão abaixo"
                         />
-                        <label className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-light transition-all cursor-pointer">
+                        <label className="inline-flex items-center gap-2 px-4 py-2 bg-blue-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-primary-light transition-all cursor-pointer">
                           <Upload size={14} /> {uploading ? 'Enviando...' : 'Upload da Capa'}
                           <input type="file" className="hidden" accept="image/*" onChange={e => handleFileUpload(e, 'image_url')} disabled={uploading} />
                         </label>
@@ -335,7 +335,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                  rows={4}
                  value={formData.description}
                  onChange={e => setFormData({ ...formData, description: e.target.value })}
-                 className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-3xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary resize-none"
+                 className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-3xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary resize-none"
                  placeholder="Descreva os diferenciais, áreas de lazer e proposta do projeto..."
                />
             </div>
@@ -354,7 +354,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
             form="dev-form"
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 bg-primary text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary-light transition-all shadow-premium disabled:opacity-50"
+            className="flex items-center gap-2 bg-blue-primary text-white px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-blue-primary-light transition-all shadow-card disabled:opacity-50"
           >
             {loading ? (
               <RefreshCw className="animate-spin" size={16} />

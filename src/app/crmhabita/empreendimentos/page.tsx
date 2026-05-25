@@ -33,7 +33,7 @@ export default function DevelopmentsPage() {
     <DashboardLayout>
       <div className="space-y-8 relative">
         {loading && (
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-20 flex items-center justify-center min-h-[400px]">
+          <div className="absolute inset-0 bg-surface/50 backdrop-blur-[1px] z-20 flex items-center justify-center min-h-[400px]">
             <RefreshCw className="animate-spin text-primary" size={32} />
           </div>
         )}
@@ -49,7 +49,7 @@ export default function DevelopmentsPage() {
               setSelectedDevelopment(null);
               setIsModalOpen(true);
             }}
-            className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-primary-light transition-all shadow-premium"
+            className="flex items-center gap-2 bg-blue-primary text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-blue-primary-light transition-all shadow-card"
           >
             <Plus size={20} /> Novo Lançamento
           </button>
@@ -57,7 +57,7 @@ export default function DevelopmentsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {developments.map((dev) => (
-            <div key={dev.id} className="group bg-card rounded-[2.5rem] shadow-premium border border-border/50 overflow-hidden hover:shadow-luxury transition-all flex flex-col">
+            <div key={dev.id} className="group bg-card rounded-xl shadow-card border border-border/50 overflow-hidden hover:shadow-card transition-all flex flex-col">
               <div className="aspect-video relative overflow-hidden bg-muted flex items-center justify-center text-muted-foreground shrink-0">
                 <img src={dev.image_url} alt={dev.name} className="absolute inset-0 object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" />
                 <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5 border border-border/50">
@@ -89,11 +89,11 @@ export default function DevelopmentsPage() {
                   <Link 
                     href={`/empreendimentos/${dev.id}`} 
                     target="_blank"
-                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-muted text-primary rounded-xl text-xs font-black hover:bg-primary hover:text-white transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 bg-muted text-primary rounded-xl text-xs font-black hover:bg-blue-primary hover:text-white transition-all"
                   >
                     Ver Landing Page
                   </Link>
-                  <button className="p-3 bg-muted text-primary rounded-xl hover:bg-primary hover:text-white transition-all">
+                  <button className="p-3 bg-muted text-primary rounded-xl hover:bg-blue-primary hover:text-white transition-all">
                     <Layers size={18} />
                   </button>
                 </div>
@@ -102,7 +102,7 @@ export default function DevelopmentsPage() {
           ))}
 
           {developments.length === 0 && !loading && (
-            <div className="col-span-full py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-border">
+            <div className="col-span-full py-20 text-center bg-surface rounded-[3rem] border-2 border-dashed border-border">
               <p className="text-muted-foreground font-medium">Nenhum empreendimento cadastrado.</p>
             </div>
           )}

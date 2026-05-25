@@ -27,7 +27,7 @@ export function WizardStepper({ steps, currentStep, onGoTo }: Props) {
         </div>
         <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
           <div
-            className="h-full bg-primary rounded-full transition-all duration-500"
+            className="h-full bg-blue-primary rounded-full transition-all duration-500"
             style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
           />
         </div>
@@ -49,10 +49,10 @@ export function WizardStepper({ steps, currentStep, onGoTo }: Props) {
               >
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm transition-all border-2 ${
                   isCompleted
-                    ? 'bg-primary text-white border-primary'
+                    ? 'bg-blue-primary text-white border-primary'
                     : isActive
-                    ? 'bg-white text-primary border-primary shadow-[0_0_0_4px_rgba(var(--primary-rgb),0.15)]'
-                    : 'bg-white text-muted-foreground border-border'
+                    ? 'bg-surface text-primary border-primary shadow-[0_0_0_4px_rgba(var(--primary-rgb),0.15)]'
+                    : 'bg-surface text-muted-foreground border-border'
                 }`}>
                   {isCompleted ? <CheckCircle2 size={18} /> : step.icon}
                 </div>
@@ -64,7 +64,7 @@ export function WizardStepper({ steps, currentStep, onGoTo }: Props) {
               </button>
               {i < steps.length - 1 && (
                 <div className={`flex-1 h-0.5 mt-[-16px] mx-1 transition-all ${
-                  i < currentStep ? 'bg-primary' : 'bg-border'
+                  i < currentStep ? 'bg-blue-primary' : 'bg-border'
                 }`} />
               )}
             </React.Fragment>

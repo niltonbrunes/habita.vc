@@ -155,14 +155,14 @@ export default function ProspeccaoPage() {
         <div className="flex gap-3">
            <Link 
             href="/crmhabita"
-            className="px-6 py-4 rounded-2xl font-black text-sm bg-white border border-border text-muted-foreground hover:text-primary transition-all flex items-center gap-2"
+            className="px-6 py-4 rounded-2xl font-black text-sm bg-surface border border-border text-muted-foreground hover:text-primary transition-all flex items-center gap-2"
            >
             <Home size={18} />
             VOLTAR AO INÍCIO
            </Link>
            <button 
             onClick={generateAILeads}
-            className="group relative px-6 py-4 rounded-2xl font-black text-sm overflow-hidden bg-primary text-white shadow-luxury hover:scale-[1.02] transition-all"
+            className="group relative px-6 py-4 rounded-2xl font-black text-sm overflow-hidden bg-blue-primary text-white shadow-card hover:scale-[1.02] transition-all"
            >
             <div className="absolute inset-0 bg-gradient-to-r from-accent/0 via-accent/30 to-accent/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             <div className="flex items-center gap-2 relative z-10">
@@ -176,7 +176,7 @@ export default function ProspeccaoPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left: Property Selection */}
         <div className="lg:col-span-4 space-y-6">
-          <div className={`p-8 rounded-[2.5rem] border ${'bg-white/5 border-white/10'}`}>
+          <div className={`p-8 rounded-xl border ${'bg-surface/5 border-white/10'}`}>
             <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
               <Home className="w-5 h-5 text-accent" />
               1. Selecione o Imóvel
@@ -212,7 +212,7 @@ export default function ProspeccaoPage() {
               className={`
                 w-full mt-8 py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 transition-all
                 ${selectedProperty && aiState !== 'analyzing'
-                  ? 'bg-accent text-white shadow-premium'
+                  ? 'bg-accent text-white shadow-card'
                   : 'bg-muted text-muted-foreground cursor-not-allowed'}
               `}
             >
@@ -244,7 +244,7 @@ export default function ProspeccaoPage() {
                 <div className="w-20 h-20 bg-accent/20 rounded-full flex items-center justify-center mb-6 animate-pulse">
                   <Cpu className="w-10 h-10 text-accent" />
                 </div>
-                <h3 className="text-2xl font-black text-primary mb-2">Aguardando Comando</h3>
+                <h3 className="text-xl font-bold text-heading mb-2">Aguardando Comando</h3>
                 <p className="max-w-md text-muted-foreground font-medium">
                   Selecione um imóvel ao lado e peça para a IA gerar o perfil do comprador e a estratégia de prospecção.
                 </p>
@@ -255,7 +255,7 @@ export default function ProspeccaoPage() {
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="h-full min-h-[500px] rounded-[3rem] bg-primary flex flex-col items-center justify-center p-12 overflow-hidden relative"
+                className="h-full min-h-[500px] rounded-[3rem] bg-blue-primary flex flex-col items-center justify-center p-12 overflow-hidden relative"
               >
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-accent/20 via-transparent to-transparent opacity-50" />
                 <div className="relative z-10 flex flex-col items-center">
@@ -272,7 +272,7 @@ export default function ProspeccaoPage() {
                   <h3 className="text-2xl font-black text-white mb-2">IA Analisando Big Data</h3>
                   <p className="text-white/50 font-bold uppercase tracking-widest text-[10px]">Mapeando tendências de mercado...</p>
                   
-                  <div className="mt-12 w-64 h-1 bg-white/10 rounded-full overflow-hidden">
+                  <div className="mt-12 w-64 h-1 bg-surface/10 rounded-full overflow-hidden">
                     <motion.div 
                       animate={{ x: [-256, 256] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
@@ -290,7 +290,7 @@ export default function ProspeccaoPage() {
                 className="space-y-6"
               >
                 {/* Persona Card */}
-                <div className={`p-8 rounded-[2.5rem] border ${'bg-white/5 border-white/10'}`}>
+                <div className={`p-8 rounded-xl border ${'bg-surface/5 border-white/10'}`}>
                   <div className="flex items-center gap-3 mb-6">
                     <div className="p-3 bg-accent/20 rounded-2xl text-accent">
                       <UserPlus size={24} />
@@ -316,7 +316,7 @@ export default function ProspeccaoPage() {
 
                 {/* Strategy Card */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className={`p-8 rounded-[2.5rem] border ${'bg-white/5 border-white/10'}`}>
+                  <div className={`p-8 rounded-xl border ${'bg-surface/5 border-white/10'}`}>
                     <h4 className="font-black text-lg mb-6 flex items-center gap-2">
                       <TrendingUp className="text-accent" size={20} />
                       Estratégia de Venda
@@ -331,18 +331,18 @@ export default function ProspeccaoPage() {
                     </ul>
                   </div>
 
-                  <div className={`p-8 rounded-[2.5rem] border ${'bg-white/5 border-white/10'}`}>
+                  <div className={`p-8 rounded-xl border ${'bg-surface/5 border-white/10'}`}>
                     <h4 className="font-black text-lg mb-6 flex items-center gap-2">
                       <MessageSquare className="text-accent" size={20} />
                       Script WhatsApp
                     </h4>
                     <div className="bg-muted/50 p-6 rounded-3xl text-sm font-medium italic relative group">
                       "{analysis.whatsappCopy}"
-                      <button className="absolute top-4 right-4 p-2 bg-white rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="absolute top-4 right-4 p-2 bg-surface rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
                         <Zap size={14} className="text-accent" />
                       </button>
                     </div>
-                    <button className="w-full mt-6 py-4 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary-light transition-all">
+                    <button className="w-full mt-6 py-4 bg-blue-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-primary-light transition-all">
                       Copiar Script
                     </button>
                   </div>

@@ -39,7 +39,7 @@ export default function AgendaPage() {
     <DashboardLayout>
       <div className="space-y-8 pb-20 max-w-5xl relative">
         {loading && (
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-20 flex items-center justify-center min-h-[400px]">
+          <div className="absolute inset-0 bg-surface/50 backdrop-blur-[1px] z-20 flex items-center justify-center min-h-[400px]">
             <RefreshCw className="animate-spin text-primary" size={32} />
           </div>
         )}
@@ -52,7 +52,7 @@ export default function AgendaPage() {
           
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-primary-light transition-all shadow-premium"
+            className="flex items-center gap-2 bg-blue-primary text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-blue-primary-light transition-all shadow-card"
           >
             <Plus size={20} /> Novo Agendamento
           </button>
@@ -65,7 +65,7 @@ export default function AgendaPage() {
         />
 
         {error && (
-          <div className="bg-red-50 border border-red-100 p-6 rounded-[2rem] flex items-center gap-4 text-red-600 animate-in fade-in duration-500">
+          <div className="bg-red-50 border border-red-100 p-6 rounded-xl flex items-center gap-4 text-red-600 animate-in fade-in duration-500">
             <AlertCircle size={24} />
             <div>
               <p className="font-bold text-sm">Erro ao carregar agenda</p>
@@ -75,7 +75,7 @@ export default function AgendaPage() {
         )}
 
         {/* Progress Card */}
-        <div className="bg-white p-6 rounded-3xl shadow-premium border border-border flex items-center gap-8 animate-in slide-in-from-top duration-500">
+        <div className="bg-surface p-6 rounded-3xl shadow-card border border-border flex items-center gap-8 animate-in slide-in-from-top duration-500">
           <div className="relative w-20 h-20 shrink-0">
             <svg className="w-full h-full transform -rotate-90">
               <circle cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-muted/30" />
@@ -132,10 +132,10 @@ export default function AgendaPage() {
               tasks.map((task) => (
                 <div 
                   key={task.id} 
-                  className={`group flex items-center gap-6 p-5 rounded-[2rem] border transition-all ${
+                  className={`group flex items-center gap-6 p-5 rounded-xl border transition-all ${
                     task.completed 
                     ? 'bg-muted/30 border-transparent opacity-60' 
-                    : 'bg-white border-border hover:shadow-luxury hover:scale-[1.01]'
+                    : 'bg-surface border-border hover:shadow-card hover:scale-[1.01]'
                   }`}
                 >
                   <button 
@@ -152,7 +152,7 @@ export default function AgendaPage() {
                         {task.category === 'business' ? 'Negócios' : task.category === 'personal' ? 'Pessoal' : task.category}
                       </span>
                       {task.leads && (
-                        <span className="bg-primary/5 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/10">
+                        <span className="bg-blue-primary/5 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/10">
                           {task.leads.name}
                         </span>
                       )}
@@ -187,7 +187,7 @@ export default function AgendaPage() {
                 </div>
               ))
             ) : !loading && (
-              <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-border animate-pulse">
+              <div className="py-20 text-center bg-surface rounded-[3rem] border-2 border-dashed border-border animate-pulse">
                 <p className="text-muted-foreground font-medium">Sua agenda está livre por enquanto.</p>
               </div>
             )}
@@ -195,9 +195,9 @@ export default function AgendaPage() {
         </div>
 
         {/* Intelligence Tip */}
-        <div className="bg-primary text-white p-8 rounded-[2.5rem] shadow-luxury flex items-start gap-6 border border-white/10 relative overflow-hidden group">
+        <div className="bg-blue-primary text-white p-8 rounded-xl shadow-card flex items-start gap-6 border border-white/10 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-1000" />
-          <div className="p-4 bg-white/10 rounded-2xl text-accent group-hover:rotate-12 transition-transform">
+          <div className="p-4 bg-surface/10 rounded-2xl text-accent group-hover:rotate-12 transition-transform">
             <AlertCircle size={32} />
           </div>
           <div className="relative z-10">

@@ -1,9 +1,10 @@
 ﻿'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/context/AuthContext';
 import { GamificationService, BADGES } from '@/services/gamification.service';
+import { ProfilesService } from '@/services/profiles.service';
 import { 
   Trophy, 
   Target, 
@@ -14,14 +15,21 @@ import {
   ArrowUpRight,
   BarChart3,
   Flame,
-  Loader2
+  Loader2,
+  Globe,
+  GitBranch
 } from 'lucide-react';
 
 export default function RankingPage() {
-  const { user } = useAuth();
+  const { user, profile, isRole } = useAuth();
   const [loading, setLoading] = useState(true);
   const [brokers, setBrokers] = useState<any[]>([]);
   const [myStats, setMyStats] = useState<any>(null);
+  const [teamIds, setTeamIds] = useState<string[]>([]);
+  const [rankingScope, setRankingScope] = useState<'global' | 'team'>('global');
+
+  const isManager = isRole(['manager']);
+  const isAdminOrDirector = isRole(['admin', 'director']);
 
   useEffect(() => {
     if (!user) return;
@@ -31,6 +39,12 @@ export default function RankingPage() {
         setBrokers(data);
         const me = data.find((b: any) => b.id === user?.id);
         if (me) setMyStats(me);
+
+        // Load team if manager
+        if (profile && isManager) {
+          const team = await ProfilesService.getTeamByManager(profile.id);
+          setTeamIds([profile.id, ...team.map(t => t.id)]);
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -38,7 +52,15 @@ export default function RankingPage() {
       }
     }
     loadData();
-  }, [user]);
+  }, [user, profile?.id]);
+
+  // Filter brokers based on scope
+  const displayedBrokers = useMemo(() => {
+    if (rankingScope === 'team' && isManager && teamIds.length > 0) {
+      return brokers.filter(b => teamIds.includes(b.id)).map((b, i) => ({ ...b, rank: i + 1 }));
+    }
+    return brokers;
+  }, [brokers, rankingScope, teamIds, isManager]);
 
   if (loading) {
     return (
@@ -67,7 +89,7 @@ export default function RankingPage() {
             <p className="text-muted-foreground">Acompanhe sua evolução e destaque-se no ranking da Habita.vc.</p>
           </div>
           <div className="flex gap-3">
-            <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-border flex items-center gap-2">
+            <div className="bg-surface px-4 py-2 rounded-xl shadow-sm border border-border flex items-center gap-2">
               <Calendar className="w-4 h-4 text-accent" />
               <span className="text-sm font-bold text-primary">
                 {new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
@@ -97,7 +119,7 @@ export default function RankingPage() {
             label="Atingimento Meta"
             value={`${goalPercent}%`}
             trend={`${formatCurrency(myStats?.vgv || 0)} / ${formatCurrency(myStats?.goal || 0)}`}
-            color="bg-primary/5"
+            color="bg-blue-primary/5"
           />
           <StatCard 
             icon={<TrendingUp className="w-6 h-6 text-green-500" />}
@@ -110,12 +132,30 @@ export default function RankingPage() {
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Ranking Table */}
-          <div className="lg:col-span-2 bg-white rounded-3xl shadow-premium border border-border overflow-hidden">
+          <div className="lg:col-span-2 bg-surface rounded-3xl shadow-card border border-border overflow-hidden">
             <div className="p-6 border-b border-border flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <Medal className="w-5 h-5 text-primary" />
-                <h3 className="font-bold text-primary">Ranking de Corretores</h3>
+                <h3 className="font-bold text-primary">
+                  {rankingScope === 'team' ? 'Ranking — Minha Equipe' : 'Ranking de Corretores'}
+                </h3>
               </div>
+              {isManager && (
+                <div className="flex items-center gap-1 bg-muted/30 p-1 rounded-xl">
+                  <button
+                    onClick={() => setRankingScope('global')}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${rankingScope === 'global' ? 'bg-blue-primary text-white shadow' : 'text-muted-foreground hover:text-primary'}`}
+                  >
+                    <Globe size={12} /> Global
+                  </button>
+                  <button
+                    onClick={() => setRankingScope('team')}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${rankingScope === 'team' ? 'bg-blue-primary text-white shadow' : 'text-muted-foreground hover:text-primary'}`}
+                  >
+                    <GitBranch size={12} /> Equipe
+                  </button>
+                </div>
+              )}
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -129,8 +169,8 @@ export default function RankingPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {brokers.map((broker) => (
-                    <tr key={broker.id} className={`hover:bg-muted/30 transition-colors ${broker.id === user?.id ? 'bg-primary/5' : ''}`}>
+                  {displayedBrokers.map((broker) => (
+                    <tr key={broker.id} className={`hover:bg-muted/30 transition-colors ${broker.id === user?.id ? 'bg-blue-primary/5' : ''}`}>
                       <td className="px-6 py-4">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
                           broker.rank === 1 ? 'bg-yellow-100 text-yellow-700' :
@@ -142,7 +182,7 @@ export default function RankingPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center font-bold text-primary text-xs overflow-hidden">
+                          <div className="w-10 h-10 rounded-xl bg-blue-primary/10 flex items-center justify-center font-bold text-primary text-xs overflow-hidden">
                             {broker.avatar?.startsWith('http') ? (
                               <img src={broker.avatar} alt={broker.name} className="w-full h-full object-cover" />
                             ) : (
@@ -174,7 +214,7 @@ export default function RankingPage() {
 
           {/* Goals & Achievements */}
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-3xl shadow-premium border border-border">
+            <div className="bg-surface p-6 rounded-3xl shadow-card border border-border">
               <h3 className="font-bold text-primary mb-6 flex items-center gap-2">
                 <Target className="w-5 h-5 text-accent" />
                 Meta de Faturamento Mensal
@@ -185,7 +225,7 @@ export default function RankingPage() {
                   <span className="font-bold text-primary">{formatCurrency(myStats?.vgv || 0)} / {formatCurrency(myStats?.goal || 0)}</span>
                 </div>
                 <div className="h-3 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full" style={{ width: `${goalPercent}%` }} />
+                  <div className="h-full bg-blue-primary rounded-full" style={{ width: `${goalPercent}%` }} />
                 </div>
                 <p className="text-[10px] text-muted-foreground text-center">
                   {remainingGoal > 0 ? (
@@ -197,7 +237,7 @@ export default function RankingPage() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl shadow-premium border border-border">
+            <div className="bg-surface p-6 rounded-3xl shadow-card border border-border">
               <h3 className="font-bold text-primary mb-4 flex items-center gap-2">
                 <Star className="w-5 h-5 text-accent" />
                 Insígnias Desbloqueadas
@@ -233,7 +273,7 @@ export default function RankingPage() {
 }
 
 const StatCard = ({ icon, label, value, trend, color }: any) => (
-  <div className="bg-white p-6 rounded-3xl shadow-premium border border-border">
+  <div className="bg-surface p-6 rounded-3xl shadow-card border border-border">
     <div className={`w-12 h-12 ${color} rounded-2xl flex items-center justify-center mb-4`}>
       {icon}
     </div>
@@ -250,3 +290,5 @@ const Calendar = ({ className }: { className?: string }) => (
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value);
 }
+
+

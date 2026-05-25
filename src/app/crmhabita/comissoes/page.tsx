@@ -39,7 +39,7 @@ export default function CommissionsPage() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Simulation Panel */}
           <div className="space-y-6">
-            <div className="bg-white p-8 rounded-3xl shadow-premium border border-border">
+            <div className="bg-surface p-8 rounded-3xl shadow-card border border-border">
               <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-primary">
                 <TrendingUp size={20} className="text-accent" />
                 Simulador de Venda
@@ -86,9 +86,9 @@ export default function CommissionsPage() {
               </div>
             </div>
 
-            <div className="bg-primary text-white p-6 rounded-3xl shadow-luxury">
+            <div className="bg-blue-primary text-white p-6 rounded-3xl shadow-card">
               <div className="flex items-start gap-4">
-                <div className="p-2 bg-white/10 rounded-lg text-accent">
+                <div className="p-2 bg-surface/10 rounded-lg text-accent">
                   <Info size={20} />
                 </div>
                 <div>
@@ -104,16 +104,16 @@ export default function CommissionsPage() {
           {/* Results Panel */}
           <div className="lg:col-span-2 space-y-6">
             {result && (
-              <div className="bg-white p-8 rounded-3xl shadow-premium border border-border">
+              <div className="bg-surface p-8 rounded-3xl shadow-card border border-border">
                 <div className="flex justify-between items-start mb-8">
                   <div>
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Comissão Total Bruta</p>
-                    <h2 className="text-4xl font-black text-primary">R$ {result.totalValue.toLocaleString()}</h2>
+                    <h2 className="text-2xl font-bold text-heading">R$ {result.totalValue.toLocaleString()}</h2>
                     <span className="text-sm font-bold text-accent bg-accent/10 px-2 py-1 rounded-full mt-2 inline-block">
                       {result.totalPercentage}% do VGV
                     </span>
                   </div>
-                  <div className="bg-primary/5 p-4 rounded-2xl flex items-center gap-3">
+                  <div className="bg-blue-primary/5 p-4 rounded-2xl flex items-center gap-3">
                     <div className="text-right">
                       <p className="text-[10px] font-bold text-muted-foreground uppercase">Ticket da Venda</p>
                       <p className="font-bold text-primary">R$ {salePrice.toLocaleString()}</p>
@@ -132,7 +132,7 @@ export default function CommissionsPage() {
                     {result.splits.map((split, i) => (
                       <div key={i} className="flex items-center justify-between p-5 bg-muted/30 rounded-2xl border border-transparent hover:border-primary/10 transition-all group">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
+                          <div className="w-12 h-12 bg-surface rounded-xl flex items-center justify-center text-primary shadow-sm">
                             {split.participantRole === 'capturer' ? <Home size={20} /> : <UserCheck size={20} />}
                           </div>
                           <div>
@@ -153,7 +153,7 @@ export default function CommissionsPage() {
                   <div className="flex items-center gap-3 text-sm font-bold text-muted-foreground">
                     <CheckCircle2 className="text-green-500" /> Regra aplicada conforme parametrização
                   </div>
-                  <button onClick={() => setIsSaleModalOpen(true)} className="bg-primary text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-primary-light transition-all shadow-premium group">
+                  <button onClick={() => setIsSaleModalOpen(true)} className="bg-blue-primary text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-blue-primary-light transition-all shadow-card group">
                     Lançar Venda no CRM <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </button>
                 </div>
@@ -187,8 +187,8 @@ const RuleTab = ({ active, onClick, label }: any) => (
     onClick={onClick}
     className={`px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-tighter transition-all border ${
       active 
-      ? 'bg-primary text-white border-primary shadow-md' 
-      : 'bg-white text-muted-foreground border-border hover:border-primary/30'
+      ? 'bg-blue-primary text-white border-primary shadow-md' 
+      : 'bg-surface text-muted-foreground border-border hover:border-primary/30'
     }`}
   >
     {label}

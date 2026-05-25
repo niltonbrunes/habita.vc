@@ -50,10 +50,10 @@ export function ContactsStep({ data, onChange }: Props) {
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-black text-primary mb-1">Contatos</h2>
+            <h2 className="text-xl font-bold text-heading mb-1">Contatos</h2>
             <p className="text-muted-foreground text-sm">Adicione telefones, WhatsApp e e-mails.</p>
           </div>
-          <button onClick={addContact} type="button" className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary font-bold rounded-xl hover:bg-primary/20 transition-all">
+          <button onClick={addContact} type="button" className="flex items-center gap-2 px-4 py-2 bg-blue-primary/10 text-primary font-bold rounded-xl hover:bg-blue-primary/20 transition-all">
             <Plus size={16} /> Adicionar
           </button>
         </div>
@@ -64,7 +64,7 @@ export function ContactsStep({ data, onChange }: Props) {
               <select
                 value={contact.type}
                 onChange={e => updateContact(contact.id, 'type', e.target.value)}
-                className="px-4 py-3 bg-white border border-border rounded-xl focus:border-primary outline-none font-bold text-primary transition-all w-40"
+                className="px-4 py-3 bg-surface border border-border rounded-xl focus:border-primary outline-none font-bold text-primary transition-all w-40"
               >
                 <option value="whatsapp">WhatsApp</option>
                 <option value="phone">Telefone</option>
@@ -75,7 +75,7 @@ export function ContactsStep({ data, onChange }: Props) {
                 value={contact.value}
                 onChange={e => updateContact(contact.id, 'value', e.target.value)}
                 placeholder={contact.type === 'email' ? 'exemplo@email.com' : '(00) 00000-0000'}
-                className="flex-1 px-4 py-3 bg-white border border-border rounded-xl focus:border-primary outline-none font-bold text-primary transition-all"
+                className="flex-1 px-4 py-3 bg-surface border border-border rounded-xl focus:border-primary outline-none font-bold text-primary transition-all"
               />
               <button type="button" onClick={() => removeContact(contact.id)} className="p-3 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
                 <Trash2 size={20} />
@@ -92,22 +92,22 @@ export function ContactsStep({ data, onChange }: Props) {
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-black text-primary mb-1">Endereços</h2>
+            <h2 className="text-xl font-bold text-heading mb-1">Endereços</h2>
             <p className="text-muted-foreground text-sm">Adicione endereços residenciais ou comerciais.</p>
           </div>
-          <button onClick={addAddress} type="button" className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary font-bold rounded-xl hover:bg-primary/20 transition-all">
+          <button onClick={addAddress} type="button" className="flex items-center gap-2 px-4 py-2 bg-blue-primary/10 text-primary font-bold rounded-xl hover:bg-blue-primary/20 transition-all">
             <Plus size={16} /> Adicionar
           </button>
         </div>
 
         <div className="space-y-4">
           {data.addresses.map((addr) => (
-            <div key={addr.id} className="bg-muted/50 p-6 rounded-[2rem] border border-border space-y-4">
+            <div key={addr.id} className="bg-muted/50 p-6 rounded-xl border border-border space-y-4">
               <div className="flex items-center justify-between">
                 <select
                   value={addr.type}
                   onChange={e => updateAddress(addr.id, 'type', e.target.value)}
-                  className="px-4 py-2 bg-white border border-border rounded-lg font-bold text-sm text-primary"
+                  className="px-4 py-2 bg-surface border border-border rounded-lg font-bold text-sm text-primary"
                 >
                   <option value="residential">Residencial</option>
                   <option value="commercial">Comercial</option>
@@ -119,18 +119,18 @@ export function ContactsStep({ data, onChange }: Props) {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <input type="text" placeholder="CEP" value={addr.zip_code} onChange={e => updateAddress(addr.id, 'zip_code', e.target.value)} className="px-4 py-3 bg-white border border-border rounded-xl font-medium" />
-                <input type="text" placeholder="Rua / Avenida" value={addr.street} onChange={e => updateAddress(addr.id, 'street', e.target.value)} className="px-4 py-3 bg-white border border-border rounded-xl font-medium md:col-span-2" />
-                <input type="text" placeholder="Número" value={addr.number} onChange={e => updateAddress(addr.id, 'number', e.target.value)} className="px-4 py-3 bg-white border border-border rounded-xl font-medium" />
-                <input type="text" placeholder="Complemento" value={addr.complement || ''} onChange={e => updateAddress(addr.id, 'complement', e.target.value)} className="px-4 py-3 bg-white border border-border rounded-xl font-medium" />
-                <input type="text" placeholder="Bairro" value={addr.neighborhood} onChange={e => updateAddress(addr.id, 'neighborhood', e.target.value)} className="px-4 py-3 bg-white border border-border rounded-xl font-medium" />
-                <input type="text" placeholder="Cidade" value={addr.city} onChange={e => updateAddress(addr.id, 'city', e.target.value)} className="px-4 py-3 bg-white border border-border rounded-xl font-medium md:col-span-2" />
-                <input type="text" placeholder="UF" value={addr.state} onChange={e => updateAddress(addr.id, 'state', e.target.value)} className="px-4 py-3 bg-white border border-border rounded-xl font-medium" />
+                <input type="text" placeholder="CEP" value={addr.zip_code} onChange={e => updateAddress(addr.id, 'zip_code', e.target.value)} className="px-4 py-3 bg-surface border border-border rounded-xl font-medium" />
+                <input type="text" placeholder="Rua / Avenida" value={addr.street} onChange={e => updateAddress(addr.id, 'street', e.target.value)} className="px-4 py-3 bg-surface border border-border rounded-xl font-medium md:col-span-2" />
+                <input type="text" placeholder="Número" value={addr.number} onChange={e => updateAddress(addr.id, 'number', e.target.value)} className="px-4 py-3 bg-surface border border-border rounded-xl font-medium" />
+                <input type="text" placeholder="Complemento" value={addr.complement || ''} onChange={e => updateAddress(addr.id, 'complement', e.target.value)} className="px-4 py-3 bg-surface border border-border rounded-xl font-medium" />
+                <input type="text" placeholder="Bairro" value={addr.neighborhood} onChange={e => updateAddress(addr.id, 'neighborhood', e.target.value)} className="px-4 py-3 bg-surface border border-border rounded-xl font-medium" />
+                <input type="text" placeholder="Cidade" value={addr.city} onChange={e => updateAddress(addr.id, 'city', e.target.value)} className="px-4 py-3 bg-surface border border-border rounded-xl font-medium md:col-span-2" />
+                <input type="text" placeholder="UF" value={addr.state} onChange={e => updateAddress(addr.id, 'state', e.target.value)} className="px-4 py-3 bg-surface border border-border rounded-xl font-medium" />
               </div>
             </div>
           ))}
           {data.addresses.length === 0 && (
-            <p className="text-center text-muted-foreground py-8 border-2 border-dashed rounded-[2rem]">Nenhum endereço adicionado.</p>
+            <p className="text-center text-muted-foreground py-8 border-2 border-dashed rounded-xl">Nenhum endereço adicionado.</p>
           )}
         </div>
       </div>

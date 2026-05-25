@@ -130,14 +130,14 @@ export const InviteMemberModal = ({ isOpen, onClose, onSuccess }: InviteMemberMo
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-primary/40 backdrop-blur-md" onClick={handleClose} />
+      <div className="absolute inset-0 bg-blue-primary/40 backdrop-blur-md" onClick={handleClose} />
 
-      <div className="relative bg-white w-full max-w-lg rounded-[3rem] shadow-luxury border border-border animate-in fade-in zoom-in duration-300 overflow-hidden">
+      <div className="relative bg-surface w-full max-w-lg rounded-[3rem] shadow-card border border-border animate-in fade-in zoom-in duration-300 overflow-hidden">
 
         <div className="p-8 border-b border-border bg-gradient-to-r from-primary/5 to-accent/5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-primary rounded-2xl flex items-center justify-center">
                 <UserPlus size={22} className="text-white" />
               </div>
               <div>
@@ -157,7 +157,7 @@ export const InviteMemberModal = ({ isOpen, onClose, onSuccess }: InviteMemberMo
               <CheckCircle2 size={44} className="text-green-500" />
             </div>
             <div>
-              <h3 className="text-2xl font-black text-primary mb-2">Convite Enviado!</h3>
+              <h3 className="text-xl font-bold text-heading mb-2">Convite Enviado!</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 Um e-mail de confirmacao foi enviado para<br />
                 <strong className="text-primary">{email}</strong>.<br />
@@ -180,7 +180,7 @@ export const InviteMemberModal = ({ isOpen, onClose, onSuccess }: InviteMemberMo
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
                 Nome Completo
               </label>
-              <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-white focus-within:border-primary/20 transition-all overflow-hidden">
+              <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-surface focus-within:border-primary/20 transition-all overflow-hidden">
                 <div className="pl-4 pr-2 text-muted-foreground shrink-0">
                   <User size={18} />
                 </div>
@@ -199,7 +199,7 @@ export const InviteMemberModal = ({ isOpen, onClose, onSuccess }: InviteMemberMo
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
                 E-mail
               </label>
-              <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-white focus-within:border-primary/20 transition-all overflow-hidden">
+              <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-surface focus-within:border-primary/20 transition-all overflow-hidden">
                 <div className="pl-4 pr-2 text-muted-foreground shrink-0">
                   <Mail size={18} />
                 </div>
@@ -255,7 +255,7 @@ export const InviteMemberModal = ({ isOpen, onClose, onSuccess }: InviteMemberMo
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-4 rounded-2xl bg-primary text-white font-black hover:bg-primary-light transition-all shadow-premium flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 py-4 rounded-2xl bg-blue-primary text-white font-black hover:bg-blue-primary-light transition-all shadow-card flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {loading ? (
                   <><Loader2 className="animate-spin" size={18} /> Enviando...</>

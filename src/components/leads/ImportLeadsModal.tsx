@@ -187,15 +187,15 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-primary/20 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-blue-primary/20 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="bg-white w-full max-w-3xl rounded-[2.5rem] shadow-luxury border border-border relative overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-surface w-full max-w-3xl rounded-xl shadow-card border border-border relative overflow-hidden flex flex-col max-h-[90vh]">
         <div className="p-8 border-b border-border flex justify-between items-center bg-muted/30">
           <div>
-            <h2 className="text-2xl font-black text-primary mb-1">Importar Leads</h2>
+            <h2 className="text-xl font-bold text-heading mb-1">Importar Leads</h2>
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Carregar planilha de clientes (CSV)</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white rounded-xl transition-colors text-muted-foreground">
+          <button onClick={onClose} className="p-2 hover:bg-surface rounded-xl transition-colors text-muted-foreground">
             <X size={24} />
           </button>
         </div>
@@ -222,11 +222,11 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                       setPropertyResults([]);
                     }
                   }}
-                  className="w-full pl-12 pr-4 py-4 bg-muted/30 border border-border rounded-2xl font-bold text-primary focus:border-primary focus:bg-white transition-all outline-none"
+                  className="w-full pl-12 pr-4 py-4 bg-muted/30 border border-border rounded-2xl font-bold text-primary focus:border-primary focus:bg-surface transition-all outline-none"
                 />
                 
                 {propertyResults.length > 0 && (
-                  <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl shadow-luxury border border-border overflow-hidden">
+                  <div className="absolute z-50 left-0 right-0 mt-2 bg-surface rounded-2xl shadow-card border border-border overflow-hidden">
                     {propertyResults.map(p => (
                       <button
                         key={p.id}
@@ -239,14 +239,14 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                           setPropertyResults([]);
                           setPropertySearch('');
                         }}
-                        className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0 flex items-center justify-between"
+                        className="w-full px-4 py-3 text-left hover:bg-blue-primary/5 transition-colors border-b border-border last:border-0 flex items-center justify-between"
                       >
                         <div>
                           <p className="font-bold text-primary text-sm">{p.title}</p>
                           <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
                         </div>
                         <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider ${
-                          p._type === 'development' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
+                          p._type === 'development' ? 'bg-accent/10 text-accent' : 'bg-blue-primary/10 text-primary'
                         }`}>
                           {p._type === 'development' ? 'Empreendimento' : 'Imóvel'}
                         </span>
@@ -256,9 +256,9 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                 )}
               </div>
             ) : (
-              <div className="flex items-center justify-between p-4 bg-primary/5 border-2 border-primary/10 rounded-2xl animate-in fade-in slide-in-from-top-2">
+              <div className="flex items-center justify-between p-4 bg-blue-primary/5 border-2 border-primary/10 rounded-2xl animate-in fade-in slide-in-from-top-2">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <div className="w-10 h-10 bg-blue-primary/10 rounded-xl flex items-center justify-center">
                     <Building className="w-5 h-5 text-primary" />
                   </div>
                   <div>
@@ -285,7 +285,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           <div className="w-full h-px bg-border/40" />
 
           {!file ? (
-            <div className="border-4 border-dashed border-muted rounded-[2rem] p-12 text-center group hover:border-primary/20 hover:bg-muted/30 transition-all cursor-pointer relative">
+            <div className="border-4 border-dashed border-muted rounded-xl p-12 text-center group hover:border-primary/20 hover:bg-muted/30 transition-all cursor-pointer relative">
               <input 
                 type="file" 
                 accept=".csv"
@@ -295,7 +295,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                 }}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
-              <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-20 h-20 bg-blue-primary/5 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
                 <Upload size={32} className="text-primary" />
               </div>
               <h3 className="text-xl font-bold text-primary mb-2">Selecione seu arquivo CSV</h3>
@@ -305,9 +305,9 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
             </div>
           ) : (
             <div className="space-y-8">
-              <div className="flex items-center justify-between p-4 bg-primary/5 rounded-2xl border border-primary/10">
+              <div className="flex items-center justify-between p-4 bg-blue-primary/5 rounded-2xl border border-primary/10">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
+                  <div className="w-10 h-10 bg-surface rounded-xl flex items-center justify-center text-primary shadow-sm">
                     <FileText size={20} />
                   </div>
                   <div>
@@ -410,10 +410,10 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
             onClick={handleImport}
             disabled={!file || !isMappingValid || loading}
             className={`
-              px-12 py-4 rounded-2xl font-black text-sm transition-all shadow-premium flex items-center gap-2
+              px-12 py-4 rounded-2xl font-black text-sm transition-all shadow-card flex items-center gap-2
               ${!isMappingValid 
                 ? 'bg-muted text-muted-foreground cursor-not-allowed grayscale' 
-                : 'bg-primary text-white hover:bg-primary-light'}
+                : 'bg-blue-primary text-white hover:bg-blue-primary-light'}
               ${loading ? 'opacity-70' : ''}
             `}
           >
@@ -447,7 +447,7 @@ const MappingField = ({ label, value, headers, onChange, required }: MappingFiel
     <select 
       value={value} 
       onChange={(e) => onChange(e.target.value)}
-      className="w-full bg-white border border-border/60 rounded-xl px-4 py-3 text-xs font-bold text-primary outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
+      className="w-full bg-surface border border-border/60 rounded-xl px-4 py-3 text-xs font-bold text-primary outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
     >
       <option value="">Não importar / Ignorar</option>
       {headers.map((h: string, i: number) => (

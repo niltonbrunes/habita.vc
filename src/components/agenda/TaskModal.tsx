@@ -63,15 +63,15 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-primary/20 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-blue-primary/20 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-luxury border border-border relative overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="bg-surface w-full max-w-lg rounded-xl shadow-card border border-border relative overflow-hidden animate-in fade-in zoom-in duration-300">
         <div className="p-8 border-b border-border flex justify-between items-center bg-muted/30">
           <div>
-            <h2 className="text-2xl font-black text-primary mb-1">Nova Atividade</h2>
+            <h2 className="text-xl font-bold text-heading mb-1">Nova Atividade</h2>
             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Agendar compromisso profissional ou pessoal</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white rounded-xl transition-colors text-muted-foreground">
+          <button onClick={onClose} className="p-2 hover:bg-surface rounded-xl transition-colors text-muted-foreground">
             <X size={24} />
           </button>
         </div>
@@ -87,7 +87,7 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
                 className={`
                   flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border
                   ${formData.category === cat 
-                    ? 'bg-primary text-white border-primary shadow-md' 
+                    ? 'bg-blue-primary text-white border-primary shadow-md' 
                     : 'bg-muted/50 text-muted-foreground border-transparent hover:border-border'}
                 `}
               >
@@ -104,7 +104,7 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
                 type="text"
                 value={formData.title}
                 onChange={e => setFormData({ ...formData, title: e.target.value })}
-                className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+                className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
                 placeholder="Ex: Reunião com Diretor ou Troca de óleo"
               />
             </div>
@@ -118,7 +118,7 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
                     type="date"
                     value={formData.due_date}
                     onChange={e => setFormData({ ...formData, due_date: e.target.value })}
-                    className="block w-full pl-12 pr-4 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary text-sm"
+                    className="block w-full pl-12 pr-4 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary text-sm"
                   />
                 </div>
               </div>
@@ -130,7 +130,7 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
                     type="time"
                     value={formData.due_time}
                     onChange={e => setFormData({ ...formData, due_time: e.target.value })}
-                    className="block w-full pl-12 pr-4 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary text-sm"
+                    className="block w-full pl-12 pr-4 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary text-sm"
                   />
                 </div>
               </div>
@@ -143,7 +143,7 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
                 <textarea
                   value={formData.description}
                   onChange={e => setFormData({ ...formData, description: e.target.value })}
-                  className="block w-full pl-12 pr-4 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary text-sm min-h-[100px]"
+                  className="block w-full pl-12 pr-4 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary text-sm min-h-[100px]"
                   placeholder="Detalhes adicionais..."
                 />
               </div>
@@ -167,7 +167,7 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-primary text-white px-8 py-3 rounded-2xl font-black text-sm hover:bg-primary-light transition-all shadow-premium flex items-center gap-2"
+                className="bg-blue-primary text-white px-8 py-3 rounded-2xl font-black text-sm hover:bg-blue-primary-light transition-all shadow-card flex items-center gap-2"
               >
                 {loading ? <Loader2 className="animate-spin" size={18} /> : 'Agendar'}
               </button>

@@ -57,7 +57,7 @@ export const PropertyCard = ({
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         whileHover={{ y: -5 }}
-        className="bg-white/80 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
+        className="bg-surface/80 backdrop-blur-xl border border-border/40 rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500"
       >
         <div className="relative">
           {/* Image Container */}
@@ -67,7 +67,7 @@ export const PropertyCard = ({
             
             {/* Top Badges */}
             <div className="absolute top-4 left-4 z-20 flex gap-2">
-              <span className="bg-primary/90 backdrop-blur-md text-primary-foreground text-[11px] uppercase tracking-wider font-semibold px-3 py-1.5 rounded-full shadow-lg">
+              <span className="bg-blue-primary/90 backdrop-blur-md text-primary-foreground text-[11px] uppercase tracking-wider font-semibold px-3 py-1.5 rounded-full shadow-lg">
                 Destaque
               </span>
             </div>
@@ -76,7 +76,7 @@ export const PropertyCard = ({
             <motion.button 
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="absolute top-4 right-4 z-20 w-9 h-9 bg-white/20 backdrop-blur-md border border-white/30 text-white rounded-full flex items-center justify-center hover:bg-white hover:text-red-500 transition-colors shadow-lg"
+              className="absolute top-4 right-4 z-20 w-9 h-9 bg-surface/20 backdrop-blur-md border border-white/30 text-white rounded-full flex items-center justify-center hover:bg-surface hover:text-red-500 transition-colors shadow-lg"
             >
               <Heart size={18} />
             </motion.button>

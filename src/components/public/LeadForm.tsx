@@ -50,11 +50,11 @@ export const LeadForm = ({ propertyId, propertyTitle, brokerId }: LeadFormProps)
 
   if (success) {
     return (
-      <div className="bg-white p-8 rounded-[3rem] shadow-luxury border border-green-100 text-center animate-in zoom-in duration-500">
+      <div className="bg-surface p-8 rounded-[3rem] shadow-card border border-green-100 text-center animate-in zoom-in duration-500">
         <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
           <CheckCircle2 className="text-green-500" size={40} />
         </div>
-        <h3 className="text-2xl font-black text-primary mb-2">Solicitação Enviada!</h3>
+        <h3 className="text-xl font-bold text-heading mb-2">Solicitação Enviada!</h3>
         <p className="text-muted-foreground font-medium mb-6">
           Um de nossos consultores entrará em contato com você em breve.
         </p>
@@ -69,11 +69,11 @@ export const LeadForm = ({ propertyId, propertyTitle, brokerId }: LeadFormProps)
   }
 
   return (
-    <div className="bg-white p-8 rounded-[3rem] shadow-luxury border border-border relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16" />
+    <div className="bg-surface p-8 rounded-[3rem] shadow-card border border-border relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-blue-primary/5 rounded-full -mr-16 -mt-16" />
       
       <div className="relative z-10 mb-8">
-        <h3 className="text-2xl font-black text-primary mb-2">Tenho Interesse</h3>
+        <h3 className="text-xl font-bold text-heading mb-2">Tenho Interesse</h3>
         <p className="text-sm text-muted-foreground font-medium">Preencha os dados e um consultor entrará em contato em minutos.</p>
       </div>
 
@@ -85,7 +85,7 @@ export const LeadForm = ({ propertyId, propertyTitle, brokerId }: LeadFormProps)
             placeholder="Seu Nome"
             value={formData.name}
             onChange={e => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-6 py-4 bg-muted/50 border-2 border-transparent rounded-2xl focus:border-primary/10 focus:bg-white focus:outline-none font-bold text-primary placeholder:text-muted-foreground/50 transition-all"
+            className="w-full px-6 py-4 bg-muted/50 border-2 border-transparent rounded-2xl focus:border-primary/10 focus:bg-surface focus:outline-none font-bold text-primary placeholder:text-muted-foreground/50 transition-all"
           />
           <input 
             type="email" 
@@ -93,7 +93,7 @@ export const LeadForm = ({ propertyId, propertyTitle, brokerId }: LeadFormProps)
             placeholder="E-mail"
             value={formData.email}
             onChange={e => setFormData({ ...formData, email: e.target.value })}
-            className="w-full px-6 py-4 bg-muted/50 border-2 border-transparent rounded-2xl focus:border-primary/10 focus:bg-white focus:outline-none font-bold text-primary placeholder:text-muted-foreground/50 transition-all"
+            className="w-full px-6 py-4 bg-muted/50 border-2 border-transparent rounded-2xl focus:border-primary/10 focus:bg-surface focus:outline-none font-bold text-primary placeholder:text-muted-foreground/50 transition-all"
           />
           <input 
             type="text" 
@@ -101,14 +101,14 @@ export const LeadForm = ({ propertyId, propertyTitle, brokerId }: LeadFormProps)
             placeholder="WhatsApp"
             value={formData.phone}
             onChange={e => setFormData({ ...formData, phone: e.target.value })}
-            className="w-full px-6 py-4 bg-muted/50 border-2 border-transparent rounded-2xl focus:border-primary/10 focus:bg-white focus:outline-none font-bold text-primary placeholder:text-muted-foreground/50 transition-all"
+            className="w-full px-6 py-4 bg-muted/50 border-2 border-transparent rounded-2xl focus:border-primary/10 focus:bg-surface focus:outline-none font-bold text-primary placeholder:text-muted-foreground/50 transition-all"
           />
         </div>
         
         <button 
           type="submit"
           disabled={loading}
-          className="w-full bg-primary text-white py-5 rounded-[1.5rem] font-black text-lg flex items-center justify-center gap-3 hover:bg-primary-dark transition-all shadow-premium group mt-4 disabled:opacity-70"
+          className="w-full bg-blue-primary text-white py-5 rounded-[1.5rem] font-black text-lg flex items-center justify-center gap-3 hover:bg-blue-primary-dark transition-all shadow-card group mt-4 disabled:opacity-70"
         >
           {loading ? <Loader2 className="animate-spin" size={24} /> : (
             <>
@@ -121,7 +121,7 @@ export const LeadForm = ({ propertyId, propertyTitle, brokerId }: LeadFormProps)
         <a 
           href={`https://wa.me/5562999999999?text=Olá! Gostaria de mais informações sobre o imóvel: ${propertyTitle}`}
           target="_blank"
-          className="w-full bg-white border-2 border-border text-primary py-4 rounded-[1.5rem] font-bold flex items-center justify-center gap-3 hover:bg-muted transition-all"
+          className="w-full bg-surface border-2 border-border text-primary py-4 rounded-[1.5rem] font-bold flex items-center justify-center gap-3 hover:bg-muted transition-all"
         >
           <Phone size={20} className="text-accent" />
           Conversar pelo WhatsApp

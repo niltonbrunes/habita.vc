@@ -85,7 +85,7 @@ export default function SettingsPage() {
       <div className="space-y-10 pb-20 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="flex justify-between items-end">
           <div>
-            <h1 className="text-4xl font-black text-primary mb-2">Configurações</h1>
+            <h1 className="text-2xl font-bold text-heading mb-2">Configurações</h1>
             <p className="text-muted-foreground font-medium">Ajuste seu motor de vendas e preferências visuais.</p>
           </div>
           {success && (
@@ -98,9 +98,9 @@ export default function SettingsPage() {
 
         <form onSubmit={handleSave} className="space-y-8">
           {/* Section: Profile */}
-          <section className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-border space-y-6">
+          <section className="bg-surface p-8 rounded-xl shadow-card border border-border space-y-6">
             <div className="flex items-center gap-3 border-b border-border pb-4">
-              <div className="p-2 bg-primary/5 rounded-xl text-primary">
+              <div className="p-2 bg-blue-primary/5 rounded-xl text-primary">
                 <User size={20} />
               </div>
               <h2 className="text-xl font-black text-primary uppercase tracking-tight">Perfil Profissional</h2>
@@ -113,7 +113,7 @@ export default function SettingsPage() {
                   type="text"
                   value={formData.full_name}
                   onChange={e => setFormData({ ...formData, full_name: e.target.value })}
-                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                 />
               </div>
               <div className="space-y-2 opacity-50">
@@ -129,7 +129,7 @@ export default function SettingsPage() {
           </section>
 
           {/* Section: Branding & Vitrine */}
-          <section className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-border space-y-6">
+          <section className="bg-surface p-8 rounded-xl shadow-card border border-border space-y-6">
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-accent/10 rounded-xl text-accent">
@@ -161,7 +161,7 @@ export default function SettingsPage() {
                     type="text"
                     value={formData.slug}
                     onChange={e => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/ /g, '-') })}
-                    className="block flex-1 px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                    className="block flex-1 px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                     placeholder="seu-nome"
                   />
                 </div>
@@ -173,7 +173,7 @@ export default function SettingsPage() {
                   type="text"
                   value={formData.whatsapp}
                   onChange={e => setFormData({ ...formData, whatsapp: e.target.value })}
-                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                   placeholder="Ex: 5562981234567"
                 />
               </div>
@@ -184,7 +184,7 @@ export default function SettingsPage() {
                   type="text"
                   value={formData.creci}
                   onChange={e => setFormData({ ...formData, creci: e.target.value })}
-                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                   placeholder="Ex: 00000-F"
                 />
               </div>
@@ -195,7 +195,7 @@ export default function SettingsPage() {
                   rows={3}
                   value={formData.bio}
                   onChange={e => setFormData({ ...formData, bio: e.target.value })}
-                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary resize-none text-sm"
+                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary resize-none text-sm"
                   placeholder="Conte brevemente sua experiência e foco de atuação..."
                 />
               </div>
@@ -203,7 +203,7 @@ export default function SettingsPage() {
           </section>
 
           {/* Section: Business Logic (Funil Reverso) */}
-          <section className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-border space-y-8">
+          <section className="bg-surface p-8 rounded-xl shadow-card border border-border space-y-8">
             <div className="flex items-center gap-3 border-b border-border pb-4">
               <div className="p-2 bg-accent/10 rounded-xl text-accent">
                 <Target size={20} />
@@ -220,7 +220,7 @@ export default function SettingsPage() {
                   type="number"
                   value={formData.earnings_goal_monthly}
                   onChange={e => setFormData({ ...formData, earnings_goal_monthly: Number(e.target.value) })}
-                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-black text-primary text-lg"
+                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-black text-primary text-lg"
                 />
               </div>
               <div className="space-y-2">
@@ -231,7 +231,7 @@ export default function SettingsPage() {
                   type="number"
                   value={formData.avg_ticket}
                   onChange={e => setFormData({ ...formData, avg_ticket: Number(e.target.value) })}
-                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-black text-primary text-lg"
+                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-black text-primary text-lg"
                 />
               </div>
               <div className="space-y-2">
@@ -243,7 +243,7 @@ export default function SettingsPage() {
                   step="0.1"
                   value={formData.avg_commission_percent}
                   onChange={e => setFormData({ ...formData, avg_commission_percent: Number(e.target.value) })}
-                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-black text-primary text-lg"
+                  className="block w-full px-5 py-4 bg-muted/30 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-black text-primary text-lg"
                 />
               </div>
             </div>
@@ -279,7 +279,7 @@ export default function SettingsPage() {
           </section>
 
           {/* Section: Appearance */}
-          <section className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-border space-y-6">
+          <section className="bg-surface p-8 rounded-xl shadow-card border border-border space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-yellow-500/10 rounded-xl text-yellow-600">
@@ -296,11 +296,11 @@ export default function SettingsPage() {
                 
                 className={`
                   relative inline-flex h-10 w-20 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-500 ease-in-out focus:outline-none
-                  bg-primary shadow-luxury
+                  bg-blue-primary shadow-card
                 `}
               >
                 <span className={`
-                  pointer-events-none inline-block h-9 w-9 transform rounded-full bg-white shadow-lg ring-0 transition duration-500 ease-in-out
+                  pointer-events-none inline-block h-9 w-9 transform rounded-full bg-surface shadow-lg ring-0 transition duration-500 ease-in-out
                   translate-x-10
                 `} />
               </button>
@@ -311,7 +311,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="bg-primary text-white px-12 py-5 rounded-[2rem] font-black text-lg hover:bg-primary-light transition-all shadow-premium flex items-center gap-3 active:scale-95"
+              className="bg-blue-primary text-white px-12 py-5 rounded-xl font-black text-lg hover:bg-blue-primary-light transition-all shadow-card flex items-center gap-3 active:scale-95"
             >
               {loading ? <RefreshCw className="animate-spin" size={24} /> : (
                 <>
@@ -335,7 +335,7 @@ const RateInput = ({ label, value, onChange }: { label: string, value: number, o
         type="number"
         value={value}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full bg-white border border-border/50 rounded-xl px-2 py-2 text-center font-black text-primary text-xl outline-none focus:border-primary/20"
+        className="w-full bg-surface border border-border/50 rounded-xl px-2 py-2 text-center font-black text-primary text-xl outline-none focus:border-primary/20"
       />
       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-muted-foreground/40">%</span>
     </div>

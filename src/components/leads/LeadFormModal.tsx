@@ -143,16 +143,16 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-primary/20 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-blue-primary/20 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="bg-white w-full max-w-xl rounded-[2.5rem] shadow-luxury border border-border relative overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="bg-surface w-full max-w-xl rounded-xl shadow-card border border-border relative overflow-hidden animate-in fade-in zoom-in duration-300">
         {/* Header */}
         <div className="p-8 border-b border-border flex justify-between items-center bg-muted/30">
           <div>
-            <h2 className="text-2xl font-black text-primary mb-1">Novo Lead</h2>
+            <h2 className="text-xl font-bold text-heading mb-1">Novo Lead</h2>
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Adicionar prospecto manualmente</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white rounded-xl transition-colors text-muted-foreground">
+          <button onClick={onClose} className="p-2 hover:bg-surface rounded-xl transition-colors text-muted-foreground">
             <X size={24} />
           </button>
         </div>
@@ -172,7 +172,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                 <input
                   type="text"
                   placeholder="Pesquisar por nome ou documento..."
-                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
                   onChange={async (e) => {
                     const term = e.target.value;
                     if (term.length > 2) {
@@ -185,7 +185,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                 />
                 
                 {searchResults.length > 0 && (
-                  <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl shadow-luxury border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
+                  <div className="absolute z-50 left-0 right-0 mt-2 bg-surface rounded-2xl shadow-card border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
                     {searchResults.map(p => (
                       <button
                         key={p.id}
@@ -200,7 +200,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                           setSelectedPersonId(p.id);
                           setSearchResults([]);
                         }}
-                        className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0"
+                        className="w-full px-4 py-3 text-left hover:bg-blue-primary/5 transition-colors border-b border-border last:border-0"
                       >
                         <p className="font-bold text-primary text-sm">{p.name}</p>
                         <p className="text-[10px] text-muted-foreground font-medium">{p.document_id || 'Sem documento'}</p>
@@ -225,7 +225,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                   type="text"
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
                   placeholder="Nome do cliente"
                 />
               </div>
@@ -233,8 +233,8 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
           </>
         ) : (
           <div className="col-span-full mb-4">
-            <div className="flex items-center gap-4 p-5 bg-primary/5 border-2 border-primary/10 rounded-[2rem] shadow-sm animate-in fade-in slide-in-from-top-2">
-              <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
+            <div className="flex items-center gap-4 p-5 bg-blue-primary/5 border-2 border-primary/10 rounded-xl shadow-sm animate-in fade-in slide-in-from-top-2">
+              <div className="w-12 h-12 bg-blue-primary rounded-2xl flex items-center justify-center shadow-lg">
                 <ShieldCheck className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -248,7 +248,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
             {/* Property Interest Section */}
             <div className="col-span-full space-y-4">
               <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 bg-primary/10 rounded-lg">
+                <div className="p-2 bg-blue-primary/10 rounded-lg">
                   <Home className="w-4 h-4 text-primary" />
                 </div>
                 <h3 className="text-xs font-black text-primary uppercase tracking-widest">Interesse / Imóvel</h3>
@@ -268,8 +268,8 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                         onClick={() => setPropertyMode(mode.id as any)}
                         className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-black uppercase transition-all ${
                           propertyMode === mode.id 
-                            ? 'bg-white text-primary shadow-sm ring-1 ring-black/5' 
-                            : 'text-muted-foreground hover:bg-white/50'
+                            ? 'bg-surface text-primary shadow-sm ring-1 ring-black/5' 
+                            : 'text-muted-foreground hover:bg-surface/50'
                         }`}
                       >
                         <mode.icon size={14} />
@@ -288,7 +288,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                         <input
                           type="text"
                           placeholder="Pesquisar nos meus imóveis..."
-                          className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+                          className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
                           value={selectedPropertyTitle}
                           onChange={async (e) => {
                             setSelectedPropertyTitle(e.target.value);
@@ -302,7 +302,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                         />
                       </div>
                       {propertyResults.length > 0 && (
-                        <div className="absolute z-50 left-0 right-0 mt-2 bg-white rounded-2xl shadow-luxury border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
+                        <div className="absolute z-50 left-0 right-0 mt-2 bg-surface rounded-2xl shadow-card border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
                           {propertyResults.map(p => (
                             <button
                               key={p.id}
@@ -316,14 +316,14 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                                   setFormData(prev => ({ ...prev, value: p.price }));
                                 }
                               }}
-                              className="w-full px-4 py-3 text-left hover:bg-primary/5 transition-colors border-b border-border last:border-0 flex items-center justify-between"
+                              className="w-full px-4 py-3 text-left hover:bg-blue-primary/5 transition-colors border-b border-border last:border-0 flex items-center justify-between"
                             >
                               <div>
                                 <p className="font-bold text-primary text-sm">{p.title}</p>
                                 <p className="text-[10px] text-muted-foreground font-medium">{p.reference || p.address_city}</p>
                               </div>
                               <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider ${
-                                p._type === 'development' ? 'bg-accent/10 text-accent' : 'bg-primary/10 text-primary'
+                                p._type === 'development' ? 'bg-accent/10 text-accent' : 'bg-blue-primary/10 text-primary'
                               }`}>
                                 {p._type === 'development' ? 'Empreendimento' : 'Imóvel'}
                               </span>
@@ -335,8 +335,8 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                   )}
                 </>
               ) : (
-                <div className="flex items-center gap-4 p-4 bg-primary/5 border-2 border-primary/10 rounded-2xl animate-in fade-in slide-in-from-top-2">
-                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                <div className="flex items-center gap-4 p-4 bg-blue-primary/5 border-2 border-primary/10 rounded-2xl animate-in fade-in slide-in-from-top-2">
+                  <div className="w-10 h-10 bg-blue-primary/10 rounded-xl flex items-center justify-center">
                     <Building className="w-5 h-5 text-primary" />
                   </div>
                   <div>
@@ -351,7 +351,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                 <div className="animate-in slide-in-from-top-2 duration-300">
                   <textarea
                     placeholder="Descreva o imóvel do mercado (Ex: Apartamento no Centro, 3 qtos, até R$ 500k...)"
-                    className="w-full px-6 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30 min-h-[100px] resize-none"
+                    className="w-full px-6 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30 min-h-[100px] resize-none"
                     value={formData.interest_description}
                     onChange={e => setFormData({ ...formData, interest_description: e.target.value })}
                   />
@@ -373,7 +373,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                     type="number"
                     value={formData.value}
                     onChange={e => setFormData({ ...formData, value: Number(e.target.value) })}
-                    className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+                    className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
                     placeholder="Ex: 500000"
                   />
                 </div>
@@ -390,7 +390,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                     max="100"
                     value={formData.probability}
                     onChange={e => setFormData({ ...formData, probability: Number(e.target.value) })}
-                    className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+                    className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
                     placeholder="Ex: 70"
                   />
                 </div>
@@ -410,7 +410,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                   type="email"
                   value={formData.email}
                   onChange={e => setFormData({ ...formData, email: e.target.value })}
-                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
                   placeholder="email@exemplo.com"
                 />
               </div>
@@ -428,7 +428,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                   type="text"
                   value={formData.phone}
                   onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
+                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
                   placeholder="(62) 99999-9999"
                 />
               </div>
@@ -444,7 +444,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                 <select
                   value={formData.source}
                   onChange={e => setFormData({ ...formData, source: e.target.value })}
-                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                   >
                     <option value="">Selecione...</option>
                     <option value="Indicação">Indicação</option>
@@ -473,7 +473,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                     className={`
                       flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border
                       ${formData.temperature === temp 
-                        ? 'bg-primary text-white border-primary shadow-md scale-[1.02]' 
+                        ? 'bg-blue-primary text-white border-primary shadow-md scale-[1.02]' 
                         : 'bg-muted/50 text-muted-foreground border-transparent hover:border-border'}
                     `}
                   >
@@ -501,7 +501,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-primary text-white px-8 py-3 rounded-2xl font-black text-sm hover:bg-primary-light transition-all shadow-premium flex items-center gap-2"
+                className="bg-blue-primary text-white px-8 py-3 rounded-2xl font-black text-sm hover:bg-blue-primary-light transition-all shadow-card flex items-center gap-2"
               >
                 {loading ? <Loader2 className="animate-spin" size={18} /> : 'Cadastrar Lead'}
               </button>

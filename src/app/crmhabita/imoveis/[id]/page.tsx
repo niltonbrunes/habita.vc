@@ -148,7 +148,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
               <ArrowLeft size={20} />
             </Link>
             <div>
-              <h1 className="text-2xl font-black text-primary truncate max-w-[400px]">{property.title}</h1>
+              <h1 className="text-xl font-bold text-heading truncate max-w-[400px]">{property.title}</h1>
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                 REF: {property.reference || '---'} • {property.status}
               </p>
@@ -161,7 +161,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
           <div className="lg:col-span-2 space-y-8">
             {/* Real Gallery */}
             <div className="space-y-4">
-              <div className="aspect-video bg-muted rounded-[2.5rem] flex items-center justify-center overflow-hidden border-2 border-border shadow-premium relative group">
+              <div className="aspect-video bg-muted rounded-xl flex items-center justify-center overflow-hidden border-2 border-border shadow-card relative group">
                 {activeImage ? (
                   <img 
                     src={activeImage} 
@@ -173,7 +173,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 )}
                 
                 <div className="absolute top-6 left-6 flex gap-2">
-                  <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg ${property.status === 'inactive' ? 'bg-red-600 text-white' : 'bg-primary/90 text-white'}`}>
+                  <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg ${property.status === 'inactive' ? 'bg-red-600 text-white' : 'bg-blue-primary/90 text-white'}`}>
                     {property.status === 'inactive' ? 'Inativo' : property.type}
                   </span>
                   {property.pattern === 'high_end' && (
@@ -239,10 +239,10 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
           {/* Sidebar Info */}
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-3xl shadow-luxury border border-border space-y-3">
+            <div className="bg-surface p-6 rounded-3xl shadow-card border border-border space-y-3">
               <button 
                 onClick={() => setIsLeadModalOpen(true)}
-                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 uppercase tracking-widest text-xs"
+                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-blue-primary text-white font-black rounded-2xl hover:bg-blue-primary/90 transition-all shadow-lg shadow-primary/20 uppercase tracking-widest text-xs"
               >
                 <Sparkles size={18} /> Criar Oportunidade
               </button>
@@ -251,7 +251,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 {canEdit && (
                   <Link 
                     href={`/crmhabita/imoveis/${id}/editar`}
-                    className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-border text-primary font-black rounded-2xl hover:border-primary/30 transition-all uppercase tracking-widest text-[10px]"
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-surface border-2 border-border text-primary font-black rounded-2xl hover:border-primary/30 transition-all uppercase tracking-widest text-[10px]"
                   >
                     <Pencil size={16} /> Editar
                   </Link>
@@ -267,7 +267,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 ) : (
                   <button 
                     onClick={() => setShowInactivateModal(true)}
-                    className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-border text-muted-foreground font-black rounded-2xl hover:border-red-200 hover:text-red-600 transition-all uppercase tracking-widest text-[10px]"
+                    className="flex items-center justify-center gap-2 px-4 py-3 bg-surface border-2 border-border text-muted-foreground font-black rounded-2xl hover:border-red-200 hover:text-red-600 transition-all uppercase tracking-widest text-[10px]"
                   >
                     <Ban size={16} /> Inativar
                   </button>
@@ -276,14 +276,14 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
 
               <button 
                 onClick={() => setShowDeleteModal(true)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-border text-red-400 font-black rounded-2xl hover:border-red-500 hover:bg-red-500 hover:text-white transition-all uppercase tracking-widest text-[10px]"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-surface border-2 border-border text-red-400 font-black rounded-2xl hover:border-red-500 hover:bg-red-500 hover:text-white transition-all uppercase tracking-widest text-[10px]"
               >
                 <Trash2 size={16} /> Excluir Definitivamente
               </button>
             </div>
-            <div className="bg-white p-8 rounded-3xl shadow-luxury border border-border sticky top-24">
+            <div className="bg-surface p-8 rounded-3xl shadow-card border border-border sticky top-24">
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-2">Preço de Venda</p>
-              <h2 className="text-4xl font-black text-primary mb-6">
+              <h2 className="text-2xl font-bold text-heading mb-6">
                 R$ {property.price.toLocaleString()}
               </h2>
 
@@ -303,14 +303,14 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary-light transition-all shadow-premium group"
+                  className="w-full bg-blue-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-blue-primary-light transition-all shadow-card group"
                 >
                   <MessageCircle size={20} className="group-hover:rotate-12 transition-transform" />
                   Compartilhar no WhatsApp
                 </a>
                 <button
                   onClick={handleDownloadFicha}
-                  className="w-full bg-white border border-border text-primary py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-muted transition-all"
+                  className="w-full bg-surface border border-border text-primary py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-muted transition-all"
                 >
                   <Download size={20} />
                   Baixar Ficha Técnica
@@ -324,7 +324,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
         {relatedProperties.length > 0 && (
           <div className="mt-20 space-y-8 animate-in slide-in-from-bottom duration-700">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-black text-primary tracking-tight">Também pode lhe interessar...</h2>
+              <h2 className="text-xl font-bold text-heading tracking-tight">Também pode lhe interessar...</h2>
               <Link href="/crmhabita/imoveis" className="text-sm font-bold text-accent hover:underline">Ver todos</Link>
             </div>
             
@@ -333,7 +333,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 <Link 
                   key={rel.id} 
                   href={`/crmhabita/imoveis/${rel.id}`}
-                  className="group bg-white rounded-[2rem] border-2 border-border p-4 shadow-sm hover:shadow-premium hover:border-primary/20 transition-all"
+                  className="group bg-surface rounded-xl border-2 border-border p-4 shadow-sm hover:shadow-card hover:border-primary/20 transition-all"
                 >
                   <div className="aspect-[4/3] rounded-2xl bg-muted mb-4 overflow-hidden relative">
                     {rel.main_image ? (
@@ -341,7 +341,7 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-primary/10 font-black italic">HABITA.VC</div>
                     )}
-                    <div className="absolute top-3 left-3 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-[8px] font-black uppercase tracking-wider text-primary">
+                    <div className="absolute top-3 left-3 px-2 py-1 bg-surface/90 backdrop-blur-sm rounded-lg text-[8px] font-black uppercase tracking-wider text-primary">
                       {rel.type}
                     </div>
                   </div>

@@ -46,7 +46,7 @@ export function SeoStep({ data, onChange }: Props) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-black text-primary mb-1">SEO e Publicação</h2>
+        <h2 className="text-xl font-bold text-heading mb-1">SEO e Publicação</h2>
         <p className="text-muted-foreground text-sm">Configure a URL amigável e as meta tags para ranqueamento no Google.</p>
       </div>
 
@@ -67,7 +67,7 @@ export function SeoStep({ data, onChange }: Props) {
             value={data.slug || ''}
             onChange={e => onChange({ slug: slugify(e.target.value) })}
             placeholder="nome-do-imovel"
-            className="flex-1 px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
+            className="flex-1 px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
           />
         </div>
         <p className="text-xs text-muted-foreground">
@@ -83,7 +83,7 @@ export function SeoStep({ data, onChange }: Props) {
           onChange={e => onChange({ meta_title: e.target.value })}
           placeholder={autoTitle}
           maxLength={70}
-          className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
+          className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
         />
         <p className="text-xs text-muted-foreground">{(data.meta_title || autoTitle).length}/70 — Ideal entre 50-60 caracteres</p>
       </div>
@@ -97,7 +97,7 @@ export function SeoStep({ data, onChange }: Props) {
           placeholder={autoDescription}
           rows={3}
           maxLength={160}
-          className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary placeholder:text-muted-foreground/40 transition-all resize-none"
+          className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary placeholder:text-muted-foreground/40 transition-all resize-none"
         />
         <p className="text-xs text-muted-foreground">{(data.meta_description || autoDescription).length}/160 — Ideal entre 120-160 caracteres</p>
       </div>
@@ -107,7 +107,7 @@ export function SeoStep({ data, onChange }: Props) {
         <label className="text-xs font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
           <Search size={14} /> Preview — Como aparecerá no Google
         </label>
-        <div className="p-6 border-2 border-border rounded-[2rem] bg-white space-y-1.5">
+        <div className="p-6 border-2 border-border rounded-xl bg-surface space-y-1.5">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Globe size={12} />
             habita.vc › imoveis › {data.address_city ? slugify(data.address_city) : '...'} › {data.slug || '...'}

@@ -35,23 +35,23 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
       <div 
         draggable
         onDragStart={(e) => onDragStart(e, lead.id)}
-        className="bg-white p-8 rounded-[3rem] shadow-premium hover:shadow-luxury transition-all duration-300 cursor-grab active:cursor-grabbing group relative border border-transparent hover:border-accent/10"
+        className="bg-surface p-4 rounded-xl shadow-card hover:shadow-card transition-all duration-300 cursor-grab active:cursor-grabbing group relative border border-transparent hover:border-accent/10"
       >
         {/* Top Header */}
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-4">
             <div 
-              className="w-14 h-14 rounded-2xl flex items-center justify-center text-xs font-black text-white shadow-lg border-4 border-white"
+              className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-black text-white shadow-lg border-2 border-white"
               style={{ backgroundColor: getAvatarBg(displayName) }}
             >
               {getInitials(displayName)}
             </div>
             <div className="min-w-0">
               <Link href={lead.person_id ? `/crmhabita/pessoas/${lead.person_id}` : `/crmhabita/leads/${lead.id}`}>
-                <h4 className="font-black text-primary text-base leading-tight hover:text-accent transition-colors truncate pr-2">{displayName}</h4>
+                <h4 className="font-black text-primary text-[13px] leading-tight hover:text-accent transition-colors truncate pr-2">{displayName}</h4>
               </Link>
               <div className="flex items-center gap-2 mt-1">
-                <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-widest">{lead.source || 'Portal'}</p>
+                <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">{lead.source || 'Portal'}</p>
                 {lead.person_id && (
                   <span className="flex items-center gap-1 text-[7px] font-black uppercase text-green-600 bg-green-50 px-2 py-0.5 rounded-md">
                     <Sparkles size={8} /> Verificado
@@ -63,7 +63,7 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
         </div>
 
         {/* Quick Contact Actions */}
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-4">
           {lead.phone && (
             <a 
               href={`https://wa.me/55${lead.phone.replace(/\D/g, '')}`}
@@ -90,7 +90,7 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
             <a 
               href={`mailto:${lead.email}`}
               onClick={(e) => e.stopPropagation()}
-              className="w-11 h-11 bg-primary/5 text-primary rounded-2xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm"
+              className="w-11 h-11 bg-blue-soft text-blue-primary rounded-2xl flex items-center justify-center hover:bg-blue-primary hover:text-white transition-all shadow-sm"
               title="E-mail"
             >
               <Mail size={20} />
@@ -100,9 +100,9 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
 
         {/* Property Interest */}
         {(lead.property || lead.interest_description) && (
-          <div className="mb-8 p-5 bg-muted/30 rounded-[2rem] border border-border/10">
+          <div className="mb-4 p-5 bg-muted/30 rounded-xl border border-border/10">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-white rounded-xl shadow-sm shrink-0">
+              <div className="p-2 bg-surface rounded-xl shadow-sm shrink-0">
                 {lead.property ? <Building size={14} className="text-primary" /> : <MapPin size={14} className="text-accent" />}
               </div>
               <div className="min-w-0">
@@ -118,7 +118,7 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
         {/* Value & Score */}
         <div className="flex items-end justify-between pt-6 border-t border-border/30">
           <div>
-            <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.15em] mb-1 block">Valor Previsto</span>
+            <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.15em] mb-1 block">Valor Previsto</span>
             <p className="text-xl font-black text-primary tracking-tighter">{formattedValue}</p>
           </div>
           <div className="text-right">
@@ -169,7 +169,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
       <div className="flex flex-col mb-10 px-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-5">
-            <div className="w-14 h-14 rounded-[1.5rem] flex items-center justify-center text-2xl shadow-premium border-4 border-white" style={{ backgroundColor: column.bg }}>
+            <div className="w-14 h-14 rounded-[1.5rem] flex items-center justify-center text-2xl shadow-card border-2 border-white" style={{ backgroundColor: column.bg }}>
               {column.emoji}
             </div>
             <div>
@@ -179,7 +179,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
           </div>
           <button 
             onClick={onAddLead}
-            className="w-11 h-11 flex items-center justify-center bg-white shadow-premium rounded-2xl text-muted-foreground/40 hover:text-primary hover:scale-110 transition-all"
+            className="w-11 h-11 flex items-center justify-center bg-surface shadow-card rounded-2xl text-muted-foreground/40 hover:text-primary hover:scale-110 transition-all"
           >
              <Plus size={20} />
           </button>
@@ -187,7 +187,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
         
         {leads.length > 0 && (
           <div className="px-2">
-             <p className="text-2xl font-black text-primary/80 tracking-tighter leading-none">{formattedColumnValue}</p>
+             <p className="text-xl font-bold text-heading/80 tracking-tighter leading-none">{formattedColumnValue}</p>
              <p className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-[0.2em] mt-2">Volume na etapa</p>
           </div>
         )}
@@ -202,7 +202,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
           const leadId = e.dataTransfer.getData('leadId');
           if (leadId) onMoveLead(leadId, column.id);
         }}
-        className={`flex-1 space-y-6 p-6 rounded-[4rem] transition-all duration-500 border-4 scrollbar-hide overflow-y-auto ${
+        className={`flex-1 space-y-6 p-6 rounded-[4rem] transition-all duration-500 border-2 scrollbar-hide overflow-y-auto ${
           isOver ? 'border-accent bg-accent/5 scale-[1.02]' : 'border-transparent bg-muted/10'
         }`}
         style={{ backgroundColor: isOver ? undefined : column.bg + '08' }}
@@ -220,7 +220,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
             />
           ))
         ) : (
-          <div className="h-64 flex flex-col items-center justify-center border-4 border-dashed border-border/10 rounded-[3.5rem] opacity-20 gap-4">
+          <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-border/10 rounded-[3.5rem] opacity-20 gap-4">
              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
                 <Plus size={32} className="text-muted-foreground" />
              </div>
@@ -230,7 +230,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
         
         <button 
           onClick={onAddLead}
-          className="w-full py-8 border-4 border-dashed border-primary/5 rounded-[3rem] text-[11px] font-black uppercase tracking-widest text-primary/10 hover:bg-white hover:border-accent/20 hover:text-accent transition-all duration-300"
+          className="w-full py-8 border-2 border-dashed border-primary/5 rounded-xl text-[11px] font-black uppercase tracking-widest text-primary/10 hover:bg-surface hover:border-accent/20 hover:text-accent transition-all duration-300"
         >
           + Nova Oportunidade
         </button>

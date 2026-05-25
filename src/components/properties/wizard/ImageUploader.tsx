@@ -66,8 +66,8 @@ export function ImageUploader({ images, onChange, maxFiles = 30 }: Props) {
     <div className="space-y-4">
       {/* Drop Zone */}
       <div
-        className={`relative border-2 border-dashed rounded-[2rem] p-10 flex flex-col items-center justify-center gap-4 transition-all cursor-pointer ${
-          dragging ? 'border-primary bg-primary/5 scale-[1.01]' : 'border-border bg-muted/30 hover:border-primary/40'
+        className={`relative border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center gap-4 transition-all cursor-pointer ${
+          dragging ? 'border-primary bg-blue-primary/5 scale-[1.01]' : 'border-border bg-muted/30 hover:border-primary/40'
         }`}
         onClick={() => inputRef.current?.click()}
         onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
@@ -138,7 +138,7 @@ export function ImageUploader({ images, onChange, maxFiles = 30 }: Props) {
                 >
                   <X size={14} />
                 </button>
-                <div className="p-2 bg-white/20 text-white rounded-xl cursor-grab" title="Reordenar">
+                <div className="p-2 bg-surface/20 text-white rounded-xl cursor-grab" title="Reordenar">
                   <GripVertical size={14} />
                 </div>
               </div>

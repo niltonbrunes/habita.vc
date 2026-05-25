@@ -57,9 +57,9 @@ export default function PropertiesPage() {
 
   return (
     <DashboardLayout>
-      <div className="h-[calc(100vh-100px)] flex flex-col bg-white overflow-hidden rounded-[2.5rem] shadow-premium">
+      <div className="h-[calc(100vh-100px)] flex flex-col bg-surface overflow-hidden rounded-xl shadow-card">
         {/* Header Section */}
-        <header className="p-6 border-b border-border bg-white z-10">
+        <header className="p-6 border-b border-border bg-surface z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
             <div>
               <h1 className="text-3xl font-black text-primary tracking-tight">Gestão de Imóveis</h1>
@@ -76,7 +76,7 @@ export default function PropertiesPage() {
               </button>
               <Link 
                 href="/crmhabita/imoveis/novo"
-                className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary/20"
+                className="flex items-center gap-2 bg-blue-primary text-white px-6 py-2.5 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary/20"
               >
                 <Plus size={14} /> Novo Imóvel
               </Link>
@@ -115,14 +115,14 @@ export default function PropertiesPage() {
         {/* Split View Content */}
         <div className="flex-1 flex overflow-hidden">
           {/* List Section */}
-          <section className="w-full md:w-[60%] lg:w-[50%] overflow-y-auto p-6 scrollbar-hide bg-white">
+          <section className="w-full md:w-[60%] lg:w-[50%] overflow-y-auto p-6 scrollbar-hide bg-surface">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {filtered.length > 0 ? (
                 filtered.map(property => (
                   <PropertyCard key={property.id} property={property} />
                 ))
               ) : !loading && (
-                <div className="col-span-full py-20 text-center bg-muted/5 rounded-[2rem] border-2 border-dashed border-border/20 flex flex-col items-center justify-center">
+                <div className="col-span-full py-20 text-center bg-muted/5 rounded-xl border-2 border-dashed border-border/20 flex flex-col items-center justify-center">
                   <Search size={40} className="text-muted-foreground/10 mb-4" />
                   <p className="text-sm font-bold text-muted-foreground/60">Nenhum imóvel encontrado.</p>
                 </div>
@@ -147,7 +147,7 @@ const FilterPill = ({ label, value, onChange, options }: any) => (
       onChange={e => onChange(e.target.value)}
       className={`
         appearance-none pl-5 pr-10 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all border cursor-pointer
-        ${value ? 'bg-primary/5 text-primary border-primary/20' : 'bg-white text-primary/40 border-border hover:bg-muted/50'}
+        ${value ? 'bg-blue-primary/5 text-primary border-primary/20' : 'bg-surface text-primary/40 border-border hover:bg-muted/50'}
       `}
     >
       <option value="" disabled>{label}</option>
@@ -167,7 +167,7 @@ const PropertyCard = ({ property }: { property: any }) => {
   }).format(property.price);
 
   return (
-    <Link href={`/crmhabita/imoveis/${property.id}`} className="group block bg-white border border-border/60 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
+    <Link href={`/crmhabita/imoveis/${property.id}`} className="group block bg-surface border border-border/60 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300">
       <div className="relative aspect-[1.5/1] overflow-hidden bg-muted">
         <img 
           src={property.main_image || property.images?.[0] || "/hero_luxury.png"} 
@@ -185,7 +185,7 @@ const PropertyCard = ({ property }: { property: any }) => {
         </div>
 
         {/* Commission Badge */}
-        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg shadow-lg border border-border/20 scale-90 group-hover:scale-100 transition-all">
+        <div className="absolute bottom-3 right-3 bg-surface/90 backdrop-blur-md px-3 py-1.5 rounded-lg shadow-lg border border-border/20 scale-90 group-hover:scale-100 transition-all">
           <p className="text-[8px] font-black text-muted-foreground uppercase leading-none">Comissão</p>
           <p className="text-xs font-black text-primary">R$ {(property.price * (property.commission_estimated_percent || 4) / 100).toLocaleString()}</p>
         </div>

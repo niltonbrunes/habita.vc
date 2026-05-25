@@ -61,10 +61,10 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
     return (
       <DashboardLayout>
         <div className="max-w-5xl mx-auto animate-pulse space-y-8">
-          <div className="h-32 bg-muted rounded-[2rem]" />
+          <div className="h-32 bg-muted rounded-xl" />
           <div className="grid grid-cols-3 gap-8">
-            <div className="col-span-1 h-96 bg-muted rounded-[2rem]" />
-            <div className="col-span-2 h-96 bg-muted rounded-[2rem]" />
+            <div className="col-span-1 h-96 bg-muted rounded-xl" />
+            <div className="col-span-2 h-96 bg-muted rounded-xl" />
           </div>
         </div>
       </DashboardLayout>
@@ -113,8 +113,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
           
           {/* Coluna Esquerda: Resumo */}
           <div className="space-y-8">
-            <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-border text-center">
-              <div className="w-24 h-24 bg-muted rounded-[2rem] flex items-center justify-center mx-auto mb-6 shadow-inner relative overflow-hidden">
+            <div className="bg-surface rounded-xl p-8 shadow-sm border border-border text-center">
+              <div className="w-24 h-24 bg-muted rounded-xl flex items-center justify-center mx-auto mb-6 shadow-inner relative overflow-hidden">
                 {person.avatar_url ? (
                   <img src={person.avatar_url} alt="" className="w-full h-full object-cover" />
                 ) : person.person_type === 'PJ' ? (
@@ -131,7 +131,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
               
               <div className="flex flex-wrap justify-center gap-2 mb-6">
                 {person.roles?.map(r => (
-                  <span key={r} className="px-3 py-1 bg-primary/5 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-wider rounded-lg">
+                  <span key={r} className="px-3 py-1 bg-blue-primary/5 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-wider rounded-lg">
                     {r}
                   </span>
                 ))}
@@ -155,7 +155,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
             {/* Endereços */}
             {person.addresses && person.addresses.length > 0 && (
-              <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-border">
+              <div className="bg-surface rounded-xl p-8 shadow-sm border border-border">
                 <h3 className="font-black text-primary text-sm mb-4 flex items-center gap-2">
                   <MapPin size={18} /> Endereços
                 </h3>
@@ -176,10 +176,10 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
           <div className="lg:col-span-2 space-y-8">
             
             {/* Quick Actions Card */}
-            <div className="bg-white p-6 rounded-[2.5rem] shadow-luxury border border-border flex items-center justify-between gap-4">
+            <div className="bg-surface p-6 rounded-xl shadow-card border border-border flex items-center justify-between gap-4">
               <button 
                 onClick={() => setIsLeadModalOpen(true)}
-                className="flex-1 flex items-center justify-center gap-3 px-6 py-4 bg-primary text-white font-black rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 uppercase tracking-widest text-xs"
+                className="flex-1 flex items-center justify-center gap-3 px-6 py-4 bg-blue-primary text-white font-black rounded-2xl hover:bg-blue-primary/90 transition-all shadow-lg shadow-primary/20 uppercase tracking-widest text-xs"
               >
                 <Sparkles size={18} /> Criar Oportunidade
               </button>
@@ -187,7 +187,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
               <div className="flex items-center gap-3">
                 <Link 
                   href={`/crmhabita/pessoas/${id}/editar`}
-                  className="p-3 bg-white border-2 border-border text-primary rounded-2xl hover:border-primary/30 transition-all shadow-sm"
+                  className="p-3 bg-surface border-2 border-border text-primary rounded-2xl hover:border-primary/30 transition-all shadow-sm"
                   title="Editar Pessoa"
                 >
                   <Pencil size={20} />
@@ -204,7 +204,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                 ) : (
                   <button 
                     onClick={() => setShowInactivateModal(true)}
-                    className="p-3 bg-white border-2 border-border text-muted-foreground rounded-2xl hover:border-red-200 hover:text-red-600 transition-all shadow-sm"
+                    className="p-3 bg-surface border-2 border-border text-muted-foreground rounded-2xl hover:border-red-200 hover:text-red-600 transition-all shadow-sm"
                     title="Inativar Pessoa"
                   >
                     <Ban size={20} />
@@ -213,7 +213,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
                 <button 
                   onClick={() => setShowDeleteModal(true)}
-                  className="p-3 bg-white border-2 border-border text-red-400 rounded-2xl hover:border-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                  className="p-3 bg-surface border-2 border-border text-red-400 rounded-2xl hover:border-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm"
                   title="Excluir Definitivamente"
                 >
                   <Trash2 size={20} />
@@ -222,7 +222,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
             </div>
             
             {/* Informações Detalhadas */}
-            <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-border">
+            <div className="bg-surface rounded-xl p-8 shadow-sm border border-border">
               <h3 className="font-black text-primary text-lg mb-6 flex items-center gap-2">
                 <FileText size={20} /> Detalhes Cadastrais
               </h3>
@@ -257,7 +257,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
 
             {/* Perfil Comercial (Interesses) */}
             {(person.commercial_info?.notes || (person.commercial_info?.interests?.length ?? 0) > 0) && (
-              <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-border">
+              <div className="bg-surface rounded-xl p-8 shadow-sm border border-border">
                 <h3 className="font-black text-primary text-lg mb-6 flex items-center gap-2">
                   <Briefcase size={20} /> Perfil Comercial
                 </h3>
@@ -287,7 +287,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
             )}
 
             {/* Timeline CRM */}
-            <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-border">
+            <div className="bg-surface rounded-xl p-8 shadow-sm border border-border">
               <h3 className="font-black text-primary text-lg mb-6 flex items-center gap-2">
                 <Calendar size={20} /> Histórico de Relacionamento
               </h3>

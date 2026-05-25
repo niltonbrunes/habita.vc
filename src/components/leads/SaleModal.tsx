@@ -182,11 +182,11 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-primary/40 backdrop-blur-md" onClick={onClose} />
+      <div className="absolute inset-0 bg-blue-primary/40 backdrop-blur-md" onClick={onClose} />
       
-      <div className="bg-white w-full max-w-xl rounded-[3rem] shadow-luxury border border-border relative max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+      <div className="bg-surface w-full max-w-xl rounded-[3rem] shadow-card border border-border relative max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
         <div className="p-8 border-b border-border bg-muted/30 shrink-0 relative">
-          <h2 className="text-2xl font-black text-primary mb-1">Lançar Venda! 🎉</h2>
+          <h2 className="text-xl font-bold text-heading mb-1">Lançar Venda! 🎉</h2>
           <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">Registrar fechamento e calcular comissões</p>
           <button onClick={onClose} className="absolute top-6 right-8 p-2 hover:bg-muted rounded-xl transition-colors">
             <X size={24} />
@@ -210,7 +210,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
                     required
                     value={selectedPersonId}
                     onChange={e => setSelectedPersonId(e.target.value)}
-                    className="w-full px-6 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
+                    className="w-full px-6 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
                   >
                     <option value="">Selecione o cliente...</option>
                     {peopleList.map(p => (
@@ -232,7 +232,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
                     const prop = propertiesList.find(p => p.id === e.target.value);
                     setFormData({ ...formData, property_id: e.target.value, sale_price: prop?.price || 0 });
                   }}
-                  className="w-full px-6 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
+                  className="w-full px-6 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
                 >
                   <option value="">Selecione o imóvel...</option>
                   {propertiesList.map(p => (
@@ -244,7 +244,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Valor da Venda</label>
-                  <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-white focus-within:border-primary/20 transition-all overflow-hidden">
+                  <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-surface focus-within:border-primary/20 transition-all overflow-hidden">
                     <div className="pl-4 pr-1 text-muted-foreground shrink-0">
                       <DollarSign size={18} />
                     </div>
@@ -259,7 +259,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Comissão Total (%)</label>
-                  <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-white focus-within:border-primary/20 transition-all overflow-hidden">
+                  <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-surface focus-within:border-primary/20 transition-all overflow-hidden">
                     <div className="pl-4 pr-1 text-muted-foreground shrink-0">
                       <Percent size={18} />
                     </div>
@@ -276,7 +276,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
               </div>
 
               {/* Split Info */}
-              <div className="bg-primary text-white p-8 rounded-[2rem] space-y-4 shadow-premium">
+              <div className="bg-blue-primary text-white p-8 rounded-xl space-y-4 shadow-card">
                 <div className="flex justify-between items-center border-b border-white/10 pb-4">
                   <span className="text-xs font-black uppercase tracking-widest text-white/50">Sua Comissão</span>
                   <span className="text-2xl font-black text-accent">R$ {brokerCommission.toLocaleString()}</span>
@@ -303,7 +303,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
               <button
                 type="submit"
                 disabled={loading || !formData.property_id || (!lead && !selectedPersonId)}
-                className="bg-primary text-white px-10 py-4 rounded-2xl font-black text-lg hover:bg-primary-light transition-all shadow-premium flex items-center gap-3 disabled:opacity-50"
+                className="bg-blue-primary text-white px-10 py-4 rounded-2xl font-black text-lg hover:bg-blue-primary-light transition-all shadow-card flex items-center gap-3 disabled:opacity-50"
               >
                 {loading ? <Loader2 className="animate-spin" size={24} /> : (
                   <>

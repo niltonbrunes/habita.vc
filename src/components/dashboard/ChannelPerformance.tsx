@@ -27,7 +27,7 @@ export function ChannelPerformance() {
 
   if (loading) {
     return (
-      <div className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-border flex items-center justify-center min-h-[300px]">
+      <div className="bg-surface p-8 rounded-xl shadow-card border border-border flex items-center justify-center min-h-[300px]">
         <Loader2 className="animate-spin text-primary w-8 h-8" />
       </div>
     );
@@ -36,7 +36,7 @@ export function ChannelPerformance() {
   const displayData = data.filter(d => d.total > 0 || d.benchmark > 0);
 
   return (
-    <div className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-border space-y-6">
+    <div className="bg-surface p-8 rounded-xl shadow-card border border-border space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-accent/10 rounded-xl text-accent">

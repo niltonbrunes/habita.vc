@@ -300,7 +300,7 @@ export function PropertyWizard({ initialData }: PropertyWizardProps) {
     <div className="max-w-4xl mx-auto">
       <WizardStepper steps={STEPS} currentStep={step} onGoTo={setStep} />
 
-      <div className="bg-white rounded-[2.5rem] border-2 border-border shadow-premium p-8 md:p-12 min-h-[500px]">
+      <div className="bg-surface rounded-xl border-2 border-border shadow-card p-8 md:p-12 min-h-[500px]">
         {step === 0 && <BasicInfoStep data={data} onChange={patch} />}
         {step === 1 && <DevelopmentLinkStep data={data} onChange={patch} />}
         {step === 2 && <FinancialStep data={data} onChange={patch} />}
@@ -329,7 +329,7 @@ export function PropertyWizard({ initialData }: PropertyWizardProps) {
 
         <div className="flex items-center gap-1">
           {STEPS.map((_, i) => (
-            <div key={i} className={`h-1.5 rounded-full transition-all ${i === step ? 'w-8 bg-primary' : i < step ? 'w-3 bg-primary/40' : 'w-3 bg-border'}`} />
+            <div key={i} className={`h-1.5 rounded-full transition-all ${i === step ? 'w-8 bg-blue-primary' : i < step ? 'w-3 bg-blue-primary/40' : 'w-3 bg-border'}`} />
           ))}
         </div>
 
@@ -338,7 +338,7 @@ export function PropertyWizard({ initialData }: PropertyWizardProps) {
             type="button"
             onClick={() => setStep(s => s + 1)}
             disabled={!canNext()}
-            className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-primary text-white font-black hover:bg-primary-light transition-all shadow-premium disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-8 py-4 rounded-2xl bg-blue-primary text-white font-black hover:bg-blue-primary-light transition-all shadow-card disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Próximo <ChevronRight size={20} />
           </button>
@@ -347,7 +347,7 @@ export function PropertyWizard({ initialData }: PropertyWizardProps) {
             type="button"
             onClick={handleSubmit}
             disabled={saving}
-            className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-accent text-white font-black hover:bg-yellow-600 transition-all shadow-luxury disabled:opacity-50"
+            className="flex items-center gap-2 px-10 py-4 rounded-2xl bg-accent text-white font-black hover:bg-yellow-600 transition-all shadow-card disabled:opacity-50"
           >
             {saving ? <><Loader2 size={20} className="animate-spin" /> Salvando...</> : <><CheckCircle2 size={20} /> {initialData ? 'Salvar Alterações' : 'Publicar Imóvel'}</>}
           </button>

@@ -14,7 +14,7 @@ export const RegionSection = () => {
   ];
 
   return (
-    <section className="py-32 bg-white">
+    <section className="py-32 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
           <div className="max-w-2xl">
@@ -36,7 +36,7 @@ export const RegionSection = () => {
             <Link 
               key={region.slug} 
               href={`/imoveis/${region.city.toLowerCase()}?bairro=${region.slug}`}
-              className="group relative h-[350px] rounded-[3rem] overflow-hidden shadow-premium hover:shadow-luxury transition-all duration-700"
+              className="group relative h-[350px] rounded-[3rem] overflow-hidden shadow-card hover:shadow-card transition-all duration-700"
             >
               {/* Background Image */}
               <Image src={region.image} alt={region.name} fill className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" sizes="(max-width: 768px) 100vw, 50vw" />
@@ -57,7 +57,7 @@ export const RegionSection = () => {
                   <p className="text-sm font-bold text-white/70">
                     {region.count} imóveis exclusivos
                   </p>
-                  <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+                  <div className="w-10 h-10 rounded-full bg-surface/20 backdrop-blur-md flex items-center justify-center border border-white/30">
                     <ChevronRight size={20} />
                   </div>
                 </div>

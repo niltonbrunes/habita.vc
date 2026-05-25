@@ -12,7 +12,7 @@ export function MediaStep({ images, onChange }: Props) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-black text-primary mb-1">Fotos do Imóvel</h2>
+        <h2 className="text-xl font-bold text-heading mb-1">Fotos do Imóvel</h2>
         <p className="text-muted-foreground text-sm">Adicione as fotos. A primeira ou a marcada como capa será a foto principal.</p>
       </div>
 

@@ -87,7 +87,7 @@ export function OwnersStep({ owners, onChange }: Props) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-black text-primary mb-1">Proprietários</h2>
+        <h2 className="text-xl font-bold text-heading mb-1">Proprietários</h2>
         <p className="text-muted-foreground text-sm">Vincule pessoas cadastradas ou adicione manualmente.</p>
       </div>
 
@@ -106,19 +106,19 @@ export function OwnersStep({ owners, onChange }: Props) {
         </div>
 
         {searchResults.length > 0 && (
-          <div className="absolute z-10 left-0 right-0 mt-2 bg-white border-2 border-border rounded-2xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
+          <div className="absolute z-10 left-0 right-0 mt-2 bg-surface border-2 border-border rounded-2xl shadow-xl overflow-hidden max-h-60 overflow-y-auto">
             {searchResults.map(p => (
               <button
                 key={p.id}
                 type="button"
                 onClick={() => add(p)}
-                className="w-full flex items-center justify-between px-5 py-3 hover:bg-primary/5 text-left border-b border-border last:border-0 transition-colors"
+                className="w-full flex items-center justify-between px-5 py-3 hover:bg-blue-primary/5 text-left border-b border-border last:border-0 transition-colors"
               >
                 <div>
                   <p className="font-black text-primary">{p.name}</p>
                   <p className="text-xs text-muted-foreground">{p.document_id || 'Sem documento'}</p>
                 </div>
-                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                <div className="w-8 h-8 rounded-full bg-blue-primary/10 flex items-center justify-center text-primary">
                   <Plus size={16} />
                 </div>
               </button>
@@ -128,7 +128,7 @@ export function OwnersStep({ owners, onChange }: Props) {
       </div>
 
       {owners.length === 0 && !searchTerm && (
-        <div className="py-12 text-center bg-muted/30 rounded-[2rem] border-2 border-dashed border-border">
+        <div className="py-12 text-center bg-muted/30 rounded-xl border-2 border-dashed border-border">
           <User className="mx-auto mb-3 text-muted-foreground/30" size={40} />
           <p className="font-bold text-muted-foreground">Nenhum proprietário vinculado.</p>
           <p className="text-sm text-muted-foreground/60 mt-1">Busque acima para vincular uma pessoa existente.</p>
@@ -137,7 +137,7 @@ export function OwnersStep({ owners, onChange }: Props) {
 
       <div className="space-y-6">
         {owners.map((owner, i) => (
-          <div key={i} className="bg-white border-2 border-border rounded-[2rem] p-6 space-y-5 relative group">
+          <div key={i} className="bg-surface border-2 border-border rounded-xl p-6 space-y-5 relative group">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">
@@ -186,7 +186,7 @@ export function OwnersStep({ owners, onChange }: Props) {
                 <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Vínculo</label>
                 <select value={owner.owner_type}
                   onChange={e => update(i, { owner_type: e.target.value as any })}
-                  className="w-full px-5 py-4 border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary transition-all bg-white">
+                  className="w-full px-5 py-4 border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary transition-all bg-surface">
                   <option value="owner">Proprietário Pleno</option>
                   <option value="coproprietario">Coproprietário</option>
                   <option value="heir">Inventariante / Herdeiro</option>

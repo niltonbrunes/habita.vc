@@ -106,16 +106,16 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Main Content: Info & History */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white p-10 rounded-[2.5rem] shadow-premium border border-border">
+            <div className="bg-surface p-10 rounded-xl shadow-card border border-border">
               <div className="flex justify-between items-start mb-8">
                 <div className="flex items-center gap-6">
-                  <div className="w-20 h-20 bg-primary/5 rounded-3xl flex items-center justify-center text-primary border border-primary/10">
+                  <div className="w-20 h-20 bg-blue-primary/5 rounded-3xl flex items-center justify-center text-primary border border-primary/10">
                     <User size={40} />
                   </div>
                   <div>
                     <h1 className="text-3xl font-black text-primary">{lead.name}</h1>
                     <div className="flex gap-3 mt-2">
-                      <span className="bg-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">{lead.status}</span>
+                      <span className="bg-blue-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">{lead.status}</span>
                       <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${
                         lead.temperature === 'hot' ? 'bg-red-100 text-red-600' : 
                         lead.temperature === 'warm' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'
@@ -126,10 +126,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button className="p-3 bg-muted rounded-2xl text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+                  <button className="p-3 bg-muted rounded-2xl text-primary hover:bg-blue-primary hover:text-white transition-all shadow-sm">
                     <MessageCircle size={20} />
                   </button>
-                  <button className="p-3 bg-muted rounded-2xl text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+                  <button className="p-3 bg-muted rounded-2xl text-primary hover:bg-blue-primary hover:text-white transition-all shadow-sm">
                     <Phone size={20} />
                   </button>
                 </div>
@@ -148,7 +148,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             </div>
 
             {/* History Section */}
-            <div className="bg-white p-10 rounded-[2.5rem] shadow-premium border border-border">
+            <div className="bg-surface p-10 rounded-xl shadow-card border border-border">
               <h3 className="text-xl font-black text-primary mb-8 flex items-center gap-2">
                 <Clock size={20} className="text-accent" /> Histórico de Interações
               </h3>
@@ -157,7 +157,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                   <div key={i} className="flex gap-6 relative">
                     {i < lead.history.length - 1 && <div className="absolute left-4 top-8 bottom-[-24px] w-0.5 bg-border" />}
                     <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center shrink-0 relative z-10">
-                      <div className="w-2 h-2 rounded-full bg-primary" />
+                      <div className="w-2 h-2 rounded-full bg-blue-primary" />
                     </div>
                     <div className="flex-1 pb-8">
                       <div className="flex justify-between items-center mb-1">
@@ -174,12 +174,12 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
           {/* Sidebar: Documents */}
           <div className="space-y-8">
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-luxury border border-border">
+            <div className="bg-surface p-8 rounded-xl shadow-card border border-border">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-black text-primary flex items-center gap-2">
                   <FileText size={20} className="text-accent" /> Documentos
                 </h3>
-                <label className={`p-2 bg-primary text-white rounded-xl cursor-pointer hover:bg-primary-light transition-all shadow-premium ${uploading ? 'pointer-events-none opacity-50' : ''}`}>
+                <label className={`p-2 bg-blue-primary text-white rounded-xl cursor-pointer hover:bg-blue-primary-light transition-all shadow-card ${uploading ? 'pointer-events-none opacity-50' : ''}`}>
                   <input type="file" multiple onChange={handleFileUpload} className="hidden" />
                   {uploading ? <Loader2 className="animate-spin" size={18} /> : <Upload size={18} />}
                 </label>
@@ -189,7 +189,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                 {lead.documents && lead.documents.length > 0 ? lead.documents.map((doc: any, i: number) => (
                   <div key={i} className="group p-4 bg-muted/50 rounded-2xl border border-transparent hover:border-primary/10 transition-all flex items-center justify-between">
                     <div className="flex items-center gap-3 overflow-hidden">
-                      <div className="p-2 bg-white rounded-xl text-primary shadow-sm">
+                      <div className="p-2 bg-surface rounded-xl text-primary shadow-sm">
                         <FileText size={16} />
                       </div>
                       <div className="overflow-hidden">
@@ -198,10 +198,10 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                       </div>
                     </div>
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <a href={doc.url} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-white rounded-lg text-muted-foreground hover:text-primary transition-colors">
+                      <a href={doc.url} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-surface rounded-lg text-muted-foreground hover:text-primary transition-colors">
                         <ExternalLink size={14} />
                       </a>
-                      <button onClick={() => deleteDocument(doc.url)} className="p-2 hover:bg-white rounded-lg text-red-400 hover:text-red-600 transition-colors">
+                      <button onClick={() => deleteDocument(doc.url)} className="p-2 hover:bg-surface rounded-lg text-red-400 hover:text-red-600 transition-colors">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -224,18 +224,18 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             </div>
 
             {/* Performance/Lead Scoring Card */}
-            <div className="bg-primary text-white p-8 rounded-[2.5rem] shadow-premium relative overflow-hidden group">
+            <div className="bg-blue-primary text-white p-8 rounded-xl shadow-card relative overflow-hidden group">
               <div className="relative z-10">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-2">Lead Score</p>
                 <h2 className="text-5xl font-black mb-4">{lead.score}%</h2>
-                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden mb-6">
+                <div className="w-full h-2 bg-surface/10 rounded-full overflow-hidden mb-6">
                   <div className="h-full bg-accent rounded-full transition-all duration-1000" style={{ width: `${lead.score}%` }} />
                 </div>
                 <p className="text-sm font-medium text-white/70 leading-relaxed">
                   Este lead possui um alto índice de conversão baseado no seu histórico com perfis similares.
                 </p>
               </div>
-              <div className="absolute top-[-20%] right-[-20%] w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000" />
+              <div className="absolute top-[-20%] right-[-20%] w-40 h-40 bg-surface/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000" />
             </div>
           </div>
         </div>

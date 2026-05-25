@@ -56,7 +56,7 @@ export function DevelopmentLinkStep({ data, onChange }: Props) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-black text-primary mb-1">Localização</h2>
+        <h2 className="text-xl font-bold text-heading mb-1">Localização</h2>
         <p className="text-muted-foreground text-sm">Vincule a um empreendimento ou preencha o endereço manualmente.</p>
       </div>
 
@@ -65,7 +65,7 @@ export function DevelopmentLinkStep({ data, onChange }: Props) {
         <button
           type="button"
           onClick={() => clearDev()}
-          className={`p-6 rounded-[2rem] border-2 text-left transition-all ${!data.development_id ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/30'}`}
+          className={`p-6 rounded-xl border-2 text-left transition-all ${!data.development_id ? 'border-primary bg-blue-primary/5' : 'border-border hover:border-primary/30'}`}
         >
           <MapPin className="text-accent mb-3" size={28} />
           <h3 className="font-black text-primary mb-1">Endereço Avulso</h3>
@@ -74,7 +74,7 @@ export function DevelopmentLinkStep({ data, onChange }: Props) {
         <button
           type="button"
           onClick={() => document.getElementById('dev-list')?.scrollIntoView({ behavior: 'smooth' })}
-          className={`p-6 rounded-[2rem] border-2 text-left transition-all ${data.development_id ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/30'}`}
+          className={`p-6 rounded-xl border-2 text-left transition-all ${data.development_id ? 'border-primary bg-blue-primary/5' : 'border-border hover:border-primary/30'}`}
         >
           <Building2 className="text-accent mb-3" size={28} />
           <h3 className="font-black text-primary mb-1">Vincular a Empreendimento</h3>
@@ -84,7 +84,7 @@ export function DevelopmentLinkStep({ data, onChange }: Props) {
 
       {/* Linked development badge */}
       {linked && (
-        <div className="flex items-center gap-4 p-5 bg-primary/5 border-2 border-primary rounded-2xl">
+        <div className="flex items-center gap-4 p-5 bg-blue-primary/5 border-2 border-primary rounded-2xl">
           <Link2 className="text-primary" size={24} />
           <div className="flex-1">
             <p className="font-black text-primary">{linked.name}</p>
@@ -106,7 +106,7 @@ export function DevelopmentLinkStep({ data, onChange }: Props) {
                 onChange={e => { onChange({ address_zip_code: e.target.value }); lookupCep(e.target.value); }}
                 placeholder="00000-000"
                 maxLength={9}
-                className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
+                className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
               />
               {cepLoading && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-primary" size={18} />}
             </div>
@@ -126,7 +126,7 @@ export function DevelopmentLinkStep({ data, onChange }: Props) {
                 value={(data as any)[f.key] || ''}
                 onChange={e => onChange({ [f.key]: e.target.value } as any)}
                 placeholder={f.placeholder}
-                className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
+                className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
               />
             </div>
           ))}
@@ -148,7 +148,7 @@ export function DevelopmentLinkStep({ data, onChange }: Props) {
                 type="button"
                 onClick={() => selectDev(dev)}
                 className={`p-4 rounded-2xl border-2 text-left transition-all flex gap-4 items-center ${
-                  data.development_id === dev.id ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/30 bg-white'
+                  data.development_id === dev.id ? 'border-primary bg-blue-primary/5' : 'border-border hover:border-primary/30 bg-surface'
                 }`}
               >
                 <div className="w-14 h-14 rounded-xl overflow-hidden bg-muted shrink-0">

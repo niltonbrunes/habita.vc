@@ -8,7 +8,7 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2">
-            <div className="bg-white/10 p-1.5 rounded-lg backdrop-blur-md">
+            <div className="bg-surface/10 p-1.5 rounded-lg backdrop-blur-md">
               <Home className="w-6 h-6 text-white" />
             </div>
             <span className="text-xl font-bold tracking-tight text-white">
@@ -29,7 +29,7 @@ export const Navbar = () => {
             </button>
             <Link 
               href="/crmhabita" 
-              className="hidden sm:flex items-center gap-2 bg-white text-black px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-white/90 transition-all shadow-premium whitespace-nowrap shrink-0"
+              className="hidden sm:flex items-center gap-2 bg-surface text-black px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-surface/90 transition-all shadow-card whitespace-nowrap shrink-0"
             >
               <LayoutDashboard className="w-4 h-4 shrink-0" />
               CRM Habita

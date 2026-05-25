@@ -79,7 +79,7 @@ export default function TeamManagementPage() {
     <DashboardLayout>
       <div className="space-y-10 pb-20 relative">
         {loading && (
-          <div className="absolute inset-0 bg-white/50 backdrop-blur-[1px] z-[50] flex items-center justify-center min-h-[400px]">
+          <div className="absolute inset-0 bg-surface/50 backdrop-blur-[1px] z-[50] flex items-center justify-center min-h-[400px]">
             <RefreshCw className="animate-spin text-primary" size={48} />
           </div>
         )}
@@ -87,15 +87,15 @@ export default function TeamManagementPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-4xl font-black text-primary mb-2">BI & Gestão de Equipe</h1>
+            <h1 className="text-2xl font-bold text-heading mb-2">BI & Gestão de Equipe</h1>
             <p className="text-muted-foreground font-medium text-lg">Inteligência competitiva e monitoramento de conversão.</p>
           </div>
           
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 bg-white border border-border px-5 py-3 rounded-2xl text-sm font-bold hover:bg-muted transition-all">
+            <button className="flex items-center gap-2 bg-surface border border-border px-5 py-3 rounded-2xl text-sm font-bold hover:bg-muted transition-all">
               <RefreshCw size={18} /> Atualizar Dados
             </button>
-            <button className="flex items-center gap-2 bg-primary text-white px-5 py-3 rounded-2xl text-sm font-black hover:bg-primary-light transition-all shadow-premium">
+            <button className="flex items-center gap-2 bg-blue-primary text-white px-5 py-3 rounded-2xl text-sm font-black hover:bg-blue-primary-light transition-all shadow-card">
               <BarChart3 size={18} /> Relatório Completo
             </button>
           </div>
@@ -140,11 +140,11 @@ export default function TeamManagementPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Detailed Broker Ranking */}
           <div className="lg:col-span-2 space-y-8 min-w-0">
-            <div className="bg-white rounded-[2.5rem] shadow-premium border border-border overflow-hidden">
+            <div className="bg-surface rounded-xl shadow-card border border-border overflow-hidden">
               <div className="p-8 border-b border-border flex justify-between items-center bg-muted/10">
                 <h3 className="text-xl font-black text-primary uppercase tracking-tight">Ranking de Performance</h3>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-primary text-white rounded-lg text-[10px] font-black uppercase">Vendas</button>
+                  <button className="px-3 py-1 bg-blue-primary text-white rounded-lg text-[10px] font-black uppercase">Vendas</button>
                   <button className="px-3 py-1 bg-muted text-muted-foreground rounded-lg text-[10px] font-black uppercase">Leads</button>
                 </div>
               </div>
@@ -168,7 +168,7 @@ export default function TeamManagementPage() {
                           <td className="px-8 py-5">
                             <span className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${
                               i === 0 ? 'bg-yellow-100 text-yellow-700' : 
-                              i === 1 ? 'bg-slate-100 text-slate-600' : 
+                              i === 1 ? 'bg-slate-100 text-body' : 
                               'bg-muted text-muted-foreground'
                             }`}>
                               {i + 1}
@@ -176,7 +176,7 @@ export default function TeamManagementPage() {
                           </td>
                           <td className="px-6 py-5">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-black text-primary">
+                              <div className="w-10 h-10 rounded-full bg-blue-primary/10 flex items-center justify-center font-black text-primary">
                                 {broker.full_name.substring(0, 2).toUpperCase()}
                               </div>
                               <p className="font-bold text-primary">{broker.full_name}</p>
@@ -192,7 +192,7 @@ export default function TeamManagementPage() {
                             </div>
                           </td>
                           <td className="px-8 py-5 text-right">
-                            <button className="p-2 hover:bg-white rounded-xl text-muted-foreground hover:text-primary transition-all">
+                            <button className="p-2 hover:bg-surface rounded-xl text-muted-foreground hover:text-primary transition-all">
                               <ChevronRight size={20} />
                             </button>
                           </td>
@@ -205,7 +205,7 @@ export default function TeamManagementPage() {
             </div>
 
             {/* Team Activity / Recent Sales */}
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-border">
+            <div className="bg-surface p-8 rounded-xl shadow-card border border-border">
               <h3 className="text-xl font-black text-primary uppercase tracking-tight mb-8">Vendas Recentes</h3>
               <div className="space-y-4">
                 {sales.length > 0 ? sales.map((sale) => (
@@ -233,14 +233,14 @@ export default function TeamManagementPage() {
 
           {/* Team Funnel Visual */}
           <div className="space-y-8">
-            <div className="bg-primary text-white p-8 rounded-[2.5rem] shadow-luxury border border-white/10 relative overflow-hidden group">
+            <div className="bg-blue-primary text-white p-8 rounded-xl shadow-card border border-white/10 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-1000" />
               <h3 className="text-lg font-black uppercase tracking-widest mb-8 flex items-center gap-2">
                 <BarChart3 size={20} className="text-accent" /> Funil Equipe
               </h3>
               
               <div className="space-y-6">
-                <FunnelStep label="Novos Leads" count={totalLeads} percent={100} color="bg-white/20" />
+                <FunnelStep label="Novos Leads" count={totalLeads} percent={100} color="bg-surface/20" />
                 <FunnelStep label="Em Atendimento" count={Math.floor(totalLeads * 0.4)} percent={40} color="bg-accent/40" />
                 <FunnelStep label="Visitas" count={Math.floor(totalLeads * 0.15)} percent={15} color="bg-accent/70" />
                 <FunnelStep label="Vendas" count={Math.floor(totalLeads * 0.03)} percent={3} color="bg-accent" />
@@ -253,7 +253,7 @@ export default function TeamManagementPage() {
             </div>
 
             {/* Inventory Insight */}
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-premium border border-border">
+            <div className="bg-surface p-8 rounded-xl shadow-card border border-border">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 bg-purple-50 text-purple-600 rounded-xl">
                   <Home size={20} />
@@ -269,13 +269,13 @@ export default function TeamManagementPage() {
             </div>
 
           {/* Funil por Origem */}
-          <div className="bg-white rounded-[2.5rem] p-8 border-2 border-border shadow-soft mt-8">
+          <div className="bg-surface rounded-xl p-8 border-2 border-border shadow-soft mt-8">
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+              <div className="w-12 h-12 rounded-2xl bg-blue-primary/10 flex items-center justify-center text-primary">
                 <Target size={24} />
               </div>
               <div>
-                <h3 className="text-2xl font-black text-primary">Funil por Origem de Lead</h3>
+                <h3 className="text-xl font-bold text-heading">Funil por Origem de Lead</h3>
                 <p className="text-sm font-bold text-muted-foreground">Métricas de conversão por canal de captação.</p>
               </div>
             </div>
@@ -313,7 +313,7 @@ export default function TeamManagementPage() {
                           <div className="flex items-center justify-center gap-2">
                             <span className={convRate > 5 ? 'text-green-600' : 'text-primary'}>{convRate}%</span>
                             <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
-                              <div className="h-full bg-primary" style={{ width: `${convRate}%` }} />
+                              <div className="h-full bg-blue-primary" style={{ width: `${convRate}%` }} />
                             </div>
                           </div>
                         </td>
@@ -333,7 +333,7 @@ export default function TeamManagementPage() {
 }
 
 const StatCard = ({ title, value, icon, trend, trendUp, subtitle }: any) => (
-  <div className="bg-card p-6 rounded-[1.5rem] shadow-premium border border-border/50 hover:shadow-luxury transition-all group flex flex-col justify-between min-h-[160px]">
+  <div className="bg-card p-6 rounded-[1.5rem] shadow-card border border-border/50 hover:shadow-card transition-all group flex flex-col justify-between min-h-[160px]">
     <div className="flex justify-between items-start mb-4">
       <div className="p-3 bg-muted/30 rounded-2xl group-hover:scale-110 transition-transform">
         {React.cloneElement(icon, { size: 24 })}
@@ -357,7 +357,7 @@ const FunnelStep = ({ label, count, percent, color }: any) => (
       <span>{label}</span>
       <span className="text-white/40">{count}</span>
     </div>
-    <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+    <div className="h-2 w-full bg-surface/5 rounded-full overflow-hidden">
       <div className={`h-full transition-all duration-1000 ${color}`} style={{ width: `${percent}%` }} />
     </div>
   </div>

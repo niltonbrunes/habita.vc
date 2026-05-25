@@ -84,7 +84,7 @@ export function FunnelSimulator() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-12 bg-card rounded-[2.5rem] shadow-premium">
+      <div className="flex items-center justify-center p-12 bg-card rounded-xl shadow-card">
         <RefreshCcw className="animate-spin text-primary" size={32} />
       </div>
     );
@@ -95,7 +95,7 @@ export function FunnelSimulator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8 bg-card p-10 rounded-[2.5rem] shadow-premium border border-border/50">
+    <div className="grid lg:grid-cols-3 gap-8 bg-card p-10 rounded-xl shadow-card border border-border/50">
       {/* Coluna de Configuração */}
       <div className="space-y-8 lg:border-r border-r-0 lg:border-border border-transparent lg:pr-8 pr-0">
         <div>
@@ -143,7 +143,7 @@ export function FunnelSimulator() {
 
         <button 
           onClick={handleSave}
-          className={`w-full py-4 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-lg ${isSaving ? 'bg-green-600 text-white' : 'bg-primary text-white hover:scale-[1.02] shadow-primary/20'}`}
+          className={`w-full py-4 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-lg ${isSaving ? 'bg-green-600 text-white' : 'bg-blue-primary text-white hover:scale-[1.02] shadow-primary/20'}`}
         >
           {isSaving ? <CheckCircle2 size={16} /> : <Save size={16} />} 
           {isSaving ? 'Salvo!' : 'Salvar Minhas Metas'}
@@ -165,7 +165,7 @@ export function FunnelSimulator() {
           <FunnelLayer 
             label="Oportunidades" 
             value={callsNeeded} 
-            color="bg-primary/5" 
+            color="bg-blue-primary/5" 
             width="w-full"
             icon={<Users className="text-primary/40" />}
             rate={`${(rateCallToApres * 100).toFixed(0)}%`}
@@ -175,7 +175,7 @@ export function FunnelSimulator() {
           <FunnelLayer 
             label="Apresentações" 
             value={presentationsNeeded} 
-            color="bg-primary/10" 
+            color="bg-blue-primary/10" 
             width="w-full sm:w-[90%] md:w-[85%] lg:w-[80%]"
             icon={<Presentation className="text-primary/60" />}
             rate={`${(rateApresToProp * 100).toFixed(0)}%`}
@@ -185,7 +185,7 @@ export function FunnelSimulator() {
           <FunnelLayer 
             label="Propostas" 
             value={proposalsNeeded} 
-            color="bg-primary/20" 
+            color="bg-blue-primary/20" 
             width="w-full sm:w-[80%] md:w-[70%] lg:w-[60%]"
             icon={<FileText className="text-primary/80" />}
             rate={`${(ratePropToSale * 100).toFixed(0)}%`}
@@ -200,7 +200,7 @@ export function FunnelSimulator() {
           </div>
 
           {/* Meta Diária Card */}
-          <div className="lg:absolute lg:top-20 lg:right-0 xl:right-2 mt-8 lg:mt-0 bg-white border-2 border-accent p-6 rounded-3xl shadow-2xl lg:rotate-3 hover:rotate-0 transition-all duration-500 max-w-[180px] z-20 mx-auto w-full text-center lg:text-left">
+          <div className="lg:absolute lg:top-20 lg:right-0 xl:right-2 mt-8 lg:mt-0 bg-surface border-2 border-accent p-6 rounded-3xl shadow-2xl lg:rotate-3 hover:rotate-0 transition-all duration-500 max-w-[180px] z-20 mx-auto w-full text-center lg:text-left">
              <p className="text-[10px] font-black text-accent uppercase tracking-widest mb-1">Ação Requerida</p>
              <p className="text-3xl font-black text-primary">{dailyLeadGoal}</p>
              <p className="text-xs font-bold text-muted-foreground leading-tight mt-1">contatos novos por dia útil</p>
@@ -276,7 +276,7 @@ const FunnelLayer = ({ label, value, color, width, icon, rate }: FunnelLayerProp
       </div>
       <div className="min-w-0">
         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground truncate">{label}</p>
-        <p className="text-xl sm:text-2xl font-black text-primary">{value}</p>
+        <p className="text-xl sm:text-xl font-bold text-heading">{value}</p>
       </div>
     </div>
     <div className="text-right relative z-10 w-full sm:w-auto flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end">

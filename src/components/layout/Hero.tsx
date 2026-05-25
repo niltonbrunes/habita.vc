@@ -71,7 +71,7 @@ export const Hero = () => {
             </div>
 
             {/* Search Bar - Glassmorphism */}
-            <div className="glass-dark p-3 md:p-4 rounded-[2.5rem] md:rounded-full shadow-luxury border-white/10 flex flex-col md:flex-row items-center gap-2 group transition-all hover:border-accent/40 relative z-20">
+            <div className="glass-dark p-3 md:p-4 rounded-xl md:rounded-full shadow-card border-white/10 flex flex-col md:flex-row items-center gap-2 group transition-all hover:border-accent/40 relative z-20">
               <div className="flex-[1.8] flex items-center px-8 gap-4 w-full">
                 <Search className="text-accent shrink-0" size={24} />
                 <input 
@@ -83,7 +83,7 @@ export const Hero = () => {
                   className="w-full py-5 bg-transparent outline-none font-bold text-white placeholder:text-white/40 text-lg md:text-xl"
                 />
               </div>
-              <div className="hidden md:block w-px h-12 bg-white/20 mx-2" />
+              <div className="hidden md:block w-px h-12 bg-surface/20 mx-2" />
               <div className="flex-1 flex items-center px-8 gap-4 w-full">
                 <MapPin className="text-accent/60" size={22} />
                 <select 
@@ -98,7 +98,7 @@ export const Hero = () => {
                   <option>Lote</option>
                 </select>
               </div>
-              <div className="hidden md:block w-px h-12 bg-white/20 mx-2" />
+              <div className="hidden md:block w-px h-12 bg-surface/20 mx-2" />
               <div className="flex-1 flex items-center px-8 gap-4 w-full">
                 <div className="bg-accent/20 p-2 rounded-lg">
                    <div className="w-1.5 h-1.5 rounded-full bg-accent" />
@@ -117,7 +117,7 @@ export const Hero = () => {
               </div>
               <button 
                 onClick={handleSearch}
-                className="bg-primary hover:bg-primary-light text-white w-full md:w-auto px-14 py-6 rounded-full font-black text-sm tracking-[0.2em] transition-all shadow-xl hover:shadow-luxury active:scale-95 flex items-center justify-center gap-3"
+                className="bg-blue-primary hover:bg-blue-primary-light text-white w-full md:w-auto px-14 py-6 rounded-full font-black text-sm tracking-[0.2em] transition-all shadow-xl hover:shadow-card active:scale-95 flex items-center justify-center gap-3"
               >
                 BUSCAR <ArrowRight size={20} />
               </button>

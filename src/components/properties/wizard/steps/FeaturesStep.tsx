@@ -20,12 +20,12 @@ function Counter({ label, value, onChange }: { label: string; value: number; onC
   return (
     <div className="flex flex-col gap-2">
       <label className="text-xs font-black text-muted-foreground uppercase tracking-widest text-center">{label}</label>
-      <div className="flex items-center justify-center gap-3 bg-white border-2 border-border rounded-2xl p-3">
+      <div className="flex items-center justify-center gap-3 bg-surface border-2 border-border rounded-2xl p-3">
         <button type="button" onClick={() => onChange(Math.max(0, value - 1))}
-          className="w-8 h-8 rounded-xl bg-muted font-black text-lg hover:bg-primary hover:text-white transition-all">−</button>
-        <span className="text-2xl font-black text-primary w-8 text-center">{value}</span>
+          className="w-8 h-8 rounded-xl bg-muted font-black text-lg hover:bg-blue-primary hover:text-white transition-all">−</button>
+        <span className="text-xl font-bold text-heading w-8 text-center">{value}</span>
         <button type="button" onClick={() => onChange(value + 1)}
-          className="w-8 h-8 rounded-xl bg-muted font-black text-lg hover:bg-primary hover:text-white transition-all">+</button>
+          className="w-8 h-8 rounded-xl bg-muted font-black text-lg hover:bg-blue-primary hover:text-white transition-all">+</button>
       </div>
     </div>
   );
@@ -41,7 +41,7 @@ export function FeaturesStep({ data, onChange }: Props) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-black text-primary mb-1">Características</h2>
+        <h2 className="text-xl font-bold text-heading mb-1">Características</h2>
         <p className="text-muted-foreground text-sm">Dimensões, cômodos e diferenciais do imóvel.</p>
       </div>
 
@@ -70,7 +70,7 @@ export function FeaturesStep({ data, onChange }: Props) {
                 if (f.key === 'floor') onChange({ metadata: { ...data.metadata, floor: v } });
                 else onChange({ [f.key]: v } as any);
               }}
-              className="w-full px-5 py-4 bg-white border-2 border-border rounded-2xl focus:border-primary outline-none font-black text-primary placeholder:text-muted-foreground/40 transition-all"
+              className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-black text-primary placeholder:text-muted-foreground/40 transition-all"
             />
           </div>
         ))}
@@ -84,7 +84,7 @@ export function FeaturesStep({ data, onChange }: Props) {
             <button key={s} type="button"
               onClick={() => onChange({ metadata: { ...data.metadata, solar: s } })}
               className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${
-                data.metadata?.solar === s ? 'bg-accent text-white border-accent' : 'bg-white text-primary border-border hover:border-accent/40'
+                data.metadata?.solar === s ? 'bg-accent text-white border-accent' : 'bg-surface text-primary border-border hover:border-accent/40'
               }`}
             >{s}</button>
           ))}
@@ -102,7 +102,7 @@ export function FeaturesStep({ data, onChange }: Props) {
             return (
               <button key={f} type="button" onClick={() => toggleFeature(f)}
                 className={`flex items-center gap-2 p-3 rounded-xl text-xs font-bold border-2 transition-all text-left ${
-                  selected ? 'border-primary bg-primary/5 text-primary' : 'border-border bg-white text-muted-foreground hover:border-primary/30'
+                  selected ? 'border-primary bg-blue-primary/5 text-primary' : 'border-border bg-surface text-muted-foreground hover:border-primary/30'
                 }`}
               >
                 {selected && <CheckCircle2 size={14} className="text-primary shrink-0" />}

@@ -199,13 +199,13 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-primary/20 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-blue-primary/20 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="bg-white w-full max-w-5xl rounded-[2.5rem] shadow-luxury border border-border relative overflow-hidden animate-in fade-in zoom-in duration-300 flex flex-col max-h-[90vh]">
+      <div className="bg-surface w-full max-w-5xl rounded-xl shadow-card border border-border relative overflow-hidden animate-in fade-in zoom-in duration-300 flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="p-8 border-b border-border flex justify-between items-center bg-muted/30 shrink-0">
           <div>
-            <h2 className="text-2xl font-black text-primary mb-1">Novo Imóvel (Atualizado)</h2>
+            <h2 className="text-xl font-bold text-heading mb-1">Novo Imóvel (Atualizado)</h2>
             <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
               Passo {step} de 4: {
                 step === 1 ? 'Identificação & Categoria' : 
@@ -214,7 +214,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
               }
             </p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white rounded-xl transition-colors text-muted-foreground">
+          <button onClick={onClose} className="p-2 hover:bg-surface rounded-xl transition-colors text-muted-foreground">
             <X size={24} />
           </button>
         </div>
@@ -241,7 +241,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                           address_neighborhood: selectedDev?.location_neighborhood || prev.address_neighborhood,
                         }));
                       }}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
                     >
                       <option value="">Imóvel Avulso (Sem Condomínio)</option>
                       {developments.map(d => (
@@ -257,7 +257,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                       type="text"
                       value={formData.title}
                       onChange={e => setFormData({ ...formData, title: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       placeholder="Ex: Cobertura Duplex no Setor Bueno"
                     />
                   </div>
@@ -268,7 +268,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                       type="text"
                       value={formData.slug}
                       onChange={e => setFormData({ ...formData, slug: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-medium text-primary text-xs"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-medium text-primary text-xs"
                       placeholder="auto-gerado-se-vazio"
                     />
                   </div>
@@ -281,7 +281,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                         type="text"
                         value={formData.reference}
                         onChange={e => setFormData({ ...formData, reference: e.target.value })}
-                        className="block w-full pl-12 pr-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        className="block w-full pl-12 pr-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       />
                     </div>
                   </div>
@@ -295,7 +295,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                           type="button"
                           onClick={() => setFormData({ ...formData, property_category: c })}
                           className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                            formData.property_category === c ? 'bg-primary text-white border-primary' : 'bg-muted/50 text-muted-foreground border-transparent hover:border-border'
+                            formData.property_category === c ? 'bg-blue-primary text-white border-primary' : 'bg-muted/50 text-muted-foreground border-transparent hover:border-border'
                           }`}
                         >
                           {c === 'residential' ? 'Residencial' : 'Comercial'}
@@ -309,7 +309,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                     <select
                       value={formData.transaction_type}
                       onChange={e => setFormData({ ...formData, transaction_type: e.target.value as any })}
-                      className="block w-full px-5 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
+                      className="block w-full px-5 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
                     >
                       <option value="sale">Venda</option>
                       <option value="rent">Locação</option>
@@ -322,7 +322,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                     <select
                       value={formData.type}
                       onChange={e => setFormData({ ...formData, type: e.target.value })}
-                      className="block w-full px-5 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
+                      className="block w-full px-5 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
                     >
                       <option>Apartamento</option>
                       <option>Casa / Sobrado</option>
@@ -340,7 +340,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                       rows={4}
                       value={formData.description}
                       onChange={e => setFormData({ ...formData, description: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-medium text-primary text-sm"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-medium text-primary text-sm"
                       placeholder="Detalhes sobre o imóvel, diferenciais e localização..."
                     />
                   </div>
@@ -357,7 +357,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                       type="text"
                       value={formData.address_street}
                       onChange={e => setFormData({ ...formData, address_street: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       placeholder="Rua, Avenida..."
                     />
                   </div>
@@ -368,7 +368,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                         type="text"
                         value={formData.address_number}
                         onChange={e => setFormData({ ...formData, address_number: e.target.value })}
-                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       />
                     </div>
                     <div className="space-y-2">
@@ -381,7 +381,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                           setFormData({ ...formData, address_zip_code: val });
                           if (val.replace(/\D/g, '').length === 8) fetchCep(val);
                         }}
-                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                         placeholder="00000-000"
                       />
                     </div>
@@ -393,7 +393,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                       type="text"
                       value={formData.address_neighborhood}
                       onChange={e => setFormData({ ...formData, address_neighborhood: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                     />
                   </div>
 
@@ -404,7 +404,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                         type="text"
                         value={formData.address_city}
                         onChange={e => setFormData({ ...formData, address_city: e.target.value })}
-                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       />
                     </div>
                     <div className="space-y-2">
@@ -413,7 +413,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                         type="text"
                         value={formData.address_state}
                         onChange={e => setFormData({ ...formData, address_state: e.target.value })}
-                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       />
                     </div>
                   </div>
@@ -424,7 +424,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                       type="text"
                       value={formData.latitude}
                       onChange={e => setFormData({ ...formData, latitude: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-medium text-primary"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-medium text-primary"
                       placeholder="-16.704858"
                     />
                   </div>
@@ -435,7 +435,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                       type="text"
                       value={formData.longitude}
                       onChange={e => setFormData({ ...formData, longitude: e.target.value })}
-                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-medium text-primary"
+                      className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-medium text-primary"
                       placeholder="-49.251057"
                     />
                   </div>
@@ -474,7 +474,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                           type="button"
                           onClick={() => setFormData({ ...formData, pattern: p })}
                           className={`flex-1 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${
-                            formData.pattern === p ? 'bg-primary text-white border-primary shadow-md' : 'bg-muted/50 text-muted-foreground border-transparent hover:border-border'
+                            formData.pattern === p ? 'bg-blue-primary text-white border-primary shadow-md' : 'bg-muted/50 text-muted-foreground border-transparent hover:border-border'
                           }`}
                         >
                           {p === 'economic' ? 'Econômico' : p === 'medium' ? 'Médio' : 'Luxo'}
@@ -528,7 +528,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                         type="text"
                         value={formData.video_url}
                         onChange={e => setFormData({ ...formData, video_url: e.target.value })}
-                        className="block w-full pl-12 pr-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-medium text-primary"
+                        className="block w-full pl-12 pr-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-medium text-primary"
                         placeholder="https://..."
                       />
                     </div>
@@ -541,7 +541,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                         type="text"
                         value={formData.tour_360_url}
                         onChange={e => setFormData({ ...formData, tour_360_url: e.target.value })}
-                        className="block w-full pl-12 pr-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-white focus:border-primary/20 transition-all outline-none font-medium text-primary"
+                        className="block w-full pl-12 pr-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-medium text-primary"
                         placeholder="https://..."
                       />
                     </div>
@@ -558,7 +558,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                         onClick={() => toggleFeature(feature)}
                         className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
                           formData.metadata.features.includes(feature)
-                            ? 'bg-primary/10 text-primary border-primary/20'
+                            ? 'bg-blue-primary/10 text-primary border-primary/20'
                             : 'bg-muted/50 text-muted-foreground border-transparent hover:border-border'
                         }`}
                       >
@@ -571,13 +571,13 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                   {/* Upload Trigger */}
                   <label className={`
-                    aspect-square rounded-[2rem] border-2 border-dashed border-border flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/30 transition-all group
+                    aspect-square rounded-xl border-2 border-dashed border-border flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/30 transition-all group
                     ${uploading ? 'pointer-events-none opacity-50' : ''}
                   `}>
                     <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
                     {uploading ? <Loader2 className="animate-spin text-primary" size={32} /> : (
                       <>
-                        <div className="p-3 bg-primary/5 rounded-2xl text-primary group-hover:scale-110 transition-transform">
+                        <div className="p-3 bg-blue-primary/5 rounded-2xl text-primary group-hover:scale-110 transition-transform">
                           <Plus size={24} />
                         </div>
                         <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Adicionar</span>
@@ -587,20 +587,20 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
 
                   {/* Image Previews */}
                   {formData.images.map((url, i) => (
-                    <div key={i} className="relative aspect-square rounded-[2rem] overflow-hidden group border border-border">
+                    <div key={i} className="relative aspect-square rounded-xl overflow-hidden group border border-border">
                       <Image src={url} alt="" fill className="w-full h-full object-cover" sizes="200px" />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                         <button 
                           type="button"
                           onClick={() => setFormData({ ...formData, main_image: url })}
-                          className={`p-2 rounded-xl transition-all ${formData.main_image === url ? 'bg-accent text-white' : 'bg-white text-primary hover:bg-accent hover:text-white'}`}
+                          className={`p-2 rounded-xl transition-all ${formData.main_image === url ? 'bg-accent text-white' : 'bg-surface text-primary hover:bg-accent hover:text-white'}`}
                         >
                           <ImageIcon size={18} />
                         </button>
                         <button 
                           type="button"
                           onClick={() => removeImage(url)}
-                          className="p-2 bg-white text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
+                          className="p-2 bg-surface text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -630,7 +630,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
               <button
                 type="button"
                 onClick={() => setStep(step - 1)}
-                className="px-8 py-4 rounded-2xl font-bold text-sm text-muted-foreground hover:bg-white transition-all"
+                className="px-8 py-4 rounded-2xl font-bold text-sm text-muted-foreground hover:bg-surface transition-all"
               >
                 Voltar
               </button>
@@ -640,7 +640,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
               <button
                 type="button"
                 onClick={() => setStep(step + 1)}
-                className="bg-primary text-white px-10 py-4 rounded-2xl font-black text-sm hover:bg-primary-light transition-all shadow-premium"
+                className="bg-blue-primary text-white px-10 py-4 rounded-2xl font-black text-sm hover:bg-blue-primary-light transition-all shadow-card"
               >
                 Próximo
               </button>
@@ -649,7 +649,7 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                 form="property-form"
                 type="submit"
                 disabled={loading || uploading}
-                className="bg-accent text-white px-12 py-4 rounded-2xl font-black text-sm hover:bg-yellow-600 transition-all shadow-premium flex items-center gap-2"
+                className="bg-accent text-white px-12 py-4 rounded-2xl font-black text-sm hover:bg-yellow-600 transition-all shadow-card flex items-center gap-2"
               >
                 {loading ? <Loader2 className="animate-spin" size={20} /> : 'Salvar no Habita.vc'}
               </button>
@@ -670,7 +670,7 @@ const PriceInput = ({ label, value, onChange }: { label: string; value: number; 
         type="number"
         value={value}
         onChange={e => onChange(Number(e.target.value))}
-        className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-xl focus:bg-white focus:border-primary/20 transition-all outline-none font-bold text-primary"
+        className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
       />
     </div>
   </div>

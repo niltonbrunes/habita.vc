@@ -41,26 +41,26 @@ export default function PeopleListPage() {
             <h1 className="text-3xl font-black text-primary tracking-tight">Pessoas</h1>
             <p className="text-muted-foreground text-sm">Gerencie leads, clientes, proprietários e parceiros.</p>
           </div>
-          <Link href="/crmhabita/pessoas/novo" className="flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-2xl hover:bg-primary-light transition-all shadow-premium shrink-0">
+          <Link href="/crmhabita/pessoas/novo" className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-primary text-white font-bold rounded-2xl hover:bg-blue-primary-light transition-all shadow-card shrink-0">
             <Plus size={20} /> Nova Pessoa
           </Link>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-3xl border border-border shadow-sm">
+        <div className="flex flex-col md:flex-row gap-4 bg-surface p-4 rounded-3xl border border-border shadow-sm">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
             <input type="text"
               placeholder="Buscar por nome, CPF, CNPJ..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-muted/30 border border-border rounded-xl font-medium focus:border-primary focus:bg-white transition-all outline-none" style={{ paddingLeft: "3rem" }}
+              className="w-full pl-12 pr-4 py-3 bg-muted/30 border border-border rounded-xl font-medium focus:border-primary focus:bg-surface transition-all outline-none" style={{ paddingLeft: "3rem" }}
             />
           </div>
           <select
             value={filterRole}
             onChange={e => setFilterRole(e.target.value)}
-            className="px-6 py-3 bg-muted/30 border border-border rounded-xl font-bold text-primary focus:border-primary focus:bg-white transition-all outline-none min-w-[200px]"
+            className="px-6 py-3 bg-muted/30 border border-border rounded-xl font-bold text-primary focus:border-primary focus:bg-surface transition-all outline-none min-w-[200px]"
           >
             <option value="">Todos os papéis</option>
             <option value="lead">Leads</option>
@@ -75,7 +75,7 @@ export default function PeopleListPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
             {[1,2,3,4,5,6].map(i => (
-              <div key={i} className="bg-white h-48 rounded-[2rem] border border-border" />
+              <div key={i} className="bg-surface h-48 rounded-xl border border-border" />
             ))}
           </div>
         ) : people.length > 0 ? (
@@ -88,9 +88,9 @@ export default function PeopleListPage() {
               
               return (
                 <div key={person.id} className="relative group">
-                  <Link href={`/crmhabita/pessoas/${person.id}`} className="block bg-white p-6 rounded-[2rem] border-2 border-border hover:border-primary transition-all shadow-sm hover:shadow-premium min-h-[180px]">
+                  <Link href={`/crmhabita/pessoas/${person.id}`} className="block bg-surface p-6 rounded-xl border-2 border-border hover:border-primary transition-all shadow-sm hover:shadow-card min-h-[180px]">
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center shrink-0 border border-border group-hover:bg-primary/5 transition-colors">
+                      <div className="w-14 h-14 bg-muted rounded-2xl flex items-center justify-center shrink-0 border border-border group-hover:bg-blue-primary/5 transition-colors">
                         {person.person_type === 'PJ' ? <Building2 className="text-primary" size={24} /> : <User className="text-primary" size={24} />}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -145,7 +145,7 @@ export default function PeopleListPage() {
                             <a 
                               href={`mailto:${email}`}
                               onClick={(e) => e.stopPropagation()}
-                              className="w-10 h-10 bg-primary/5 text-primary rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm"
+                              className="w-10 h-10 bg-blue-primary/5 text-primary rounded-xl flex items-center justify-center hover:bg-blue-primary hover:text-white transition-all shadow-sm"
                               title="E-mail"
                             >
                               <Mail size={18} />
@@ -160,7 +160,7 @@ export default function PeopleListPage() {
             })}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white rounded-[3rem] border border-border">
+          <div className="text-center py-20 bg-surface rounded-[3rem] border border-border">
             <div className="w-20 h-20 bg-muted rounded-3xl flex items-center justify-center mx-auto mb-6">
               <User className="text-muted-foreground" size={32} />
             </div>
