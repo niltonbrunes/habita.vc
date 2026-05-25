@@ -35,18 +35,18 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
       <div 
         draggable
         onDragStart={(e) => onDragStart(e, lead.id)}
-        className="bg-surface p-2.5 rounded-[10px] shadow-sm hover:shadow-card transition-all duration-300 cursor-grab active:cursor-grabbing group relative border border-border-light hover:border-accent/30 flex flex-col gap-2"
+        className="bg-surface p-1.5 rounded-lg shadow-sm hover:shadow-card transition-all duration-300 cursor-grab active:cursor-grabbing group relative border border-border-light hover:border-accent/30 flex flex-col gap-1"
       >
-        <div className="flex justify-between items-start gap-2">
-          <div className="flex items-center gap-2 min-w-0">
+        <div className="flex justify-between items-start gap-1">
+          <div className="flex items-center gap-1 min-w-0">
             <div 
-              className="w-6 h-6 rounded-md flex items-center justify-center text-[9px] font-black text-white flex-shrink-0"
+              className="w-5 h-5 rounded-sm flex items-center justify-center text-[7px] font-black text-white flex-shrink-0"
               style={{ backgroundColor: getAvatarBg(displayName) }}
             >
               {getInitials(displayName)}
             </div>
             <Link href={lead.person_id ? `/crmhabita/pessoas/${lead.person_id}` : `/crmhabita/leads/${lead.id}`} className="min-w-0">
-              <h4 className="font-bold text-heading text-[12px] leading-tight hover:text-accent transition-colors truncate">{displayName}</h4>
+              <h4 className="font-bold text-heading text-[10px] leading-tight hover:text-accent transition-colors truncate">{displayName}</h4>
             </Link>
           </div>
           
@@ -62,10 +62,10 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
         </div>
 
         <div className="flex items-center justify-between mt-1">
-          <p className="text-[12px] font-black text-primary">{formattedValue}</p>
+          <p className="text-[10px] font-black text-primary">{formattedValue}</p>
           <div className="flex items-center gap-1">
-             <Sparkles size={10} className="text-accent" />
-             <span className="text-[10px] font-bold text-muted">{lead.score} pts</span>
+             <Sparkles size={8} className="text-accent" />
+             <span className="text-[8px] font-bold text-muted">{lead.score} pts</span>
           </div>
         </div>
       </div>
@@ -84,7 +84,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
   }).format(columnTotalValue);
 
   return (
-    <div className="flex flex-col w-[320px] shrink-0 h-full group/col pb-10">
+    <div className="flex flex-col w-[260px] shrink-0 h-full group/col pb-10">
       <div className="flex flex-col mb-4 px-2">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -93,7 +93,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
             </div>
             <div>
               <h3 className="font-black text-sm text-primary uppercase tracking-[0.25em]">{column.title}</h3>
-              <p className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest">{leads.length} leads</p>
+              <p className="text-[8px] font-bold text-muted-foreground/30 uppercase tracking-widest">{leads.length} leads</p>
             </div>
           </div>
           <button 
