@@ -58,6 +58,7 @@ export const InviteMemberModal = ({ isOpen, onClose, onSuccess }: InviteMemberMo
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -67,6 +68,7 @@ export const InviteMemberModal = ({ isOpen, onClose, onSuccess }: InviteMemberMo
     setRole('broker');
     setError(null);
     setSuccess(false);
+    setGeneratedPassword(null);
     onClose();
   };
 
@@ -109,10 +111,7 @@ export const InviteMemberModal = ({ isOpen, onClose, onSuccess }: InviteMemberMo
       }
 
       setSuccess(true);
-      setTimeout(() => {
-        handleClose();
-        onSuccess();
-      }, 2500);
+      setGeneratedPassword(tempPassword);
 
     } catch (err: any) {
       const msg = err?.message || 'Erro ao enviar convite.';
@@ -152,17 +151,42 @@ export const InviteMemberModal = ({ isOpen, onClose, onSuccess }: InviteMemberMo
         </div>
 
         {success ? (
-          <div className="p-12 flex flex-col items-center text-center gap-4">
-            <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center">
+          <div className="p-8 flex flex-col items-center text-center gap-5">
+            <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mb-2">
               <CheckCircle2 size={44} className="text-green-500" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-heading mb-2">Convite Enviado!</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Um e-mail de confirmacao foi enviado para<br />
-                <strong className="text-primary">{email}</strong>.<br />
-                O usuario deve verificar o e-mail para ativar o acesso.
+              <h3 className="text-2xl font-black text-heading mb-3">Membro Adicionado!</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                O usuário já pode acessar o sistema com o e-mail:<br />
+                <strong className="text-primary text-base">{email}</strong>
               </p>
+              
+              <div className="bg-orange-50 border border-orange-200 p-5 rounded-2xl w-full max-w-sm text-left mb-6">
+                <p className="text-[11px] font-black text-orange-600 uppercase tracking-widest mb-2">Senha Temporária</p>
+                <div className="flex items-center justify-between gap-3">
+                  <code className="text-xl font-mono font-bold text-orange-900 select-all">{generatedPassword}</code>
+                  <button 
+                    onClick={() => navigator.clipboard.writeText(generatedPassword || '')}
+                    className="px-3 py-1.5 bg-white border border-orange-200 text-orange-700 text-xs font-bold rounded-lg hover:bg-orange-100 transition-colors"
+                  >
+                    COPIAR
+                  </button>
+                </div>
+                <p className="text-[11px] text-orange-700 mt-3 font-medium">
+                  Copie e envie esta senha para o novo membro de forma segura.
+                </p>
+              </div>
+
+              <button
+                onClick={() => {
+                  handleClose();
+                  onSuccess();
+                }}
+                className="w-full bg-blue-primary text-white py-4 rounded-2xl font-bold hover:bg-blue-hover transition-colors"
+              >
+                Concluir
+              </button>
             </div>
           </div>
         ) : (
@@ -171,7 +195,7 @@ export const InviteMemberModal = ({ isOpen, onClose, onSuccess }: InviteMemberMo
             <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 p-4 rounded-2xl">
               <Info size={16} className="text-blue-500 shrink-0 mt-0.5" />
               <p className="text-xs text-blue-700 font-medium leading-relaxed">
-                O convidado recebera um e-mail com link de ativacao para definir sua senha.
+                O sistema irá gerar uma senha segura automaticamente. Você deverá copiá-la e enviar ao convidado.
                 Este cadastro e separado de Contatos/Pessoas do CRM.
               </p>
             </div>
