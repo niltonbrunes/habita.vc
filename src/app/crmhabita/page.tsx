@@ -170,7 +170,9 @@ export default function DashboardPage() {
           </SectionCard>
 
           {/* FUNIL REAL E CANAIS */}
-          <div className="grid grid-cols-1 xl:grid-cols-[330px_1fr_1fr] gap-5 mt-5">
+        <div className="grid grid-cols-1 xl:grid-cols-[330px_1fr] gap-8 mt-5">
+           {/* Left Column: Funnel & Properties Chart */}
+           <div className="space-y-8 flex flex-col">
              <SectionCard title="Funil de Vendas (Realizado)">
                 <div className="p-4">
                   <FunnelBar label="Base"        color="bg-blue-primary"   pct={100} count={metrics?.activeLeads || 0} loading={loading} />
@@ -180,21 +182,27 @@ export default function DashboardPage() {
                   <FunnelBar label="Negociação"  color="bg-green-primary"  pct={11}  count={Math.round((metrics?.activeLeads || 0) * 0.11)} loading={loading} />
                 </div>
              </SectionCard>
-             <SectionCard title="Análise de Canais">
-                <div className="p-2">
-                  <ChannelPerformance />
-                </div>
-             </SectionCard>
+             
              <SectionCard title="Quantidade por Tipo de Imóvel">
                 <div className="p-2 h-full flex flex-col justify-center min-h-[300px]">
                   <PropertyTypeChart />
                 </div>
              </SectionCard>
-          </div>
+           </div>
 
+           {/* Right Column: Channel Performance */}
+           <div className="flex flex-col h-full">
+             <SectionCard title="Análise de Canais">
+                <div className="p-2 h-full flex-grow">
+                  <ChannelPerformance />
+                </div>
+             </SectionCard>
+           </div>
         </div>
 
-        {/* ── RIGHT: Agenda + Oportunidades ── */}
+      </div>
+
+      {/* ── RIGHT: Agenda + Oportunidades ── */}
         <aside className="w-[280px] flex-shrink-0 border-l border-border bg-surface overflow-y-auto hidden xl:flex flex-col">
 
           <SectionCard title="Agenda do dia" link={{ label: 'Ver tudo', href: '/crmhabita/agenda' }} noBorder>
