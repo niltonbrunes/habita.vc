@@ -32,7 +32,13 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setError(error.message);
+      if (error.message.toLowerCase().includes("email not confirmed")) {
+        setError("E-mail não confirmado. Verifique a caixa de entrada ou desative 'Confirm email' no painel do Supabase.");
+      } else if (error.message.toLowerCase().includes("invalid login credentials")) {
+        setError("E-mail ou senha incorretos.");
+      } else {
+        setError(error.message);
+      }
       setLoading(false);
     }
   };
