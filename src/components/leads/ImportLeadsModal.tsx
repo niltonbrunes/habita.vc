@@ -27,6 +27,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
     source: ''
   });
   const [delimiter, setDelimiter] = useState(',');
+  const [globalSource, setGlobalSource] = useState('');
   
   // Produto Vinculado (Opcional)
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
@@ -138,7 +139,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
             ],
             assigned_to_id: user.id,
             commercial_info: {
-              lead_source: raw.source || 'Importação CSV',
+              lead_source: globalSource || raw.source || 'Importação CSV',
               notes: 'Criado automaticamente via importação de leads.'
             }
           } as any);
@@ -155,7 +156,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           status: 'lead' as any,
           temperature: 'warm' as any,
           score: 50,
-          source: raw.source || 'Importação CSV',
+          source: globalSource || raw.source || 'Importação CSV',
           value: selectedPropertyId ? selectedPropertyPrice : undefined,
           interest_description: selectedPropertyType === 'development' ? `Interesse no Empreendimento: ${selectedPropertyTitle}` : undefined,
           property_id: selectedPropertyType === 'property' ? (selectedPropertyId || undefined) : undefined,
@@ -330,7 +331,40 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                 {/* Mapping Section */}
                 <div className="space-y-4">
                   <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Mapeamento de Campos (De/Para)</p>
-                  <div className="space-y-3">
+                  
+            {/* Origem Global */}
+            <div className="space-y-3">
+              <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">Origem Global (Opcional)</label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={globalSource}
+                  onChange={(e) => setGlobalSource(e.target.value)}
+                  placeholder="Ex: Plantão FGR, Indicação, etc"
+                  list="lead-sources"
+                  className="w-full px-4 py-3 bg-muted/50 border border-transparent rounded-xl focus:bg-white focus:border-primary/20 outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
+                />
+                <datalist id="lead-sources">
+                  <option value="Indicação" />
+                  <option value="Base de clientes" />
+                  <option value="Network" />
+                  <option value="Portais" />
+                  <option value="Redes sociais" />
+                  <option value="Ligação ativa" />
+                  <option value="Ponto avançado" />
+                  <option value="IA Prospecção" />
+                  <option value="Manual" />
+                  <option value="Ação de Vendas" />
+                </datalist>
+              </div>
+              <p className="text-[9px] font-medium text-muted-foreground leading-relaxed italic">
+                Se preenchido, esta origem será aplicada a <strong>todos</strong> os leads da planilha, ignorando o mapeamento de colunas.
+              </p>
+            </div>
+            
+            <div className="w-full h-px bg-border/40" />
+
+            <div className="space-y-3">
                     <MappingField 
                       label="Nome do Lead" 
                       field="name" 
