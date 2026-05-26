@@ -14,7 +14,7 @@ export const PropertyOwnersService = {
   async create(owner: Omit<PropertyOwner, 'id' | 'created_at'>): Promise<PropertyOwner> {
     const { data, error } = await supabase
       .from('property_owners')
-      .insert([owner])
+      .insert([{ ...owner, cpf_cnpj: undefined }])
       .select()
       .single();
     if (error) throw error;
@@ -24,7 +24,7 @@ export const PropertyOwnersService = {
   async update(id: string, owner: Partial<PropertyOwner>): Promise<PropertyOwner> {
     const { data, error } = await supabase
       .from('property_owners')
-      .update(owner)
+      .update({ ...owner, cpf_cnpj: undefined })
       .eq('id', id)
       .select()
       .single();
@@ -51,7 +51,7 @@ export const PropertyOwnersService = {
     if (owners.length > 0) {
       const { error: insError } = await supabase
         .from('property_owners')
-        .insert(owners.map(o => ({ ...o, property_id: propertyId })));
+        .insert(owners.map(o => { const { cpf_cnpj, ...rest } = o; return { ...rest, property_id: propertyId }; }));
       if (insError) throw insError;
     }
   }
