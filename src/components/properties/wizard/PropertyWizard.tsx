@@ -164,7 +164,7 @@ export function PropertyWizard({ initialData }: PropertyWizardProps) {
         setOwners(initialData.owners.map((o: any) => ({
           person_id: o.person_id,
           name: o.name,
-          cpf_cnpj: o.cpf_cnpj,
+          // cpf_cnpj: o.cpf_cnpj, // Removido para evitar erro de schema cache na tabela property_owners
           phone: o.phone,
           email: o.email,
           ownership_percent: o.ownership_percent,
