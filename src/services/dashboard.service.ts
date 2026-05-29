@@ -9,6 +9,13 @@ export interface DashboardMetrics {
   newLeadsToday: number;
   goalProgress: number;
   realVgv: number;
+  funnelStats?: {
+    base: number;
+    oportunidades: number;
+    apresentacoes: number;
+    propostas: number;
+    vendas: number;
+  };
 }
 
 export interface RankingData {
@@ -47,12 +54,41 @@ export class DashboardService {
       return acc + Number(brokerSplit?.value || 0);
     }, 0) || 0;
 
-    // 3. Get Active Leads
-    const { count: activeLeads } = await supabase
+        // 3. Get Active Leads
+    const { data: allLeadsData } = await supabase
       .from('leads')
-      .select('*', { count: 'exact', head: true })
-      .eq('assigned_to_id', userId)
-      .not('status', 'in', '("sale","lost")');
+      .select('status, created_at, updated_at')
+      .eq('assigned_to_id', userId);
+
+    const activeLeads = (allLeadsData || []).filter(l => l.status !== 'sale' && l.status !== 'lost').length;
+
+    const funnelStats = {
+      base: 0,
+      oportunidades: 0,
+      apresentacoes: 0,
+      propostas: 0,
+      vendas: 0
+    };
+
+    const currentQuarter = Math.floor((now.getMonth() + 3) / 3);
+    const currentYear = now.getFullYear();
+
+    (allLeadsData || []).forEach((l: any) => {
+      funnelStats.base++;
+      if (l.status === 'lead' || l.status === 'contact') {
+        funnelStats.oportunidades++;
+      } else if (l.status === 'presentation' || l.status === 'visit') {
+        funnelStats.apresentacoes++;
+      } else if (l.status === 'proposal') {
+        funnelStats.propostas++;
+      } else if (l.status === 'sale') {
+        const d = new Date(l.updated_at || l.created_at);
+        const q = Math.floor((d.getMonth() + 3) / 3);
+        if (q === currentQuarter && d.getFullYear() === currentYear) {
+          funnelStats.vendas++;
+        }
+      }
+    });
 
     // 4. New Leads Today
     const startOfToday = new Date();
@@ -72,10 +108,11 @@ export class DashboardService {
       monthlyGoal,
       realEarnings,
       vgvNeeded,
-      activeLeads: activeLeads || 0,
+            activeLeads: activeLeads || 0,
       newLeadsToday: newLeadsToday || 0,
       goalProgress: Math.min(100, Math.round((realEarnings / monthlyGoal) * 100)),
-      realVgv: currentVGV
+      realVgv: currentVGV,
+      funnelStats
     };
   }
 
@@ -281,3 +318,4 @@ export class DashboardService {
   }
 
 }
+

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -174,14 +174,14 @@ export default function DashboardPage() {
            {/* Left Column: Funnel & Properties Chart */}
            <div className="space-y-8 flex flex-col">
              <SectionCard title="Funil de Vendas (Realizado)">
-                <div className="p-4">
-                  <FunnelBar label="Base"        color="bg-blue-primary"   pct={100} count={metrics?.activeLeads || 0} loading={loading} />
-                  <FunnelBar label="Qualificação" color="bg-orange-primary" pct={60}  count={Math.round((metrics?.activeLeads || 0) * 0.6)} loading={loading} />
-                  <FunnelBar label="Visita"      color="bg-purple-primary" pct={40}  count={Math.round((metrics?.activeLeads || 0) * 0.4)} loading={loading} />
-                  <FunnelBar label="Proposta"    color="bg-pink-primary"   pct={25}  count={Math.round((metrics?.activeLeads || 0) * 0.25)} loading={loading} />
-                  <FunnelBar label="Negociação"  color="bg-green-primary"  pct={11}  count={Math.round((metrics?.activeLeads || 0) * 0.11)} loading={loading} />
-                </div>
-             </SectionCard>
+  <div className="p-4">
+    <FunnelBar label="Base" color="bg-blue-primary" pct={100} count={metrics?.funnelStats?.base || 0} loading={loading} />
+    <FunnelBar label="Oportunidades" color="bg-orange-primary" pct={metrics?.funnelStats?.base ? Math.round(((metrics.funnelStats.oportunidades || 0) / metrics.funnelStats.base) * 100) : 0} count={metrics?.funnelStats?.oportunidades || 0} loading={loading} />
+    <FunnelBar label="Apresentações" color="bg-purple-primary" pct={metrics?.funnelStats?.base ? Math.round(((metrics.funnelStats.apresentacoes || 0) / metrics.funnelStats.base) * 100) : 0} count={metrics?.funnelStats?.apresentacoes || 0} loading={loading} />
+    <FunnelBar label="Propostas" color="bg-pink-primary" pct={metrics?.funnelStats?.base ? Math.round(((metrics.funnelStats.propostas || 0) / metrics.funnelStats.base) * 100) : 0} count={metrics?.funnelStats?.propostas || 0} loading={loading} />
+    <FunnelBar label="Vendas trimestre" color="bg-green-primary" pct={metrics?.funnelStats?.base ? Math.round(((metrics.funnelStats.vendas || 0) / metrics.funnelStats.base) * 100) : 0} count={metrics?.funnelStats?.vendas || 0} loading={loading} />
+  </div>
+</SectionCard>
              
              <SectionCard title="Quantidade por Tipo de Imóvel">
                 <div className="p-2 h-full flex flex-col justify-center min-h-[300px]">
@@ -370,3 +370,6 @@ const TargetIcon = () => (
     <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
   </svg>
 );
+
+
+
