@@ -15,7 +15,8 @@ import { Footer } from "@/components/dual-om-stay/Footer";
 
 const Index = () => {
   return (
-    <main>
+    <div className="theme-dual-om-stay antialiased">
+      <main>
       <Navbar />
       <HeroSection />
       <AboutSection />
@@ -27,6 +28,7 @@ const Index = () => {
       <ContactForm />
       <Footer />
     </main>
+    </div>
   );
 };
 

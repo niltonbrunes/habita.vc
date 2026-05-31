@@ -463,3 +463,249 @@ h1, h2, h3, h4, h5, h6 {
   background-color: hsl(var(--background));
 }
 
+
+
+/* =========================================================
+   LOVABLE THEME FONT OVERRIDES
+   These ensure each theme's fonts override the global body/h* rules
+   ========================================================= */
+
+/* ── Parqville: Playfair Display + DM Sans ── */
+.theme-parqville {
+  font-family: 'DM Sans', sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+.theme-parqville h1, .theme-parqville h2, .theme-parqville h3,
+.theme-parqville h4, .theme-parqville h5, .theme-parqville h6 {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: hsl(var(--foreground));
+  letter-spacing: normal;
+}
+.theme-parqville p, .theme-parqville span, .theme-parqville a,
+.theme-parqville li, .theme-parqville button, .theme-parqville label {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Up Buriti: Plus Jakarta Sans (display) + Inter (body) ── */
+.theme-up-buriti {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+.theme-up-buriti h1, .theme-up-buriti h2, .theme-up-buriti h3,
+.theme-up-buriti h4, .theme-up-buriti h5, .theme-up-buriti h6 {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif !important;
+  color: hsl(var(--foreground));
+  letter-spacing: -0.02em;
+}
+
+/* ── Fusion Dinâmica: Playfair Display + Inter ── */
+.theme-fusion-dinamica {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+.theme-fusion-dinamica h1, .theme-fusion-dinamica h2, .theme-fusion-dinamica h3,
+.theme-fusion-dinamica h4, .theme-fusion-dinamica h5, .theme-fusion-dinamica h6 {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: hsl(var(--foreground));
+  letter-spacing: normal;
+}
+.theme-fusion-dinamica p, .theme-fusion-dinamica span, .theme-fusion-dinamica a,
+.theme-fusion-dinamica li, .theme-fusion-dinamica button {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+/* Utility classes used in fusion components */
+.theme-fusion-dinamica .font-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+.theme-fusion-dinamica .font-body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+/* Gold gradient */
+.theme-fusion-dinamica .bg-gradient-gold {
+  background: var(--gradient-gold);
+}
+
+/* ── Bioma Wellness: Cormorant Garamond + DM Sans ── */
+.theme-bioma-wellness {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+.theme-bioma-wellness h1, .theme-bioma-wellness h2, .theme-bioma-wellness h3,
+.theme-bioma-wellness h4, .theme-bioma-wellness h5, .theme-bioma-wellness h6 {
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  color: hsl(var(--foreground));
+  letter-spacing: normal;
+  font-weight: 600;
+}
+.theme-bioma-wellness p, .theme-bioma-wellness span, .theme-bioma-wellness a,
+.theme-bioma-wellness li, .theme-bioma-wellness button, .theme-bioma-wellness label {
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+.theme-bioma-wellness .font-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+.theme-bioma-wellness .font-body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+/* Wellness gradient backgrounds */
+.theme-bioma-wellness .bg-gradient-wellness {
+  background: var(--gradient-wellness);
+}
+.theme-bioma-wellness .bg-gradient-warm {
+  background: var(--gradient-warm);
+}
+
+/* ── Dual O.M Stay: dark theme (gold on near-black) ── */
+.theme-dual-om-stay {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+.theme-dual-om-stay h1, .theme-dual-om-stay h2, .theme-dual-om-stay h3,
+.theme-dual-om-stay h4, .theme-dual-om-stay h5, .theme-dual-om-stay h6 {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: hsl(var(--foreground));
+  letter-spacing: normal;
+}
+.theme-dual-om-stay p, .theme-dual-om-stay span, .theme-dual-om-stay a,
+.theme-dual-om-stay li, .theme-dual-om-stay button, .theme-dual-om-stay label {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.theme-dual-om-stay .font-display {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+.theme-dual-om-stay .font-body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+/* Gold gradient */
+.theme-dual-om-stay .bg-gradient-gold {
+  background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
+}
+
+
+
+/* =========================================================
+   LOVABLE THEME FONT OVERRIDES
+   These ensure each theme's fonts override the global body/h* rules
+   ========================================================= */
+
+/* ── Parqville: Playfair Display + DM Sans ── */
+.theme-parqville {
+  font-family: 'DM Sans', sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+.theme-parqville h1, .theme-parqville h2, .theme-parqville h3,
+.theme-parqville h4, .theme-parqville h5, .theme-parqville h6 {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: hsl(var(--foreground));
+  letter-spacing: normal;
+}
+.theme-parqville p, .theme-parqville span, .theme-parqville a,
+.theme-parqville li, .theme-parqville button, .theme-parqville label {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── Up Buriti: Plus Jakarta Sans (display) + Inter (body) ── */
+.theme-up-buriti {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+.theme-up-buriti h1, .theme-up-buriti h2, .theme-up-buriti h3,
+.theme-up-buriti h4, .theme-up-buriti h5, .theme-up-buriti h6 {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif !important;
+  color: hsl(var(--foreground));
+  letter-spacing: -0.02em;
+}
+
+/* ── Fusion Dinâmica: Playfair Display + Inter ── */
+.theme-fusion-dinamica {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+.theme-fusion-dinamica h1, .theme-fusion-dinamica h2, .theme-fusion-dinamica h3,
+.theme-fusion-dinamica h4, .theme-fusion-dinamica h5, .theme-fusion-dinamica h6 {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: hsl(var(--foreground));
+  letter-spacing: normal;
+}
+.theme-fusion-dinamica p, .theme-fusion-dinamica span, .theme-fusion-dinamica a,
+.theme-fusion-dinamica li, .theme-fusion-dinamica button {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+/* Utility classes used in fusion components */
+.theme-fusion-dinamica .font-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+.theme-fusion-dinamica .font-body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+/* Gold gradient */
+.theme-fusion-dinamica .bg-gradient-gold {
+  background: var(--gradient-gold);
+}
+
+/* ── Bioma Wellness: Cormorant Garamond + DM Sans ── */
+.theme-bioma-wellness {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+.theme-bioma-wellness h1, .theme-bioma-wellness h2, .theme-bioma-wellness h3,
+.theme-bioma-wellness h4, .theme-bioma-wellness h5, .theme-bioma-wellness h6 {
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  color: hsl(var(--foreground));
+  letter-spacing: normal;
+  font-weight: 600;
+}
+.theme-bioma-wellness p, .theme-bioma-wellness span, .theme-bioma-wellness a,
+.theme-bioma-wellness li, .theme-bioma-wellness button, .theme-bioma-wellness label {
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+.theme-bioma-wellness .font-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+.theme-bioma-wellness .font-body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+/* Wellness gradient backgrounds */
+.theme-bioma-wellness .bg-gradient-wellness {
+  background: var(--gradient-wellness);
+}
+.theme-bioma-wellness .bg-gradient-warm {
+  background: var(--gradient-warm);
+}
+
+/* ── Dual O.M Stay: dark theme (gold on near-black) ── */
+.theme-dual-om-stay {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+.theme-dual-om-stay h1, .theme-dual-om-stay h2, .theme-dual-om-stay h3,
+.theme-dual-om-stay h4, .theme-dual-om-stay h5, .theme-dual-om-stay h6 {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: hsl(var(--foreground));
+  letter-spacing: normal;
+}
+.theme-dual-om-stay p, .theme-dual-om-stay span, .theme-dual-om-stay a,
+.theme-dual-om-stay li, .theme-dual-om-stay button, .theme-dual-om-stay label {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.theme-dual-om-stay .font-display {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+.theme-dual-om-stay .font-body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+/* Gold gradient */
+.theme-dual-om-stay .bg-gradient-gold {
+  background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
+}
+

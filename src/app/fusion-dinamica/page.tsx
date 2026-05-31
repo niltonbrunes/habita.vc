@@ -16,7 +16,8 @@ import WhatsAppFloat from "@/components/fusion-dinamica/WhatsAppFloat";
 
 const Index = () => {
   return (
-    <main>
+    <div className="theme-fusion-dinamica antialiased">
+      <main>
       <HeroSection />
       <AboutSection />
       <FeaturesSection />
@@ -29,6 +30,7 @@ const Index = () => {
       <FooterSection />
       <WhatsAppFloat />
     </main>
+    </div>
   );
 };
 

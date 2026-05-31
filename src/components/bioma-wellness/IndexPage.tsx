@@ -88,7 +88,8 @@ const Index = () => {
   }, []);
 
   return (
-    <main>
+    <div className="theme-bioma-wellness antialiased">
+      <main>
       <HeroSection />
       <AboutSection />
       <TypologiesSection />
@@ -100,6 +101,7 @@ const Index = () => {
       <FooterBioma />
       <FloatingWhatsApp />
     </main>
+    </div>
   );
 };
 
