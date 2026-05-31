@@ -1,3 +1,4 @@
+@import "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap";
 @import "tailwindcss";
 
 @theme {
@@ -65,6 +66,8 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --color-glow-green: hsl(var(--glow-green));
+  --color-warm-gold: hsl(var(--warm-gold));
 
   --font-display: var(--font-display);
   --font-body: var(--font-body);
@@ -172,4 +175,5 @@ h1, h2, h3, h4, h5, h6 {
 .theme-parqville .card-elevated {
   box-shadow: 0 10px 40px -10px hsla(200, 15%, 15%, 0.1);
 }
+
 
