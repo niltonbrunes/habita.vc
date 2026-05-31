@@ -33,7 +33,8 @@ export async function proxy(request: NextRequest) {
     'dashboard',
     'blog',
     'corretor',
-    'ofertashabita'
+    'ofertashabita',
+    'parqville-cerejeira'
   ];
 
   // 3. Detect if it's a potential broker slug (root level, single segment)
@@ -118,3 +119,4 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
+
