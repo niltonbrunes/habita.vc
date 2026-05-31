@@ -15,16 +15,16 @@ import { ChevronLeft, ChevronRight, X, Dumbbell, Waves, TreePine, PartyPopper, D
 
 
 const gallery = [
-  { src: clubeExterno, alt: "Clube externo Parqville Cerejeira", label: "Clube Social" },
-  { src: piscina, alt: "Piscina com deck Parqville Cerejeira", label: "Piscina" },
-  { src: salaoFestas, alt: "Salão de festas Parqville Cerejeira", label: "Salão de Festas" },
-  { src: academia, alt: "Academia completa Parqville Cerejeira", label: "Academia" },
-  { src: quadras, alt: "Quadras poliesportivas Parqville Cerejeira", label: "Quadras" },
-  { src: beachTennis, alt: "Quadra de beach tennis Parqville Cerejeira", label: "Beach Tennis" },
-  { src: quadraAreia, alt: "Quadras de areia Parqville Cerejeira", label: "Quadras de Areia" },
-  { src: praca, alt: "Praça central com cerejeiras Parqville Cerejeira", label: "Praça Central" },
-  { src: petPlace, alt: "Pet place Parqville Cerejeira", label: "Pet Place" },
-  { src: playground, alt: "Playground infantil Parqville Cerejeira", label: "Playground" },
+  { src: "/parqville/clube-externo.jpeg", alt: "Clube externo Parqville Cerejeira", label: "Clube Social" },
+  { src: "/parqville/piscina.jpeg", alt: "Piscina com deck Parqville Cerejeira", label: "Piscina" },
+  { src: "/parqville/salao-festas.jpeg", alt: "Salão de festas Parqville Cerejeira", label: "Salão de Festas" },
+  { src: "/parqville/academia.jpeg", alt: "Academia completa Parqville Cerejeira", label: "Academia" },
+  { src: "/parqville/quadras.jpeg", alt: "Quadras poliesportivas Parqville Cerejeira", label: "Quadras" },
+  { src: "/parqville/beach-tennis.jpeg", alt: "Quadra de beach tennis Parqville Cerejeira", label: "Beach Tennis" },
+  { src: "/parqville/quadra-areia.jpeg", alt: "Quadras de areia Parqville Cerejeira", label: "Quadras de Areia" },
+  { src: "/parqville/praca.jpeg", alt: "Praça central com cerejeiras Parqville Cerejeira", label: "Praça Central" },
+  { src: "/parqville/pet-place.jpeg", alt: "Pet place Parqville Cerejeira", label: "Pet Place" },
+  { src: "/parqville/playground.jpeg", alt: "Playground infantil Parqville Cerejeira", label: "Playground" },
 ];
 
 const highlights = [
@@ -158,5 +158,6 @@ const ParqvilleSection = () => {
 };
 
 export default ParqvilleSection;
+
 
 
