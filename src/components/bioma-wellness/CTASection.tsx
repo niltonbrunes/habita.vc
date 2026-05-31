@@ -1,25 +1,24 @@
 "use client";
 import { MessageCircle, CalendarDays, Info } from "lucide-react";
-
-const WHATSAPP_BASE = "https://wa.me/5562993076768";
+import { LeadCaptureWrapper } from "@/components/crmhabita/LeadCaptureWrapper";
 
 const ctas = [
   {
     icon: Info,
     label: "Quero receber informações",
-    text: "?text=Ol%C3%A1!%20Quero%20receber%20informa%C3%A7%C3%B5es%20sobre%20o%20BIOMA%20Wellness%20Life!",
+    message: "Olá! Quero receber informações sobre o BIOMA Wellness Life!",
     variant: "primary" as const,
   },
   {
     icon: MessageCircle,
     label: "Falar com especialista",
-    text: "?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20um%20especialista%20sobre%20o%20BIOMA%20Wellness%20Life!",
+    message: "Olá! Gostaria de falar com um especialista sobre o BIOMA Wellness Life!",
     variant: "secondary" as const,
   },
   {
     icon: CalendarDays,
     label: "Agendar apresentação",
-    text: "?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20uma%20apresenta%C3%A7%C3%A3o%20do%20BIOMA%20Wellness%20Life!",
+    message: "Olá! Gostaria de agendar uma apresentação do BIOMA Wellness Life!",
     variant: "secondary" as const,
   },
 ];
@@ -36,26 +35,28 @@ const CTASection = () => {
           Seu novo lar wellness espera por você
         </h2>
         <p className="mx-auto mb-10 max-w-2xl font-body text-lg text-primary-foreground/80">
-          Condições especiais de lançamento. Fale agora com nosso consultor 
+          Condições especiais de lançamento. Fale agora com nosso consultor{" "}
           Frederico Brunes e garanta as melhores unidades.
         </p>
 
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
           {ctas.map((cta, i) => (
-            <a
+            <LeadCaptureWrapper
               key={i}
-              href={`${WHATSAPP_BASE}${cta.text}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 font-body text-base font-semibold transition-all hover:scale-105 ${
-                cta.variant === "primary"
-                  ? "bg-primary-foreground text-primary shadow-elevated"
-                  : "border-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-              }`}
+              source="Landing Page Bioma Wellness"
+              whatsappMsg={cta.message}
             >
-              <cta.icon className="h-5 w-5" />
-              {cta.label}
-            </a>
+              <span
+                className={`inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 font-body text-base font-semibold transition-all hover:scale-105 ${
+                  cta.variant === "primary"
+                    ? "bg-primary-foreground text-primary shadow-elevated"
+                    : "border-2 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+                }`}
+              >
+                <cta.icon className="h-5 w-5" />
+                {cta.label}
+              </span>
+            </LeadCaptureWrapper>
           ))}
         </div>
 
