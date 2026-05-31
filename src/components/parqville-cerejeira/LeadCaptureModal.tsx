@@ -26,8 +26,7 @@ export default function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalPr
         email,
         phone,
         source: "Landing Page Parqville Cerejeira",
-        status: "new",
-        origin: "whatsapp_button"
+        status: "lead"
       });
 
       const whatsappMsg = "Ol\u00e1, quero mais informa\u00e7\u00f5es sobre o Cidade do Amanh\u00e3 em Aparecida de Goi\u00e2nia.";
@@ -108,5 +107,6 @@ export default function LeadCaptureModal({ isOpen, onClose }: LeadCaptureModalPr
     </div>
   );
 }
+
 
 
