@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -91,8 +91,8 @@ export default function LeadsPage() {
         {/* Page Header Area */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
           <div>
-            <h1 className="text-2xl font-bold text-heading tracking-tighter mb-2">Gest�o de Leads</h1>
-            <p className="text-muted-foreground font-medium">Pipeline de vendas e convers�o em tempo real.</p>
+            <h1 className="text-2xl font-bold text-heading tracking-tighter mb-2">Gestão de Leads</h1>
+            <p className="text-muted-foreground font-medium">Pipeline de vendas e conversão em tempo real.</p>
           </div>
 
           <div className="flex items-center gap-3 w-full md:w-auto">
@@ -142,7 +142,7 @@ export default function LeadsPage() {
             <AlertCircle size={24} />
             <div>
               <p className="font-bold text-sm">Erro ao carregar leads</p>
-              <p className="text-xs opacity-80">Não foi possível conectar ao banco de dados ou a tabela não existe.</p>
+              <p className="text-xs opacity-80">NÃ£o foi possÃ­vel conectar ao banco de dados ou a tabela nÃ£o existe.</p>
             </div>
           </div>
         )}
