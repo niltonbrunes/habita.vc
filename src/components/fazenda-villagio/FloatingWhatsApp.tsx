@@ -8,7 +8,7 @@ const FloatingWhatsApp = () => {
       <LeadCaptureWrapper
         source="Floating WhatsApp Fazenda Villagio"
         whatsappMsg="Olá! Vi a landing page do Fazenda Villagio e gostaria de receber o book de apresentação e falar com um especialista sobre os lotes."
-        whatsappNumber="556283058000"
+        whatsappNumber="5562993076768"
       >
         <div className="cursor-pointer flex items-center justify-center bg-[#25d366] hover:bg-[#20ba5a] text-white p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95">
           <span className="absolute inset-0 bg-[#25d366] rounded-full opacity-30 animate-ping -z-10" />

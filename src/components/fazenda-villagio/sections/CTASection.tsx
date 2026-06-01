@@ -46,7 +46,7 @@ const CTASection = () => {
               key={i}
               source="Footer CTA Fazenda Villagio"
               whatsappMsg={cta.message}
-              whatsappNumber="556283058000"
+              whatsappNumber="5562993076768"
             >
               <span
                 className={
@@ -63,7 +63,7 @@ const CTASection = () => {
         </div>
 
         <p className="mt-12 text-[#F7F4EB]/60 text-sm font-medium">
-          Curadores Oficiais: Thiago Wendel e Frederico Brunes • Atendimento WhatsApp: (62) 8305-8000
+          Consultor Especialista: Frederico Brunes • Atendimento WhatsApp: (62) 99307-6768
         </p>
       </div>
     </section>

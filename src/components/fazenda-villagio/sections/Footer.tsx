@@ -49,8 +49,8 @@ const Footer = () => {
             Entre em contato direto pelo telefone para receber agendamento e a tabela com exclusividade:
           </p>
           <div className="text-lg font-bold text-[#F7F4EB] space-y-1">
-            <p>Telefone: (62) 98305-8000</p>
-            <p>WhatsApp: (62) 8305-8000</p>
+            <p>Telefone: (62) 99307-6768</p>
+            <p>WhatsApp: (62) 99307-6768</p>
           </div>
           <p className="text-xs text-white/40 flex items-center gap-1.5 pt-2">
             <Shield size={14} className="text-[#D4AF37]" />
