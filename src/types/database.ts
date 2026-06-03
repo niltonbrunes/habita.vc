@@ -1,6 +1,8 @@
 ﻿export type PropertyPattern = 'economic' | 'medium' | 'high_end';
-export type PropertyStatus = 'available' | 'reserved' | 'sold' | 'inactive';
+export type PropertyStatus = 'available' | 'reserved' | 'sold' | 'inactive' | 'suspended';
 export type LeadStatus = 'lead' | 'contact' | 'presentation' | 'visit' | 'proposal' | 'sale' | 'lost';
+export type SellerLeadStatus = 'prospecting' | 'contacted' | 'visit_scheduled' | 'visited' | 'proposal_sent' | 'captured' | 'lost';
+export type LeadType = 'buyer' | 'seller';
 export type UserRole = 'broker' | 'manager' | 'director' | 'admin';
 export type BrokerFocus = 'resale' | 'launch' | 'hybrid';
 
@@ -99,7 +101,10 @@ export interface Lead {
   name: string;
   email?: string;
   phone?: string;
-  status: LeadStatus;
+  /** Buyer pipeline status */
+  status: LeadStatus | SellerLeadStatus;
+  /** Tipo do lead: buyer = quer comprar, seller = quer vender (captação) */
+  lead_type?: LeadType;
   score: number;
   temperature: 'cold' | 'warm' | 'hot';
   value?: number;
@@ -109,9 +114,16 @@ export interface Lead {
   documents: any[];
   created_at: string;
   person?: any; // Dados da pessoa vinculada (carregados via join)
-  property_id?: string; // Link para imÃ³vel da base (opcional)
-  interest_description?: string; // DescriÃ§Ã£o de imÃ³vel externo/mercado
-  property?: any; // Dados do imÃ³vel (carregados via join)
+  property_id?: string; // Link para imóvel da base (opcional)
+  interest_description?: string; // Descrição de imóvel externo/mercado
+  property?: any; // Dados do imóvel (carregados via join)
+  // ── Campos exclusivos de leads vendedores (captação) ──────────────
+  seller_property_address?: string; // Endereço do imóvel a captar
+  seller_property_type?: string;    // Tipo: Casa, Apto, Terreno...
+  seller_asking_price?: number;     // Expectativa de preço do proprietário
+  seller_motivation?: string;       // Motivação: Mudança, Herança, Financeiro...
+  seller_property_area?: number;    // Área em m²
+  seller_rooms?: number;            // Quartos
 }
 
 export interface Developer {
@@ -198,4 +210,3 @@ export interface Sale {
   sale_date: string;
   created_at: string;
 }
-

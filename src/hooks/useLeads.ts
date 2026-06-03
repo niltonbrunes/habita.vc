@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { LeadsService } from '@/services/leads.service';
-import { Lead, LeadStatus } from '@/types/database';
+import { Lead, LeadStatus, SellerLeadStatus } from '@/types/database';
 import { useAuth } from '@/context/AuthContext';
 
 export function useLeads() {
@@ -18,13 +18,10 @@ export function useLeads() {
 
       let data: Lead[];
       if (isRole(['admin', 'director'])) {
-        // Admin/Director vê tudo
         data = await LeadsService.getAll();
       } else if (isRole(['manager'])) {
-        // Gerente vê leads da equipe dele + os próprios
         data = await LeadsService.getByTeamOf(profile.id);
       } else {
-        // Corretor vê apenas os próprios
         const all = await LeadsService.getAll();
         data = all.filter(l => l.assigned_to_id === profile.id);
       }
@@ -41,10 +38,10 @@ export function useLeads() {
     fetchLeads();
   }, [fetchLeads]);
 
-  const updateLeadStatus = async (id: string, status: LeadStatus) => {
+  const updateLeadStatus = async (id: string, status: LeadStatus | SellerLeadStatus) => {
     try {
       const updated = await LeadsService.updateStatus(id, status);
-      setLeads(prev => prev.map(l => l.id === id ? updated : l));
+      setLeads(prev => prev.map(l => (l.id === id ? updated : l)));
       return updated;
     } catch (err) {
       setError(err as Error);
@@ -52,11 +49,13 @@ export function useLeads() {
     }
   };
 
+  // Use string key to support both buyer and seller statuses
   const leadsByStatus = leads.reduce((acc, lead) => {
-    if (!acc[lead.status]) acc[lead.status] = [];
-    acc[lead.status].push(lead);
+    const key = lead.status as string;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(lead);
     return acc;
-  }, {} as Record<LeadStatus, Lead[]>);
+  }, {} as Record<string, Lead[]>);
 
   return { leads, leadsByStatus, loading, error, refresh: fetchLeads, updateLeadStatus };
 }

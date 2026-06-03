@@ -32,11 +32,11 @@ const Footer = () => {
           </ul>
 
           <h4 className="text-[#D4AF37] font-bold text-sm tracking-wider uppercase font-display pt-2">
-            Vendas e Parcerias
+            Vendas e Atendimento
           </h4>
           <ul className="text-sm space-y-1 font-medium text-[#F7F4EB]/90">
-            <li>Aevo Imobiliária</li>
-            <li className="text-xs text-white/50">CRECI Jurídico: 29.617</li>
+            <li>Frederico Brunes</li>
+            <li className="text-xs text-white/50">Consultor Imobiliário</li>
           </ul>
         </div>
 

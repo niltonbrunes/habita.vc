@@ -4,74 +4,162 @@ import React from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { KanbanColumnComponent } from '@/components/ui/Kanban';
 import { KANBAN_COLUMNS } from '@/lib/constants/kanban';
+import { CAPTACAO_COLUMNS } from '@/lib/constants/captacao';
 import { useLeads } from '@/hooks/useLeads';
-import { Search, Filter, Plus, Download, RefreshCw, Upload, AlertCircle } from 'lucide-react';
+import {
+  Search, Plus, Download, RefreshCw, AlertCircle, Upload,
+  ShoppingBag, Home
+} from 'lucide-react';
 import { LeadFormModal } from '@/components/leads/LeadFormModal';
 import { ImportLeadsModal } from '@/components/leads/ImportLeadsModal';
+import { CaptacaoFormModal } from '@/components/captacao/CaptacaoFormModal';
+import { CaptacaoColumnComponent } from '@/components/captacao/CaptacaoKanban';
+import { CaptacaoHeader } from '@/components/captacao/CaptacaoHeader';
 import { LeadsService } from '@/services/leads.service';
-
+import { PropertiesService } from '@/services/properties.service';
 import { KanbanHeader } from '@/components/ui/KanbanHeader';
 import { useAuth } from '@/context/AuthContext';
+import { SellerLeadStatus, Lead } from '@/types/database';
+
+type PipelineTab = 'buyer' | 'seller';
 
 export default function LeadsPage() {
-  const { leadsByStatus, leads, loading, error, refresh } = useLeads();
+  const { leads, loading, error, refresh } = useLeads();
   const { profile, isRole } = useAuth();
-  const [isLeadModalOpen, setIsLeadModalOpen] = React.useState(false);
+
+  // ── Tab state ──────────────────────────────────────────────────────
+  const [activeTab, setActiveTab] = React.useState<PipelineTab>('buyer');
+  const [isBuyerModalOpen, setIsBuyerModalOpen] = React.useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = React.useState(false);
+  const [isCaptacaoModalOpen, setIsCaptacaoModalOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
 
-  // 1. Role-based Visibility Filtering
+  // ── Role-based filter ──────────────────────────────────────────────
   const visibleLeads = React.useMemo(() => {
     if (!profile) return [];
     if (isRole(['admin', 'manager', 'director'])) return leads;
-    // Brokers see only their assigned leads
-    return leads.filter(l => l.assigned_to_id === profile.id);
+    return leads.filter((l: Lead) => l.assigned_to_id === profile.id);
   }, [leads, profile, isRole]);
 
-  // 2. Search & Search Filtering
-  const filteredLeads = React.useMemo(() => {
-    if (!search.trim()) return visibleLeads;
+  // ── Split buyer / seller ───────────────────────────────────────────
+  const buyerLeads = React.useMemo(
+    () => visibleLeads.filter((l: Lead) => !l.lead_type || l.lead_type === 'buyer'),
+    [visibleLeads],
+  );
+  const sellerLeads = React.useMemo(
+    () => visibleLeads.filter((l: Lead) => l.lead_type === 'seller'),
+    [visibleLeads],
+  );
+
+  // ── Search filter ──────────────────────────────────────────────────
+  const filteredBuyers = React.useMemo(() => {
+    if (!search.trim()) return buyerLeads;
     const q = search.toLowerCase();
-    return visibleLeads.filter(l =>
-      (l.name ?? '').toLowerCase().includes(q) ||
-      (l.email ?? '').toLowerCase().includes(q) ||
-      (l.phone ?? '').includes(q)
+    return buyerLeads.filter(
+      (l: Lead) =>
+        (l.name ?? '').toLowerCase().includes(q) ||
+        (l.email ?? '').toLowerCase().includes(q) ||
+        (l.phone ?? '').includes(q),
     );
-  }, [visibleLeads, search]);
+  }, [buyerLeads, search]);
 
-  // 3. Group by Status for Kanban
-  const groupedLeads = React.useMemo(() => {
-    return filteredLeads.reduce((acc, lead) => {
-      if (!acc[lead.status]) acc[lead.status] = [];
-      acc[lead.status].push(lead);
-      return acc;
-    }, {} as Record<string, typeof leads>);
-  }, [filteredLeads]);
+  const filteredSellers = React.useMemo(() => {
+    if (!search.trim()) return sellerLeads;
+    const q = search.toLowerCase();
+    return sellerLeads.filter(
+      (l: Lead) =>
+        (l.name ?? '').toLowerCase().includes(q) ||
+        (l.seller_property_address ?? '').toLowerCase().includes(q) ||
+        (l.seller_property_type ?? '').toLowerCase().includes(q) ||
+        (l.phone ?? '').includes(q),
+    );
+  }, [sellerLeads, search]);
 
+  // ── Group by status for kanban ─────────────────────────────────────
+  const groupedBuyers = React.useMemo(
+    () =>
+      filteredBuyers.reduce(
+        (acc: Record<string, Lead[]>, lead: Lead) => {
+          if (!acc[lead.status]) acc[lead.status] = [];
+          acc[lead.status].push(lead);
+          return acc;
+        },
+        {} as Record<string, Lead[]>,
+      ),
+    [filteredBuyers],
+  );
+
+  const groupedSellers = React.useMemo(
+    () =>
+      filteredSellers.reduce(
+        (acc: Record<string, Lead[]>, lead: Lead) => {
+          if (!acc[lead.status]) acc[lead.status] = [];
+          acc[lead.status].push(lead);
+          return acc;
+        },
+        {} as Record<string, Lead[]>,
+      ),
+    [filteredSellers],
+  );
+
+  // ── Handlers ───────────────────────────────────────────────────────
   const handleExport = async () => {
     try {
       const data = await LeadsService.exportToCSV();
-      const csvContent = "data:text/csv;charset=utf-8," 
-        + "Nome,Email,Telefone,Status,Origem\n"
-        + data.map((e: any) => `${e.name},${e.email || ''},${e.phone || ''},${e.status},${e.source || ''}`).join("\n");
-      
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `habita_leads_${new Date().toISOString().split('T')[0]}.csv`);
+      const csvContent =
+        'data:text/csv;charset=utf-8,' +
+        'Nome,Email,Telefone,Status,Tipo,Origem\n' +
+        data
+          .map(
+            (e: any) =>
+              `${e.name},${e.email || ''},${e.phone || ''},${e.status},${e.lead_type || 'buyer'},${e.source || ''}`,
+          )
+          .join('\n');
+
+      const link = document.createElement('a');
+      link.setAttribute('href', encodeURI(csvContent));
+      link.setAttribute('download', `habita_leads_${new Date().toISOString().split('T')[0]}.csv`);
       document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (err) {
       console.error('Erro no export:', err);
     }
   };
 
-  const handleMoveLead = async (id: string, newStatus: string) => {
+  const handleMoveBuyer = async (id: string, newStatus: string) => {
     try {
       await LeadsService.update(id, { status: newStatus as any });
       refresh();
     } catch (err) {
-      console.error('Erro ao mover lead:', err);
+      console.error('Erro ao mover lead comprador:', err);
+    }
+  };
+
+  const handleMoveSeller = async (id: string, newStatus: SellerLeadStatus) => {
+    try {
+      await LeadsService.update(id, { status: newStatus as any });
+
+      // ── Conversão automática: Captado → Imóvel Suspenso ──────────
+      if (newStatus === 'captured' && profile) {
+        const lead = visibleLeads.find((l: Lead) => l.id === id);
+        if (lead) {
+          try {
+            const property = await PropertiesService.createFromSellerLead(lead, profile.id);
+            console.log('✅ Imóvel criado automaticamente (suspenso):', property.id);
+            // Notificação discreta — toast seria ideal, usamos alert como fallback
+            window.dispatchEvent(
+              new CustomEvent('habita:property-created', { detail: { propertyId: property.id } }),
+            );
+          } catch (propErr) {
+            console.error('Erro ao criar imóvel automaticamente:', propErr);
+          }
+        }
+      }
+
+      refresh();
+    } catch (err) {
+      console.error('Erro ao mover lead vendedor:', err);
     }
   };
 
@@ -85,92 +173,204 @@ export default function LeadsPage() {
     }
   };
 
+  // ── Notification for property auto-creation ──────────────────────
+  const [capturedNotice, setCapturedNotice] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    const handler = (e: any) => {
+      setCapturedNotice(e.detail.propertyId);
+      setTimeout(() => setCapturedNotice(null), 6000);
+    };
+    window.addEventListener('habita:property-created', handler);
+    return () => window.removeEventListener('habita:property-created', handler);
+  }, []);
+
+  // ── Tab counts ────────────────────────────────────────────────────
+  const buyerCount = buyerLeads.length;
+  const sellerCount = sellerLeads.length;
+
   return (
     <DashboardLayout>
       <div className="h-[calc(100vh-58px)] flex flex-col p-6 lg:p-8">
-        {/* Page Header Area */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+        {/* Page Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-heading tracking-tighter mb-2">Gestão de Leads</h1>
-            <p className="text-muted-foreground font-medium">Pipeline de vendas e conversão em tempo real.</p>
+            <h1 className="text-2xl font-bold text-heading tracking-tighter mb-1">Gestão de Leads</h1>
+            <p className="text-muted-foreground font-medium text-sm">
+              Pipeline de vendas e captação de imóveis em tempo real.
+            </p>
           </div>
 
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <button 
+            <button
               onClick={handleExport}
               className="flex-1 md:flex-none p-4 bg-surface border border-border/40 rounded-2xl text-muted-foreground hover:text-primary transition-all shadow-sm"
               title="Exportar CSV"
             >
               <Download size={20} />
             </button>
-            <button 
+            <button
               onClick={() => setIsImportModalOpen(true)}
               className="flex-1 md:flex-none px-6 py-4 bg-surface border border-border/40 rounded-2xl text-sm font-black text-muted-foreground hover:text-primary transition-all shadow-sm flex items-center gap-2"
             >
               <Upload size={18} /> Importar
             </button>
-            <button 
-              onClick={() => setIsLeadModalOpen(true)}
-              className="flex-1 md:flex-none px-8 py-4 bg-blue-primary text-white rounded-2xl text-sm font-black hover:bg-blue-primary-light transition-all shadow-card flex items-center gap-2"
-            >
-              <Plus size={20} /> Novo Lead
-            </button>
+            {activeTab === 'buyer' ? (
+              <button
+                onClick={() => setIsBuyerModalOpen(true)}
+                className="flex-1 md:flex-none px-8 py-4 bg-blue-primary text-white rounded-2xl text-sm font-black hover:bg-blue-primary-light transition-all shadow-card flex items-center gap-2"
+              >
+                <Plus size={20} /> Novo Lead
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsCaptacaoModalOpen(true)}
+                className="flex-1 md:flex-none px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl text-sm font-black transition-all shadow-card flex items-center gap-2"
+              >
+                <Home size={20} /> Nova Captação
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Financial Header & Search */}
-        <KanbanHeader 
-          leads={visibleLeads} 
-          search={search} 
-          onSearchChange={setSearch} 
-        />
+        {/* ── Pipeline Tabs ── */}
+        <div className="flex items-center gap-2 mb-8 bg-muted/20 p-1.5 rounded-2xl w-fit border border-border/30">
+          <TabButton
+            active={activeTab === 'buyer'}
+            onClick={() => { setActiveTab('buyer'); setSearch(''); }}
+            icon={<ShoppingBag size={16} />}
+            label="Compradores"
+            count={buyerCount}
+            activeColor="bg-blue-primary"
+          />
+          <TabButton
+            active={activeTab === 'seller'}
+            onClick={() => { setActiveTab('seller'); setSearch(''); }}
+            icon={<Home size={16} />}
+            label="Captação"
+            count={sellerCount}
+            activeColor="bg-emerald-500"
+          />
+        </div>
 
-        {/* Modals */}
-        <LeadFormModal 
-          isOpen={isLeadModalOpen} 
-          onClose={() => setIsLeadModalOpen(false)} 
-          onSuccess={refresh} 
-        />
-        <ImportLeadsModal 
-          isOpen={isImportModalOpen} 
-          onClose={() => setIsImportModalOpen(false)} 
-          onSuccess={refresh} 
-        />
+        {/* ── Auto-capture notification ── */}
+        {capturedNotice && (
+          <div className="mb-4 flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-3 rounded-xl text-sm font-bold animate-in slide-in-from-top-2 duration-300">
+            <span className="text-lg">🎉</span>
+            <span>
+              Imóvel criado automaticamente com status <strong>Suspenso</strong> — aguardando fotos e descrição comercial para publicação.
+            </span>
+            <a
+              href="/crmhabita/imoveis"
+              className="ml-auto text-xs font-black underline hover:no-underline flex-shrink-0"
+            >
+              Ver Imóveis →
+            </a>
+          </div>
+        )}
 
+        {/* ── Error ── */}
         {error && (
           <div className="bg-red-50 border border-red-100 p-6 rounded-xl flex items-center gap-4 text-red-600 mb-8 animate-in fade-in duration-500">
             <AlertCircle size={24} />
             <div>
               <p className="font-bold text-sm">Erro ao carregar leads</p>
-              <p className="text-xs opacity-80">NÃ£o foi possÃ­vel conectar ao banco de dados ou a tabela nÃ£o existe.</p>
+              <p className="text-xs opacity-80">Não foi possível conectar ao banco de dados.</p>
             </div>
           </div>
         )}
 
-        {/* Kanban Board Container */}
+        {/* ── Headers ── */}
+        {activeTab === 'buyer' ? (
+          <KanbanHeader leads={buyerLeads} search={search} onSearchChange={setSearch} />
+        ) : (
+          <CaptacaoHeader leads={sellerLeads} search={search} onSearchChange={setSearch} />
+        )}
+
+        {/* ── Kanban Board ── */}
         <div className="flex-1 overflow-x-auto pb-10 scrollbar-thin scrollbar-thumb-primary/10 relative min-h-[600px] -mx-8 px-8">
           {loading && (
             <div className="absolute inset-0 bg-surface/50 backdrop-blur-[1px] z-20 flex items-center justify-center">
               <RefreshCw className="animate-spin text-primary" size={32} />
             </div>
           )}
-          
-          <div className="flex gap-8 min-h-full min-w-max pb-4">
-            {KANBAN_COLUMNS.map(column => (
-              <KanbanColumnComponent 
-                key={column.id} 
-                column={column} 
-                leads={groupedLeads[column.id] || []} 
-                onMoveLead={handleMoveLead}
-                onAddLead={() => setIsLeadModalOpen(true)}
-                onDeleteLead={handleDeleteLead}
-              />
-            ))}
-          </div>
+
+          {activeTab === 'buyer' ? (
+            <div className="flex gap-8 min-h-full min-w-max pb-4">
+              {KANBAN_COLUMNS.map(column => (
+                <KanbanColumnComponent
+                  key={column.id}
+                  column={column}
+                  leads={groupedBuyers[column.id] || []}
+                  onMoveLead={handleMoveBuyer}
+                  onAddLead={() => setIsBuyerModalOpen(true)}
+                  onDeleteLead={handleDeleteLead}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex gap-8 min-h-full min-w-max pb-4">
+              {CAPTACAO_COLUMNS.map(column => (
+                <CaptacaoColumnComponent
+                  key={column.id}
+                  column={column}
+                  leads={groupedSellers[column.id] || []}
+                  onMoveLead={handleMoveSeller}
+                  onAddLead={() => setIsCaptacaoModalOpen(true)}
+                  onDeleteLead={handleDeleteLead}
+                />
+              ))}
+            </div>
+          )}
         </div>
+
+        {/* ── Modals ── */}
+        <LeadFormModal
+          isOpen={isBuyerModalOpen}
+          onClose={() => setIsBuyerModalOpen(false)}
+          onSuccess={refresh}
+        />
+        <ImportLeadsModal
+          isOpen={isImportModalOpen}
+          onClose={() => setIsImportModalOpen(false)}
+          onSuccess={refresh}
+        />
+        <CaptacaoFormModal
+          isOpen={isCaptacaoModalOpen}
+          onClose={() => setIsCaptacaoModalOpen(false)}
+          onSuccess={refresh}
+        />
       </div>
     </DashboardLayout>
   );
 }
 
-
+/* ── Tab Button ──────────────────────────────────────────────────── */
+const TabButton = ({
+  active, onClick, icon, label, count, activeColor,
+}: {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  count: number;
+  activeColor: string;
+}) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black transition-all duration-200 ${
+      active
+        ? `${activeColor} text-white shadow-md`
+        : 'text-muted-foreground hover:text-primary hover:bg-surface'
+    }`}
+  >
+    {icon}
+    {label}
+    <span
+      className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
+        active ? 'bg-white/20 text-white' : 'bg-muted text-muted-foreground'
+      }`}
+    >
+      {count}
+    </span>
+  </button>
+);
