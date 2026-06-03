@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { X, Upload, FileText, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
@@ -28,6 +28,11 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
   });
   const [delimiter, setDelimiter] = useState(',');
   const [globalSource, setGlobalSource] = useState('');
+
+  // Date mode states
+  const [dateMode, setDateMode] = useState<'today' | 'global' | 'column'>('today');
+  const [globalDate, setGlobalDate] = useState(''); // formato YYYY-MM (month picker)
+  const [dateColumnMapping, setDateColumnMapping] = useState(''); // nome da coluna CSV com a data
   
   // Produto Vinculado (Opcional)
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
@@ -81,9 +86,43 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
     }
   };
 
+  // UtilitÃ¡rio de parse de data â€” suporta DD/MM/AAAA, DD/MM/AA, YYYY-MM-DD, MM/YYYY
+  const parseDateBR = (raw: string): string | null => {
+    if (!raw || !raw.trim()) return null;
+    const s = raw.trim();
+    // DD/MM/AAAA or DD/MM/AA
+    const dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+    if (dmy) {
+      let year = parseInt(dmy[3]);
+      if (year < 100) year += 2000;
+      const month = dmy[2].padStart(2, '0');
+      const day = dmy[1].padStart(2, '0');
+      return `${year}-${month}-${day}T00:00:00Z`;
+    }
+    // MM/YYYY
+    const my = s.match(/^(\d{1,2})\/(\d{4})$/);
+    if (my) return `${my[2]}-${my[1].padStart(2, '0')}-01T00:00:00Z`;
+    // YYYY-MM-DD
+    const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (iso) return `${s}T00:00:00Z`;
+    return null;
+  };
+
+  // Resolve o created_at para cada linha com base no dateMode
+  const resolveCreatedAt = (fileHeaders: string[], values: string[]): string | null => {
+    if (dateMode === 'global' && globalDate) {
+      return `${globalDate}-01T00:00:00Z`;
+    }
+    if (dateMode === 'column' && dateColumnMapping) {
+      const idx = fileHeaders.indexOf(dateColumnMapping);
+      if (idx !== -1 && values[idx]) return parseDateBR(values[idx]);
+    }
+    return null; // usa NOW() do Supabase
+  };
+
   const handleImport = async () => {
     if (!file || !user || !mapping.name) {
-      console.warn('Importação abortada: arquivos ou mapeamentos ausentes', { file: !!file, user: !!user, mappingName: mapping.name });
+      console.warn('ImportaÃ§Ã£o abortada: arquivos ou mapeamentos ausentes', { file: !!file, user: !!user, mappingName: mapping.name });
       return;
     }
 
@@ -97,13 +136,13 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
       });
 
       const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
-      if (lines.length < 2) throw new Error('O arquivo está vazio ou contém apenas o cabeçalho.');
+      if (lines.length < 2) throw new Error('O arquivo estÃ¡ vazio ou contÃ©m apenas o cabeÃ§alho.');
 
       const fileHeaders = lines[0].split(delimiter).map(h => h.trim());
       
       const leadsToProcess = lines.slice(1).map(line => {
         const values = line.split(delimiter).map(v => v.trim());
-        const rawLead: any = {};
+        const rawLead: any = { _rawValues: values };
         Object.entries(mapping).forEach(([field, mappedHeader]) => {
           if (mappedHeader) {
             const index = fileHeaders.indexOf(mappedHeader);
@@ -115,19 +154,19 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
         return rawLead;
       });
 
-      console.log(`Processando ${leadsToProcess.length} leads com vínculo à base de Pessoas...`);
+      console.log(`Processando ${leadsToProcess.length} leads com vÃ­nculo Ã  base de Pessoas...`);
       
       const leadsToInsert = [];
       
       for (const raw of leadsToProcess) {
-        // 1. Verificar se a pessoa já existe
+        // 1. Verificar se a pessoa jÃ¡ existe
         let personId = null;
         const existingPerson = await PeopleService.findByContact(raw.email || raw.phone);
         
         if (existingPerson) {
           personId = existingPerson.id;
         } else {
-          // 2. Criar nova pessoa se não existir
+          // 2. Criar nova pessoa se nÃ£o existir
           const newPerson = await PeopleService.create({
             name: raw.name,
             person_type: 'PF',
@@ -139,46 +178,50 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
             ],
             assigned_to_id: user.id,
             commercial_info: {
-              lead_source: globalSource || raw.source || 'Importação CSV',
-              notes: 'Criado automaticamente via importação de leads.'
+              lead_source: globalSource || raw.source || 'ImportaÃ§Ã£o CSV',
+              notes: 'Criado automaticamente via importaÃ§Ã£o de leads.'
             }
           } as any);
           personId = newPerson.id;
         }
 
+        // Resolver data de entrada
+        const createdAt = resolveCreatedAt(fileHeaders, raw._rawValues || []);
+
         // 3. Montar o lead vinculado
         leadsToInsert.push({
           assigned_to_id: user.id,
-          person_id: personId || undefined, // O VÍNCULO MÁGICO (undefined é melhor que null para o Supabase)
+          person_id: personId || undefined,
           name: raw.name,
           email: raw.email,
           phone: raw.phone,
           status: 'lead' as any,
           temperature: 'warm' as any,
           score: 50,
-          source: globalSource || raw.source || 'Importação CSV',
+          source: globalSource || raw.source || 'ImportaÃ§Ã£o CSV',
           value: selectedPropertyId ? selectedPropertyPrice : undefined,
           interest_description: selectedPropertyType === 'development' ? `Interesse no Empreendimento: ${selectedPropertyTitle}` : undefined,
           property_id: selectedPropertyType === 'property' ? (selectedPropertyId || undefined) : undefined,
+          ...(createdAt ? { created_at: createdAt } : {}),
           history: [{ 
             type: 'import', 
             date: new Date().toISOString(), 
             note: selectedPropertyId 
-              ? `Importado e vinculado ao ${selectedPropertyType === 'development' ? 'empreendimento' : 'imóvel'}: ${selectedPropertyTitle}` 
-              : 'Importado e vinculado à base de Pessoas.' 
+              ? `Importado e vinculado ao ${selectedPropertyType === 'development' ? 'empreendimento' : 'imÃ³vel'}: ${selectedPropertyTitle}` 
+              : 'Importado e vinculado Ã  base de Pessoas.' 
           }]
         });
       }
 
       await LeadsService.bulkCreate(leadsToInsert);
       
-      console.log('Importação e Vínculo concluídos com sucesso!');
+      console.log('ImportaÃ§Ã£o e VÃ­nculo concluÃ­dos com sucesso!');
       onSuccess();
       onClose();
     } catch (error: any) {
-      console.error('Erro detalhado na importação:', error);
+      console.error('Erro detalhado na importaÃ§Ã£o:', error);
       const errorMessage = error.message || 'Erro desconhecido';
-      alert(`Erro na importação: ${errorMessage}\n\nVerifique se o arquivo está no formato correto (UTF-8) e se os dados são válidos.`);
+      alert(`Erro na importaÃ§Ã£o: ${errorMessage}\n\nVerifique se o arquivo estÃ¡ no formato correto (UTF-8) e se os dados sÃ£o vÃ¡lidos.`);
     } finally {
       setLoading(false);
     }
@@ -210,7 +253,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                 <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                 <input 
                   type="text"
-                  placeholder="Pesquise por nome do imóvel ou empreendimento..."
+                  placeholder="Pesquise por nome do imÃ³vel ou empreendimento..."
                   value={propertySearch}
                   onChange={async (e) => {
                     setPropertySearch(e.target.value);
@@ -249,7 +292,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                         <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider ${
                           p._type === 'development' ? 'bg-accent/10 text-accent' : 'bg-blue-primary/10 text-primary'
                         }`}>
-                          {p._type === 'development' ? 'Empreendimento' : 'Imóvel'}
+                          {p._type === 'development' ? 'Empreendimento' : 'ImÃ³vel'}
                         </span>
                       </button>
                     ))}
@@ -274,12 +317,12 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                   }}
                   className="text-[10px] font-black text-red-500 uppercase hover:underline"
                 >
-                  Remover Vínculo
+                  Remover VÃ­nculo
                 </button>
               </div>
             )}
             <p className="text-[9px] font-medium text-muted-foreground leading-relaxed italic">
-              Ao selecionar um produto, todos os leads desta planilha serão automaticamente vinculados a ele. Deixe em branco se for uma lista geral.
+              Ao selecionar um produto, todos os leads desta planilha serÃ£o automaticamente vinculados a ele. Deixe em branco se for uma lista geral.
             </p>
           </div>
 
@@ -301,7 +344,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
               </div>
               <h3 className="text-xl font-bold text-primary mb-2">Selecione seu arquivo CSV</h3>
               <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                O sistema aceita arquivos com delimitador vírgula (,) ou ponto-e-vírgula (;).
+                O sistema aceita arquivos com delimitador vÃ­rgula (,) ou ponto-e-vÃ­rgula (;).
               </p>
             </div>
           ) : (
@@ -313,7 +356,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                   </div>
                   <div>
                     <p className="font-bold text-primary">{file.name}</p>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{(file.size / 1024).toFixed(1)} KB • Separador: {delimiter}</p>
+                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{(file.size / 1024).toFixed(1)} KB â€¢ Separador: {delimiter}</p>
                   </div>
                 </div>
                 <button 
@@ -326,6 +369,59 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                   Remover e trocar arquivo
                 </button>
               </div>
+
+              {/* â”€â”€ Data de ReferÃªncia â”€â”€ */}
+              <div className="space-y-3">
+                <label className="text-xs font-black text-muted-foreground uppercase tracking-widest ml-1">
+                  ðŸ“… Data de Entrada dos Leads
+                </label>
+                <div className="flex gap-2">
+                  {(['today', 'global', 'column'] as const).map(mode => (
+                    <button
+                      key={mode}
+                      type="button"
+                      onClick={() => setDateMode(mode)}
+                      className={`flex-1 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                        dateMode === mode
+                          ? 'bg-blue-primary text-white border-blue-primary shadow-md'
+                          : 'bg-muted/50 text-muted-foreground border-transparent hover:border-border'
+                      }`}
+                    >
+                      {mode === 'today' ? 'ðŸ“Œ Hoje' : mode === 'global' ? 'ðŸ“… Data Fixa' : 'ðŸ“‹ Por Coluna'}
+                    </button>
+                  ))}
+                </div>
+
+                {dateMode === 'global' && (
+                  <div className="space-y-1.5">
+                    <p className="text-[9px] font-bold text-muted-foreground">Todos os leads receberÃ£o esta data de entrada:</p>
+                    <input
+                      type="month"
+                      value={globalDate}
+                      onChange={e => setGlobalDate(e.target.value)}
+                      max={new Date().toISOString().slice(0, 7)}
+                      className="w-full px-4 py-3 bg-muted/50 border border-transparent rounded-xl focus:bg-white focus:border-primary/20 outline-none font-bold text-primary transition-all"
+                    />
+                  </div>
+                )}
+
+                {dateMode === 'column' && (
+                  <div className="space-y-1.5">
+                    <p className="text-[9px] font-bold text-muted-foreground">Coluna da planilha com a data (formato DD/MM/AAAA):</p>
+                    <select
+                      value={dateColumnMapping}
+                      onChange={e => setDateColumnMapping(e.target.value)}
+                      className="w-full bg-surface border border-border/60 rounded-xl px-4 py-3 text-xs font-bold text-primary outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
+                    >
+                      <option value="">Selecionar coluna...</option>
+                      {headers.map((h, i) => (
+                        <option key={i} value={h}>{h}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+              <div className="w-full h-px bg-border/40" />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Mapping Section */}
@@ -340,25 +436,25 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                   type="text"
                   value={globalSource}
                   onChange={(e) => setGlobalSource(e.target.value)}
-                  placeholder="Ex: Plantão FGR, Indicação, etc"
+                  placeholder="Ex: PlantÃ£o FGR, IndicaÃ§Ã£o, etc"
                   list="lead-sources"
                   className="w-full px-4 py-3 bg-muted/50 border border-transparent rounded-xl focus:bg-white focus:border-primary/20 outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
                 />
                 <datalist id="lead-sources">
-                  <option value="Indicação" />
+                  <option value="IndicaÃ§Ã£o" />
                   <option value="Base de clientes" />
                   <option value="Network" />
                   <option value="Portais" />
                   <option value="Redes sociais" />
-                  <option value="Ligação ativa" />
-                  <option value="Ponto avançado" />
-                  <option value="IA Prospecção" />
+                  <option value="LigaÃ§Ã£o ativa" />
+                  <option value="Ponto avanÃ§ado" />
+                  <option value="IA ProspecÃ§Ã£o" />
                   <option value="Manual" />
-                  <option value="Ação de Vendas" />
+                  <option value="AÃ§Ã£o de Vendas" />
                 </datalist>
               </div>
               <p className="text-[9px] font-medium text-muted-foreground leading-relaxed italic">
-                Se preenchido, esta origem será aplicada a <strong>todos</strong> os leads da planilha, ignorando o mapeamento de colunas.
+                Se preenchido, esta origem serÃ¡ aplicada a <strong>todos</strong> os leads da planilha, ignorando o mapeamento de colunas.
               </p>
             </div>
             
@@ -399,7 +495,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
 
                 {/* Preview Section */}
                 <div className="space-y-4">
-                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Prévia dos Dados</p>
+                  <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">PrÃ©via dos Dados</p>
                   <div className="bg-muted/30 rounded-3xl p-4 overflow-x-auto border border-border/50 max-h-[300px]">
                     <table className="w-full text-[10px]">
                       <thead>
@@ -425,9 +521,17 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
 
               <div className="bg-blue-50 p-5 rounded-3xl border border-blue-100 flex items-start gap-4">
                 <AlertCircle size={20} className="text-blue-500 shrink-0 mt-0.5" />
-                <p className="text-xs font-bold text-blue-700 leading-relaxed">
-                  Vincule as colunas da sua planilha aos campos do sistema à esquerda. <br/>O campo <span className="underline">Nome</span> é obrigatório para processar a importação.
-                </p>
+                <div className="space-y-1">
+                  <p className="text-xs font-bold text-blue-700 leading-relaxed">
+                    Vincule as colunas da sua planilha aos campos do sistema Ã  esquerda. <br/>O campo <span className="underline">Nome</span> Ã© obrigatÃ³rio para processar a importaÃ§Ã£o.
+                  </p>
+                  {dateMode === 'global' && globalDate && (
+                    <p className="text-xs text-blue-600 font-bold">ðŸ“… Data de referÃªncia: {globalDate}</p>
+                  )}
+                  {dateMode === 'column' && dateColumnMapping && (
+                    <p className="text-xs text-blue-600 font-bold">ðŸ“‹ Datas individuais da coluna: {dateColumnMapping}</p>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -483,10 +587,11 @@ const MappingField = ({ label, value, headers, onChange, required }: MappingFiel
       onChange={(e) => onChange(e.target.value)}
       className="w-full bg-surface border border-border/60 rounded-xl px-4 py-3 text-xs font-bold text-primary outline-none focus:border-accent transition-colors appearance-none cursor-pointer"
     >
-      <option value="">Não importar / Ignorar</option>
+      <option value="">NÃ£o importar / Ignorar</option>
       {headers.map((h: string, i: number) => (
         <option key={i} value={h}>{h}</option>
       ))}
     </select>
   </div>
 );
+

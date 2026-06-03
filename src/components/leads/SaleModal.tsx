@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { X, DollarSign, Percent, ShieldCheck, Loader2, CheckCircle2 } from 'lucide-react';
@@ -37,6 +37,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
     sale_price: 0,
     total_commission_percent: 5,
     broker_split_percent: 50,
+    sale_date: new Date().toISOString().split('T')[0],
   });
 
   // Reset form when modal opens/closes
@@ -47,6 +48,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
         sale_price: initialData?.sale_price || 0,
         total_commission_percent: initialData?.total_commission_percent ?? 5,
         broker_split_percent: initialData?.broker_split_percent ?? 50,
+        sale_date: new Date().toISOString().split('T')[0],
       });
       setSelectedPersonId('');
       setError(null);
@@ -77,7 +79,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
         }
       } catch (err) {
         console.error('Erro ao carregar dados iniciais no SaleModal:', err);
-        setError('Falha ao carregar dados do formulário.');
+        setError('Falha ao carregar dados do formulÃ¡rio.');
       } finally {
         setInitialLoading(false);
       }
@@ -98,7 +100,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
       return;
     }
     if (!formData.property_id) {
-      setError('Selecione o imóvel vendido.');
+      setError('Selecione o imÃ³vel vendido.');
       return;
     }
 
@@ -119,7 +121,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
         } else {
           // If no lead exists for this person, dynamically create one
           const selectedPerson = peopleList.find(p => p.id === selectedPersonId);
-          if (!selectedPerson) throw new Error('Cliente selecionado não foi encontrado na base de dados.');
+          if (!selectedPerson) throw new Error('Cliente selecionado nÃ£o foi encontrado na base de dados.');
 
           const newLead = await LeadsService.create({
             name: selectedPerson.fantasy_name || selectedPerson.name || 'Sem nome',
@@ -135,7 +137,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
         }
       }
 
-      if (!activeLead) throw new Error('Não foi possível determinar ou criar o Lead correspondente.');
+      if (!activeLead) throw new Error('NÃ£o foi possÃ­vel determinar ou criar o Lead correspondente.');
 
       // 1. Criar o registro da venda
       await SalesService.create({
@@ -146,6 +148,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
         total_commission: totalCommission,
         broker_commission: brokerCommission,
         manager_commission: totalCommission - brokerCommission,
+        sale_date: formData.sale_date ? new Date(formData.sale_date + 'T12:00:00').toISOString() : new Date().toISOString(),
         split_type: 'direct',
         split_metadata: {
           total_percent: formData.total_commission_percent,
@@ -153,7 +156,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
         }
       });
 
-      // 2. Unificação Master Person: Promover para 'client'
+      // 2. UnificaÃ§Ã£o Master Person: Promover para 'client'
       if (activeLead.person_id) {
         try {
           const person = await PeopleService.getById(activeLead.person_id);
@@ -173,8 +176,8 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
       onSuccess();
       onClose();
     } catch (err: any) {
-      console.error('Erro ao lançar venda:', err);
-      setError(err?.message || 'Erro ao registrar a venda no banco de dados. Verifique a conexão.');
+      console.error('Erro ao lanÃ§ar venda:', err);
+      setError(err?.message || 'Erro ao registrar a venda no banco de dados. Verifique a conexÃ£o.');
     } finally {
       setLoading(false);
     }
@@ -186,8 +189,8 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
       
       <div className="bg-surface w-full max-w-xl rounded-[3rem] shadow-card border border-border relative max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
         <div className="p-8 border-b border-border bg-muted/30 shrink-0 relative">
-          <h2 className="text-xl font-bold text-heading mb-1">Lançar Venda! 🎉</h2>
-          <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">Registrar fechamento e calcular comissões</p>
+          <h2 className="text-xl font-bold text-heading mb-1">LanÃ§ar Venda! ðŸŽ‰</h2>
+          <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">Registrar fechamento e calcular comissÃµes</p>
           <button onClick={onClose} className="absolute top-6 right-8 p-2 hover:bg-muted rounded-xl transition-colors">
             <X size={24} />
           </button>
@@ -224,7 +227,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
 
               {/* Select Property */}
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Imóvel Vendido</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">ImÃ³vel Vendido</label>
                 <select
                   required
                   value={formData.property_id}
@@ -234,7 +237,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
                   }}
                   className="w-full px-6 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"
                 >
-                  <option value="">Selecione o imóvel...</option>
+                  <option value="">Selecione o imÃ³vel...</option>
                   {propertiesList.map(p => (
                     <option key={p.id} value={p.id}>{p.title} - R$ {p.price.toLocaleString()}</option>
                   ))}
@@ -258,7 +261,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Comissão Total (%)</label>
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">ComissÃ£o Total (%)</label>
                   <div className="flex items-center bg-muted/50 border border-transparent rounded-2xl focus-within:bg-surface focus-within:border-primary/20 transition-all overflow-hidden">
                     <div className="pl-4 pr-1 text-muted-foreground shrink-0">
                       <Percent size={18} />
@@ -275,14 +278,27 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
                 </div>
               </div>
 
+                            {/* Data da Venda */}
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">📅 Data da Venda</label>
+                <input
+                  type="date"
+                  value={formData.sale_date}
+                  max={new Date().toISOString().split('T')[0]}
+                  onChange={e => setFormData({ ...formData, sale_date: e.target.value })}
+                  className="w-full px-6 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                />
+                <p className="text-[9px] font-medium text-muted-foreground/60 ml-1">Padrão: hoje. Edite para registrar vendas realizadas anteriormente.</p>
+              </div>
+
               {/* Split Info */}
               <div className="bg-blue-primary text-white p-8 rounded-xl space-y-4 shadow-card">
                 <div className="flex justify-between items-center border-b border-white/10 pb-4">
-                  <span className="text-xs font-black uppercase tracking-widest text-white/50">Sua Comissão</span>
+                  <span className="text-xs font-black uppercase tracking-widest text-white/50">Sua ComissÃ£o</span>
                   <span className="text-2xl font-black text-accent">R$ {brokerCommission.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-[10px] font-bold text-white/40 uppercase tracking-widest">
-                  <span>Comissão Bruta: R$ {totalCommission.toLocaleString()}</span>
+                  <span>ComissÃ£o Bruta: R$ {totalCommission.toLocaleString()}</span>
                   <span>Split: {formData.broker_split_percent}%</span>
                 </div>
               </div>
@@ -290,7 +306,7 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-                <span>⚠️ {error}</span>
+                <span>âš ï¸ {error}</span>
               </div>
             )}
 
@@ -318,3 +334,4 @@ export const SaleModal = ({ isOpen, onClose, onSuccess, lead, properties, initia
     </div>
   );
 };
+

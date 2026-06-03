@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { X, Mail, Phone, User, Tag, ShieldCheck, Loader2, Search, Home, Building, MapPin, Sparkles } from 'lucide-react';
@@ -29,7 +29,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
   React.useEffect(() => {
     if (preSelectedPersonId) {
       setSelectedPersonId(preSelectedPersonId);
-      // Busca os dados da pessoa para preencher o formulário
+      // Busca os dados da pessoa para preencher o formulÃ¡rio
       PeopleService.getById(preSelectedPersonId).then(p => {
         if (p) {
           const primaryContact = p.contacts?.find(c => c.is_primary) || p.contacts?.[0];
@@ -48,7 +48,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
     if (preSelectedPropertyId) {
       setPropertyMode('base');
       setSelectedPropertyId(preSelectedPropertyId);
-      // Busca detalhes do imóvel para mostrar o título e o valor
+      // Busca detalhes do imÃ³vel para mostrar o tÃ­tulo e o valor
       PropertiesService.getById(preSelectedPropertyId).then(prop => {
         if (prop) {
           setSelectedPropertyTitle(prop.title);
@@ -68,6 +68,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
     interest_description: string;
     value: number;
     probability: number;
+    entry_date: string;
   }>({
     name: '',
     email: '',
@@ -77,7 +78,8 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
     score: 50,
     interest_description: '',
     value: 0,
-    probability: 50
+    probability: 50,
+    entry_date: new Date().toISOString().split('T')[0],
   });
 
   if (!isOpen) return null;
@@ -88,7 +90,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
 
     setLoading(true);
     try {
-      // 1. Unificação com a base de Pessoas: Usar selecionada ou buscar por contato
+      // 1. UnificaÃ§Ã£o com a base de Pessoas: Usar selecionada ou buscar por contato
       let personId = selectedPersonId;
       
       if (!personId) {
@@ -96,7 +98,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
         if (existingPerson) {
           personId = existingPerson.id;
         } else {
-          // 2. Criar nova pessoa se for um contato inédito e não selecionado
+          // 2. Criar nova pessoa se for um contato inÃ©dito e nÃ£o selecionado
           const newPerson = await PeopleService.create({
             name: formData.name,
             person_type: 'PF',
@@ -128,14 +130,14 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
             : undefined,
         assigned_to_id: user.id,
         status: 'lead' as any,
-        history: [{ type: 'creation', date: new Date().toISOString(), note: `Lead criado e vinculado à Pessoa ID: ${personId}` }]
+        history: [{ type: 'creation', date: new Date().toISOString(), note: `Lead criado e vinculado Ã  Pessoa ID: ${personId}` }]
       });
 
       onSuccess();
       onClose();
     } catch (error: any) {
       console.error('Erro detalhado ao criar lead unificado:', error.message || error);
-      alert('Erro ao criar lead: ' + (error.message || 'Verifique as permissões no banco.'));
+      alert('Erro ao criar lead: ' + (error.message || 'Verifique as permissÃµes no banco.'));
     } finally {
       setLoading(false);
     }
@@ -251,7 +253,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                 <div className="p-2 bg-blue-primary/10 rounded-lg">
                   <Home className="w-4 h-4 text-primary" />
                 </div>
-                <h3 className="text-xs font-black text-primary uppercase tracking-widest">Interesse / Imóvel</h3>
+                <h3 className="text-xs font-black text-primary uppercase tracking-widest">Interesse / ImÃ³vel</h3>
               </div>
 
               {!preSelectedPropertyId ? (
@@ -287,7 +289,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                         </div>
                         <input
                           type="text"
-                          placeholder="Pesquisar nos meus imóveis..."
+                          placeholder="Pesquisar nos meus imÃ³veis..."
                           className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30"
                           value={selectedPropertyTitle}
                           onChange={async (e) => {
@@ -325,7 +327,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                               <span className={`px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-wider ${
                                 p._type === 'development' ? 'bg-accent/10 text-accent' : 'bg-blue-primary/10 text-primary'
                               }`}>
-                                {p._type === 'development' ? 'Empreendimento' : 'Imóvel'}
+                                {p._type === 'development' ? 'Empreendimento' : 'ImÃ³vel'}
                               </span>
                             </button>
                           ))}
@@ -340,7 +342,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                     <Building className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-primary/50 uppercase tracking-widest mb-0.5">Imóvel Vinculado</p>
+                    <p className="text-[10px] font-black text-primary/50 uppercase tracking-widest mb-0.5">ImÃ³vel Vinculado</p>
                     <p className="text-sm font-black text-primary uppercase">{selectedPropertyTitle}</p>
                   </div>
                 </div>
@@ -350,7 +352,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
               {propertyMode === 'market' && (
                 <div className="animate-in slide-in-from-top-2 duration-300">
                   <textarea
-                    placeholder="Descreva o imóvel do mercado (Ex: Apartamento no Centro, 3 qtos, até R$ 500k...)"
+                    placeholder="Descreva o imÃ³vel do mercado (Ex: Apartamento no Centro, 3 qtos, atÃ© R$ 500k...)"
                     className="w-full px-6 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary placeholder:text-muted-foreground/30 min-h-[100px] resize-none"
                     value={formData.interest_description}
                     onChange={e => setFormData({ ...formData, interest_description: e.target.value })}
@@ -447,18 +449,36 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                   className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                   >
                     <option value="">Selecione...</option>
-                    <option value="Indicação">Indicação</option>
+                    <option value="IndicaÃ§Ã£o">IndicaÃ§Ã£o</option>
                     <option value="Base de clientes">Base de clientes</option>
                     <option value="Network">Network</option>
                     <option value="Portais">Portais</option>
                     <option value="Redes sociais">Redes sociais</option>
-                    <option value="Ligação ativa">Ligação ativa</option>
-                    <option value="Ponto avançado">Ponto avançado</option>
+                    <option value="LigaÃ§Ã£o ativa">LigaÃ§Ã£o ativa</option>
+                    <option value="Ponto avanÃ§ado">Ponto avanÃ§ado</option>
                   
                     <option value="IA Prospec??o">IA Prospec??o</option>
                     <option value="Manual">Manual</option>
                     </select>
               </div>
+            </div>
+
+            {/* Data de Entrada */}
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">📅 Data de Entrada</label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <span className="text-[11px] text-muted-foreground">📅</span>
+                </div>
+                <input
+                  type="date"
+                  value={formData.entry_date}
+                  max={new Date().toISOString().split('T')[0]}
+                  onChange={e => setFormData({ ...formData, entry_date: e.target.value })}
+                  className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                />
+              </div>
+              <p className="text-[9px] font-medium text-muted-foreground/60 ml-1">Padrão: hoje. Edite para registrar leads de datas anteriores.</p>
             </div>
 
             {/* Temperature */}
@@ -512,3 +532,4 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
     </div>
   );
 };
+

@@ -40,6 +40,7 @@ export const CaptacaoFormModal = ({ isOpen, onClose, onSuccess }: CaptacaoFormMo
     seller_motivation: '',
     seller_property_area: 0,
     seller_rooms: 0,
+    entry_date: new Date().toISOString().split('T')[0],
   });
 
   if (!isOpen) return null;
@@ -103,7 +104,7 @@ export const CaptacaoFormModal = ({ isOpen, onClose, onSuccess }: CaptacaoFormMo
       setFormData({
         name: '', phone: '', email: '', source: 'Manual', temperature: 'warm', score: 50,
         seller_property_address: '', seller_property_type: '', seller_asking_price: 0,
-        seller_motivation: '', seller_property_area: 0, seller_rooms: 0,
+        seller_motivation: '', seller_property_area: 0, seller_rooms: 0, entry_date: new Date().toISOString().split('T')[0],
       });
     } catch (err) {
       console.error('Erro ao criar lead de captação:', err);
@@ -377,3 +378,4 @@ export const CaptacaoFormModal = ({ isOpen, onClose, onSuccess }: CaptacaoFormMo
     </div>
   );
 };
+
