@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Users, Home, TrendingUp, Target,
   Settings, LogOut, Bell, Calendar, Briefcase,
-  Sparkles, Globe, Menu, ShoppingBag, Trophy
+  Sparkles, Globe, Menu, ShoppingBag, Trophy, Building2
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/context/NotificationContext';
@@ -51,6 +51,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
         <NavIcon icon={<Target size={17} />}           href="/crmhabita/leads"       label="Leads"        active={pathname.startsWith('/crmhabita/leads')} />
         <NavIcon icon={<Trophy size={17} />}           href="/crmhabita/ranking"     label="Ranking"      active={pathname === '/crmhabita/ranking'} />
         <NavIcon icon={<Home size={17} />}             href="/crmhabita/imoveis"     label="Imóveis"      active={pathname.startsWith('/crmhabita/imoveis')} />
+        <NavIcon icon={<Building2 size={17} />}         href="/crmhabita/empreendimentos" label="Empreendimentos" active={pathname.startsWith('/crmhabita/empreendimentos')} />
         <NavIcon icon={<Calendar size={17} />}         href="/crmhabita/agenda"      label="Agenda"       active={pathname === '/crmhabita/agenda'} />
         <NavIcon icon={<Users size={17} />}            href="/crmhabita/pessoas"     label="Contatos"     active={pathname.startsWith('/crmhabita/pessoas')} />
         <NavIcon icon={<Sparkles size={17} />}         href="/crmhabita/prospeccao"  label="IA"           active={pathname.startsWith('/crmhabita/prospeccao')} />
