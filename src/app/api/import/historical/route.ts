@@ -66,9 +66,9 @@ function mapCategoryToType(category: string) {
 
 export async function GET() {
   try {
-    const excelPath = path.join(process.cwd(), 'scratch/Base alornesed_SBRUv1.xlsx');
+    const excelPath = path.join(process.cwd(), 'public/Base_alornesed_SBRUv1.xlsx');
     if (!fs.existsSync(excelPath)) {
-      return NextResponse.json({ error: 'Arquivo Excel não encontrado na pasta scratch.' }, { status: 400 });
+      return NextResponse.json({ error: 'Arquivo Excel não encontrado na pasta public.' }, { status: 400 });
     }
 
     const supabase = createClient(
