@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import XLSX from 'xlsx';
+import * as XLSX from 'xlsx';
 import path from 'path';
 import fs from 'fs';
 
