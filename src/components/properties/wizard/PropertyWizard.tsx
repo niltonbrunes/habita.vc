@@ -43,6 +43,8 @@ export interface WizardFormData {
   address_city: string;
   address_state: string;
   address_zip_code?: string;
+  latitude?: string;
+  longitude?: string;
   // Financial
   price: number;
   price_condo?: number;

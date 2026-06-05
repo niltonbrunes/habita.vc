@@ -42,6 +42,9 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
     location_address: development?.location_address || '',
     location_city: development?.location_city || 'Goiânia',
     location_neighborhood: (development as any)?.location_neighborhood || '',
+    location_cep: (development as any)?.location_cep || '',
+    location_lat: (development as any)?.location_lat || '',
+    location_lng: (development as any)?.location_lng || '',
     price_starting_at: development?.price_starting_at || 0,
     commercial_stage: development?.commercial_stage || 'pre_launch',
     image_url: development?.image_url || '',
@@ -52,6 +55,31 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
     launch_date: development?.launch_date || '',
     slug: (development as any)?.slug || '',
   });
+
+  const [cepLoading, setCepLoading] = useState(false);
+
+  const lookupCep = async (cep: string) => {
+    const clean = cep.replace(/\D/g, '');
+    if (clean.length !== 8) return;
+    setCepLoading(true);
+    try {
+      const r = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+      const d = await r.json();
+      if (!d.erro) {
+        setFormData(prev => ({
+          ...prev,
+          location_address: d.logradouro || '',
+          location_neighborhood: d.bairro || '',
+          location_city: d.localidade || '',
+          location_cep: d.cep || '',
+        }));
+      }
+    } catch (err) {
+      console.error('Erro ao buscar CEP:', err);
+    } finally {
+      setCepLoading(false);
+    }
+  };
 
   const generateSlug = (text: string) => {
     return text
@@ -116,7 +144,9 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
         slug,
         launch_date: formData.launch_date || null,
         price_starting_at: Number(formData.price_starting_at) || 0,
-        developer_id: formData.developer_id || null
+        developer_id: formData.developer_id || null,
+        location_lat: formData.location_lat ? parseFloat(formData.location_lat.toString()) : null,
+        location_lng: formData.location_lng ? parseFloat(formData.location_lng.toString()) : null,
       };
 
       if (development?.id) {
@@ -237,6 +267,29 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                 
                 <div className="space-y-4">
                   <div className="space-y-2">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">CEP</label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={formData.location_cep}
+                        onChange={e => {
+                          const val = e.target.value;
+                          setFormData(prev => ({ ...prev, location_cep: val }));
+                          lookupCep(val);
+                        }}
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                        placeholder="Ex: 74000-000"
+                        maxLength={9}
+                      />
+                      {cepLoading && (
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                          <RefreshCw className="animate-spin text-primary" size={18} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
                     <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Endereço Completo</label>
                     <input
                       required
@@ -266,6 +319,29 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
                         className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
                       />
                     </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Latitude</label>
+                      <input
+                        type="text"
+                        value={formData.location_lat}
+                        onChange={e => setFormData({ ...formData, location_lat: e.target.value })}
+                        placeholder="Ex: -16.68689"
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Longitude</label>
+                      <input
+                        type="text"
+                        value={formData.location_lng}
+                        onChange={e => setFormData({ ...formData, location_lng: e.target.value })}
+                        placeholder="Ex: -49.26478"
+                        className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
+                      />
+                    </div>
+                  </div>
+
                   </div>
                 </div>
               </div>

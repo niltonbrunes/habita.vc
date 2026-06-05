@@ -239,6 +239,9 @@ export const PropertyFormModal = ({ isOpen, onClose, onSuccess }: PropertyFormMo
                           address_street: selectedDev?.location_address || prev.address_street,
                           address_city: selectedDev?.location_city || prev.address_city,
                           address_neighborhood: selectedDev?.location_neighborhood || prev.address_neighborhood,
+                          address_zip_code: selectedDev?.location_cep || prev.address_zip_code,
+                          latitude: selectedDev?.location_lat?.toString() || prev.latitude,
+                          longitude: selectedDev?.location_lng?.toString() || prev.longitude,
                         }));
                       }}
                       className="block w-full px-5 py-4 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary appearance-none"

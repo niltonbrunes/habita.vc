@@ -143,7 +143,11 @@ export interface Development {
   gallery: string[];
   features: string[];
   location_address: string;
+  location_neighborhood?: string;
   location_city: string;
+  location_cep?: string;
+  location_lat?: number | null;
+  location_lng?: number | null;
   price_starting_at: number;
   commercial_stage?: 'pre_launch' | 'launch' | 'construction' | 'ready';
   plans_url?: string;

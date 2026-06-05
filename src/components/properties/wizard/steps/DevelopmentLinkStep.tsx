@@ -25,8 +25,12 @@ export function DevelopmentLinkStep({ data, onChange }: Props) {
       development_id: dev.id,
       // Inherit address from development
       address_street: dev.location_address || '',
+      address_neighborhood: dev.location_neighborhood || '',
       address_city: dev.location_city || '',
       address_state: 'GO',
+      address_zip_code: dev.location_cep || '',
+      latitude: dev.location_lat?.toString() || '',
+      longitude: dev.location_lng?.toString() || '',
     });
   };
 
