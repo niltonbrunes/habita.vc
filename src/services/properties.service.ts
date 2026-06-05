@@ -163,6 +163,15 @@ export const PropertiesService = {
     return data as Property[];
   },
 
+  async getByIds(ids: string[]) {
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*')
+      .in('id', ids);
+    if (error) throw error;
+    return data as Property[];
+  },
+
   async search(term: string) {
     const { data: properties, error: pError } = await supabase
       .from('properties')

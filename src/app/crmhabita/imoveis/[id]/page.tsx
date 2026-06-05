@@ -8,8 +8,9 @@ import { Property } from '@/types/database';
 import { 
   ArrowLeft, MapPin, BedDouble, Bath, Square, Car, 
   TrendingUp, Download, MessageCircle, CheckCircle2,
-  RefreshCw, Pencil, Trash2, Ban, Sparkles
+  RefreshCw, Pencil, Trash2, Ban, Sparkles, LayoutGrid
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
 import { LeadFormModal } from '@/components/leads/LeadFormModal';
@@ -21,6 +22,8 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
   const [property, setProperty] = useState<Property | null>(null);
   const [loading, setLoading] = useState(true);
   const [relatedProperties, setRelatedProperties] = useState<Property[]>([]);
+  const [linkedUnits, setLinkedUnits] = useState<any[]>([]);
+  const [parentUnits, setParentUnits] = useState<any[]>([]);
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [inactivating, setInactivating] = useState(false);
@@ -37,6 +40,35 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
         // Fetch related
         const related = await PropertiesService.getRelated(data);
         setRelatedProperties(related);
+
+        // Fetch linked units
+        const linkedIds = data.metadata?.linked_unit_ids || [];
+        if (linkedIds.length > 0) {
+          try {
+            const units = await PropertiesService.getByIds(linkedIds);
+            setLinkedUnits(units || []);
+          } catch (err) {
+            console.error('Erro ao buscar unidades vinculadas:', err);
+          }
+        } else {
+          setLinkedUnits([]);
+        }
+
+        // Fetch parent units (if this is a box/locker)
+        if (data.type === 'Box de Garagem' || data.type === 'Escaninho') {
+          try {
+            const { data: parents, error } = await supabase
+              .from('properties')
+              .select('id, title, type, reference')
+              .contains('metadata', { linked_unit_ids: [id] });
+            if (error) throw error;
+            setParentUnits(parents || []);
+          } catch (err) {
+            console.error('Erro ao buscar unidades pais:', err);
+          }
+        } else {
+          setParentUnits([]);
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -235,6 +267,57 @@ export default function PropertyDetailPage({ params }: { params: Promise<{ id: s
                 )}
               </div>
             </div>
+
+            {/* Unidades Vinculadas (Mão Dupla) */}
+            {linkedUnits.length > 0 && (
+              <div className="space-y-4 pt-6 border-t border-border">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <LayoutGrid size={20} className="text-accent" /> Unidades Vinculadas (Garagem / Escaninho)
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {linkedUnits.map((unit) => (
+                    <Link
+                      key={unit.id}
+                      href={`/crmhabita/imoveis/${unit.id}`}
+                      className="flex items-center gap-4 p-4 bg-muted/30 border border-border/60 hover:border-primary/40 rounded-2xl transition-all group"
+                    >
+                      <div className="p-3 bg-blue-primary/5 rounded-xl text-primary group-hover:bg-blue-primary group-hover:text-white transition-all">
+                        {unit.type === 'Box de Garagem' ? <Car size={20} /> : <Square size={20} />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-primary truncate text-sm">{unit.title}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">{unit.type} {unit.reference ? `• ${unit.reference}` : ''}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {parentUnits.length > 0 && (
+              <div className="space-y-4 pt-6 border-t border-border">
+                <h3 className="text-xl font-bold flex items-center gap-2">
+                  <LayoutGrid size={20} className="text-accent" /> Unidade Principal Vinculada
+                </h3>
+                <div className="grid grid-cols-1 gap-4">
+                  {parentUnits.map((unit) => (
+                    <Link
+                      key={unit.id}
+                      href={`/crmhabita/imoveis/${unit.id}`}
+                      className="flex items-center gap-4 p-4 bg-muted/30 border border-border/60 hover:border-primary/40 rounded-2xl transition-all group"
+                    >
+                      <div className="p-3 bg-blue-primary/5 rounded-xl text-primary group-hover:bg-blue-primary group-hover:text-white transition-all">
+                        <BedDouble size={20} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-primary truncate text-sm">{unit.title}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">{unit.type} {unit.reference ? `• ${unit.reference}` : ''}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Sidebar Info */}

@@ -1,7 +1,8 @@
 'use client';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { WizardFormData } from '../PropertyWizard';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Car, Square as SquareIcon } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 interface Props {
   data: WizardFormData;
@@ -32,6 +33,44 @@ function Counter({ label, value, onChange }: { label: string; value: number; onC
 }
 
 export function FeaturesStep({ data, onChange }: Props) {
+  const [siblingUnits, setSiblingUnits] = useState<any[]>([]);
+  const [loadingUnits, setLoadingUnits] = useState(false);
+
+  useEffect(() => {
+    if (!data.development_id || data.type === 'Box de Garagem' || data.type === 'Escaninho') {
+      setSiblingUnits([]);
+      return;
+    }
+
+    const fetchSiblings = async () => {
+      setLoadingUnits(true);
+      try {
+        const { data: units, error } = await supabase
+          .from('properties')
+          .select('id, title, type, reference')
+          .eq('development_id', data.development_id)
+          .in('type', ['Box de Garagem', 'Escaninho'])
+          .order('title');
+        if (error) throw error;
+        setSiblingUnits(units || []);
+      } catch (err) {
+        console.error('Erro ao buscar unidades vinculáveis:', err);
+      } finally {
+        setLoadingUnits(false);
+      }
+    };
+
+    fetchSiblings();
+  }, [data.development_id, data.type]);
+
+  const toggleLinkedUnit = (unitId: string) => {
+    const current = data.metadata?.linked_unit_ids || [];
+    const updated = current.includes(unitId)
+      ? current.filter((id: string) => id !== unitId)
+      : [...current, unitId];
+    onChange({ metadata: { ...data.metadata, linked_unit_ids: updated } });
+  };
+
   const toggleFeature = (f: string) => {
     const current = data.metadata?.features || [];
     const updated = current.includes(f) ? current.filter((x: string) => x !== f) : [...current, f];
@@ -112,6 +151,41 @@ export function FeaturesStep({ data, onChange }: Props) {
           })}
         </div>
       </div>
+
+      {/* Linked Units (Garage / Locker) */}
+      {data.development_id && data.type !== 'Box de Garagem' && data.type !== 'Escaninho' && siblingUnits.length > 0 && (
+        <div className="space-y-3 pt-6 border-t border-border">
+          <label className="block text-xs font-black text-muted-foreground uppercase tracking-widest">
+            Vincular Unidades de Garagem / Escaninho
+          </label>
+          <p className="text-xs text-muted-foreground">Selecione os boxes de garagem ou escaninhos deste empreendimento que pertencem a este imóvel.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {siblingUnits.map(unit => {
+              const selected = (data.metadata?.linked_unit_ids || []).includes(unit.id);
+              return (
+                <button
+                  key={unit.id}
+                  type="button"
+                  onClick={() => toggleLinkedUnit(unit.id)}
+                  className={`flex items-center gap-3 p-4 rounded-xl text-xs font-bold border-2 transition-all text-left ${
+                    selected ? 'border-primary bg-blue-primary/5 text-primary' : 'border-border bg-surface text-muted-foreground hover:border-primary/30'
+                  }`}
+                >
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center ${
+                    selected ? 'bg-primary border-primary text-white' : 'border-muted-foreground/30'
+                  }`}>
+                    {selected && <CheckCircle2 size={12} className="text-white" />}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-primary">{unit.title}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{unit.type} {unit.reference ? `• ${unit.reference}` : ''}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -7,7 +7,7 @@ interface Props {
   onChange: (patch: Partial<WizardFormData>) => void;
 }
 
-const PROPERTY_TYPES = ['Apartamento','Casa','Cobertura','Terreno','Sala Comercial','Galpão','Loja','Fazenda','Sítio','Chácara','Studio','Kitnet','Flat'];
+const PROPERTY_TYPES = ['Apartamento','Casa','Cobertura','Terreno','Sala Comercial','Galpão','Loja','Fazenda','Sítio','Chácara','Studio','Kitnet','Flat','Box de Garagem','Escaninho'];
 const STATUS_OPTIONS = [
   { value: 'available', label: 'Disponível', color: 'bg-green-100 text-green-700 border-green-200' },
   { value: 'reserved',  label: 'Reservado',  color: 'bg-amber-100 text-amber-700 border-amber-200' },
