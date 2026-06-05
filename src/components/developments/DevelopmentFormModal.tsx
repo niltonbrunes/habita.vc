@@ -194,7 +194,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Incorporadora</label>
+                      <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Construtora</label>
                       <select
                         required
                         value={formData.developer_id}
