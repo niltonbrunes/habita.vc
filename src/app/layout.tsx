@@ -72,6 +72,7 @@ export const metadata: Metadata = {
 
 import { AuthProvider } from "@/context/AuthContext";
 import { NotificationProvider } from "@/context/NotificationContext";
+import { Analytics } from '@vercel/analytics/next';
 
 export default function RootLayout({
   children,
@@ -89,6 +90,7 @@ export default function RootLayout({
             {children}
           </NotificationProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
