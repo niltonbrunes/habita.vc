@@ -30,7 +30,7 @@ export const PropertiesService = {
   async getById(id: string) {
     const { data, error } = await supabase
       .from('properties')
-      .select('*, development:developments(*, developer:developers(*)), registered_by_profile:profiles(*)')
+      .select('*, development:developments(*, developer:people(id, name)), registered_by_profile:profiles(*)')
       .eq('id', id)
       .single();
 
@@ -43,7 +43,7 @@ export const PropertiesService = {
 
     let query = supabase
       .from('properties')
-      .select('*, development:developments(*, developer:developers(*)), registered_by_profile:profiles(*)');
+      .select('*, development:developments(*, developer:people(id, name)), registered_by_profile:profiles(*)');
 
     if (isUuid) {
       query = query.eq('id', slugOrId);
