@@ -1,8 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
-import path from 'path';
-import fs from 'fs';
 
 // Helper to convert Excel date numbers to JS Date
 function excelDateToDate(serial: any) {
@@ -64,12 +62,17 @@ function mapCategoryToType(category: string) {
   return 'Outro';
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const excelPath = path.join(process.cwd(), 'public/Base_alornesed_SBRUv1.xlsx');
-    if (!fs.existsSync(excelPath)) {
-      return NextResponse.json({ error: 'Arquivo Excel não encontrado na pasta public.' }, { status: 400 });
+    const { origin } = new URL(request.url);
+    const fileUrl = `${origin}/Base_alornesed_SBRUv1.xlsx`;
+
+    const fileResponse = await fetch(fileUrl);
+    if (!fileResponse.ok) {
+      return NextResponse.json({ error: `Falha ao carregar o arquivo Excel da CDN: ${fileResponse.statusText}` }, { status: 400 });
     }
+    const arrayBuffer = await fileResponse.arrayBuffer();
+    const workbook = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -77,7 +80,6 @@ export async function GET() {
     );
 
     const FREDERICO_BRUNES_ID = 'c4980824-975e-4703-825a-e0fb5a45ccd4';
-    const workbook = XLSX.readFile(excelPath);
     
     // Load sheets
     const sheetBase = workbook.Sheets['Base completa'];
