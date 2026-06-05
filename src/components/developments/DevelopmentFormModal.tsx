@@ -17,6 +17,7 @@ import {
   FileDown,
   Activity
 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 import { DevelopmentsService } from '@/services/developments.service';
 import { DevelopersService } from '@/services/developers.service';
 import { StorageService } from '@/services/storage.service';
@@ -66,17 +67,24 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
   useEffect(() => {
     const fetchDevelopers = async () => {
       try {
-        const data = await DevelopersService.getAll();
-        setDevelopers(data);
-        if (!formData.developer_id && data.length > 0) {
+        const { data, error } = await supabase
+          .from('people')
+          .select('id, name')
+          .eq('person_type', 'PJ')
+          .order('name');
+        
+        if (error) throw error;
+        
+        setDevelopers(data as any[] || []);
+        if (!formData.developer_id && data && data.length > 0) {
           setFormData(prev => ({ ...prev, developer_id: data[0].id }));
         }
       } catch (err) {
-        console.error('Erro ao buscar incorporadoras:', err);
+        console.error('Erro ao buscar construtoras PJ:', err);
       }
     };
     fetchDevelopers();
-  }, []);
+  }, [formData.developer_id]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'image_url' | 'plans_url' | 'price_table_url' | 'gallery') => {
     const file = e.target.files?.[0];

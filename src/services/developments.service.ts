@@ -4,7 +4,7 @@ export const DevelopmentsService = {
   async getAll() {
     const { data, error } = await supabase
       .from('developments')
-      .select('*, developer:developers(*)')
+      .select('*, developer:people(id, name)')
       .order('name');
     
     if (error) throw error;
@@ -14,7 +14,7 @@ export const DevelopmentsService = {
   async getById(id: string) {
     const { data, error } = await supabase
       .from('developments')
-      .select('*, developer:developers(*), properties(*)')
+      .select('*, developer:people(id, name), properties(*)')
       .eq('id', id)
       .single();
     
@@ -25,7 +25,7 @@ export const DevelopmentsService = {
   async getBySlug(slug: string) {
     const { data, error } = await supabase
       .from('developments')
-      .select('*, developer:developers(*), properties(*)')
+      .select('*, developer:people(id, name), properties(*)')
       .eq('slug', slug)
       .single();
     
