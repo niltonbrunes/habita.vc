@@ -103,7 +103,13 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
     setLoading(true);
     try {
       const slug = formData.slug || generateSlug(formData.name);
-      const dataToSave = { ...formData, slug };
+      const dataToSave = { 
+        ...formData, 
+        slug,
+        launch_date: formData.launch_date || null,
+        price_starting_at: Number(formData.price_starting_at) || 0,
+        developer_id: formData.developer_id || null
+      };
 
       if (development?.id) {
         // Implementar update se necessário
