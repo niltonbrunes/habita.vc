@@ -112,7 +112,7 @@ export function DevelopmentFormModal({ onClose, onSuccess, development }: Develo
       };
 
       if (development?.id) {
-        // Implementar update se necessário
+        await DevelopmentsService.update(development.id, dataToSave);
       } else {
         await DevelopmentsService.create(dataToSave);
       }

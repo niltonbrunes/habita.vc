@@ -3,11 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { DevelopmentsService } from '@/services/developments.service';
-import { Plus, Building2, MapPin, Calendar, ArrowRight, RefreshCw, Layers } from 'lucide-react';
+import { Plus, Building2, MapPin, Calendar, ArrowRight, RefreshCw, Layers, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { DevelopmentFormModal } from '@/components/developments/DevelopmentFormModal';
+import { useAuth } from '@/context/AuthContext';
 
 export default function DevelopmentsPage() {
+  const { profile } = useAuth();
+  const isAdmin = profile?.role === 'admin';
   const [developments, setDevelopments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,6 +25,21 @@ export default function DevelopmentsPage() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (confirm(`Tem certeza de que deseja excluir o empreendimento "${name}"?`)) {
+      setLoading(true);
+      try {
+        await DevelopmentsService.delete(id);
+        fetchDevelopments();
+      } catch (err) {
+        console.error(err);
+        alert('Erro ao excluir o empreendimento.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -93,9 +111,25 @@ export default function DevelopmentsPage() {
                   >
                     Ver Landing Page
                   </Link>
-                  <button className="p-3 bg-muted text-primary rounded-xl hover:bg-blue-primary hover:text-white transition-all">
-                    <Layers size={18} />
+                  <button 
+                    onClick={() => {
+                      setSelectedDevelopment(dev);
+                      setIsModalOpen(true);
+                    }}
+                    className="p-3 bg-muted text-primary rounded-xl hover:bg-blue-primary hover:text-white transition-all"
+                    title="Editar Empreendimento"
+                  >
+                    <Pencil size={18} />
                   </button>
+                  {isAdmin && (
+                    <button 
+                      onClick={() => handleDelete(dev.id, dev.name)}
+                      className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all"
+                      title="Excluir Empreendimento"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

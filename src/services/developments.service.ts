@@ -42,5 +42,26 @@ export const DevelopmentsService = {
     
     if (error) throw error;
     return data;
+  },
+
+  async update(id: string, development: Partial<any>) {
+    const { data, error } = await supabase
+      .from('developments')
+      .update(development)
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
+  },
+
+  async delete(id: string) {
+    const { error } = await supabase
+      .from('developments')
+      .delete()
+      .eq('id', id);
+    
+    if (error) throw error;
   }
 };
