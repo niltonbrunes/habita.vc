@@ -210,23 +210,47 @@ export class DashboardService {
 
   
   static async getChannelPerformance(userId: string) {
-    const { data: leads, error } = await supabase
-      .from('leads')
-      .select('source, status')
-      .eq('assigned_to_id', userId);
+    const fetchAll = async (tableName: string, columns: string, filterField: string) => {
+      let results: any[] = [];
+      let page = 0;
+      const pageSize = 1000;
+      while (true) {
+        const { data, error } = await supabase
+          .from(tableName)
+          .select(columns)
+          .eq(filterField, userId)
+          .range(page * pageSize, (page + 1) * pageSize - 1);
+        if (error) throw error;
+        if (!data || data.length === 0) break;
+        results = results.concat(data);
+        if (data.length < pageSize) break;
+        page++;
+      }
+      return results;
+    };
 
-    if (error) {
-      console.error('Error fetching channel performance:', error);
-      return [];
+    let leads: any[] = [];
+    let people: any[] = [];
+
+    try {
+      leads = await fetchAll('leads', 'source, status', 'assigned_to_id');
+    } catch (err) {
+      console.error('Error fetching leads for channel performance:', err);
+    }
+
+    try {
+      people = await fetchAll('people', 'commercial_info, roles, relationship_status', 'assigned_to_id');
+    } catch (err) {
+      console.error('Error fetching people for channel performance:', err);
     }
 
     const benchmarks: Record<string, number> = {
-      'Indicação': 70,
+      'Indicaǜo': 70,
       'Base de clientes': 45,
       'Network': 40,
       'Portais': 10,
       'Redes sociais': 15,
-      'Ligação ativa': 5,
+      'Ligaǜo ativa': 5,
       'Ponto avan\u00E7ado': 30,
       'IA Prospec\u00E7\u00E3o': 15,
       'Manual': 15
@@ -239,14 +263,57 @@ export class DashboardService {
 
     const oppStatuses = ['presentation', 'visit', 'proposal', 'sale'];
 
+    const normalizeSource = (src: string): string => {
+      if (!src) return 'Outros';
+      const clean = src.trim().toLowerCase();
+
+      const strip = (s: string) => {
+        return s.toLowerCase()
+          .replace(/ǜ/g, 'ca') // ǜ represents çã in the broken encoding
+          .replace(/[áàâãäǟ]/g, 'a')
+          .replace(/[éèêëǸ]/g, 'e')
+          .replace(/[íìîï]/g, 'i')
+          .replace(/[óòôõö]/g, 'o')
+          .replace(/[úùûü]/g, 'u')
+          .replace(/ç/g, 'c')
+          .replace(/[^a-z0-9]/g, '');
+      };
+
+      const cleanSrc = strip(clean);
+      const matchedKey = Object.keys(benchmarks).find(k => {
+        const cleanK = strip(k);
+        return cleanK === cleanSrc || cleanK.includes(cleanSrc) || cleanSrc.includes(cleanK);
+      });
+      return matchedKey || src.trim();
+    };
+
+    // Process leads
     (leads || []).forEach(lead => {
-      const source = lead.source || 'Outros';
+      const source = normalizeSource(lead.source);
       if (!stats[source]) {
         stats[source] = { total: 0, opps: 0 };
       }
       stats[source].total += 1;
       
       if (oppStatuses.includes(lead.status)) {
+        stats[source].opps += 1;
+      }
+    });
+
+    // Process people
+    (people || []).forEach(person => {
+      const commInfo = person.commercial_info || {};
+      const source = normalizeSource(commInfo.lead_source);
+      if (!stats[source]) {
+        stats[source] = { total: 0, opps: 0 };
+      }
+      stats[source].total += 1;
+      
+      const isConverted = 
+        person.relationship_status === 'ativo' || 
+        (person.roles && person.roles.some((r: string) => r !== 'lead'));
+        
+      if (isConverted) {
         stats[source].opps += 1;
       }
     });
@@ -266,6 +333,7 @@ export class DashboardService {
 
     return results;
   }
+
 
   static async saveFunnelConfig(userId: string, config: any) {
       const updateData: any = { funnel_config: config };
