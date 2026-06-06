@@ -192,12 +192,15 @@ export function FunnelSimulator() {
           />
 
           {/* Camada: Vendas */}
-          <div className="relative z-10 w-full sm:w-[50%] md:w-[45%] lg:w-[40%] max-w-[280px] bg-accent text-white p-6 rounded-2xl shadow-xl shadow-accent/20 flex flex-col items-center group hover:scale-110 transition-all duration-500">
-            <CheckCircle2 size={32} className="mb-2 text-white/80" />
-            <span className="text-2xl font-black">{salesNeeded}</span>
-            <span className="text-[10px] font-black uppercase tracking-widest opacity-80 text-center">Vendas Trimestre</span>
-            <span className="mt-2 text-sm font-bold">{formatCurrency(goal)}</span>
-          </div>
+          <FunnelLayer 
+            label="Vendas Trimestre" 
+            value={salesNeeded} 
+            color="bg-accent/15 border-accent/20" 
+            width="w-full sm:w-[70%] md:w-[55%] lg:w-[40%]"
+            icon={<CheckCircle2 className="text-accent" />}
+            rate={formatCurrency(goal)}
+            rateLabel="Meta Trimestral"
+          />
 
           {/* Meta Diária Card */}
           <div className="mt-8 mb-4 bg-surface border-2 border-accent p-6 rounded-3xl shadow-2xl lg:rotate-3 hover:rotate-0 transition-all duration-500 max-w-[240px] z-20 mx-auto w-full text-center">
@@ -266,9 +269,10 @@ interface FunnelLayerProps {
   width: string;
   icon: React.ReactNode;
   rate: string;
+  rateLabel?: string;
 }
 
-const FunnelLayer = ({ label, value, color, width, icon, rate }: FunnelLayerProps) => (
+const FunnelLayer = ({ label, value, color, width, icon, rate, rateLabel }: FunnelLayerProps) => (
   <div className={`relative ${width} ${color} py-4 px-5 sm:px-6 sm:py-5 rounded-[1.5rem] flex flex-col sm:flex-row items-center justify-between mb-4 border border-border/50 group hover:border-accent/30 hover:shadow-lg transition-all duration-500 cursor-default overflow-hidden gap-2`}>
     <div className="flex items-center gap-4 relative z-10 w-full sm:w-auto text-left">
       <div className="p-3 bg-card/80 backdrop-blur-sm rounded-xl shrink-0 group-hover:scale-110 transition-transform duration-500">
@@ -280,7 +284,7 @@ const FunnelLayer = ({ label, value, color, width, icon, rate }: FunnelLayerProp
       </div>
     </div>
     <div className="text-right relative z-10 w-full sm:w-auto flex flex-row sm:flex-col justify-between sm:justify-end items-center sm:items-end">
-      <p className="text-[10px] font-black uppercase tracking-widest text-accent">Taxa Próxima</p>
+      <p className="text-[10px] font-black uppercase tracking-widest text-accent">{rateLabel || "Taxa Próxima"}</p>
       <p className="text-lg font-black text-primary">{rate}</p>
     </div>
     {/* Efeito de brilho ao passar o mouse */}

@@ -33,8 +33,8 @@ export function useFunnelCalculator({
     // 4. Ligações/Leads necessários (Apresentações / Taxa de Agendamento)
     const callsNeeded = Math.ceil(presentationsNeeded / (callToPresentation || 0.01));
 
-    // 5. Meta Diária (Considerando 60 dias úteis no trimestre)
-    const dailyLeadGoal = parseFloat((callsNeeded / 60).toFixed(1));
+    // 5. Meta Diária (Considerando 90 dias úteis no trimestre)
+    const dailyLeadGoal = parseFloat((callsNeeded / 90).toFixed(1));
 
     return {
       salesNeeded,
