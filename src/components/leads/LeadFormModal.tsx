@@ -119,8 +119,9 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
       }
 
       // 3. Criar o lead vinculado
+      const { entry_date, ...leadPayload } = formData;
       await LeadsService.create({
-        ...formData,
+        ...leadPayload,
         person_id: personId as string, 
         property_id: (propertyMode === 'base' && selectedPropertyType === 'property') ? (selectedPropertyId || undefined) : undefined,
         interest_description: propertyMode === 'market' 
@@ -130,7 +131,8 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
             : undefined,
         assigned_to_id: user.id,
         status: 'lead' as any,
-        history: [{ type: 'creation', date: new Date().toISOString(), note: `Lead criado e vinculado Ã  Pessoa ID: ${personId}` }]
+        created_at: entry_date ? `${entry_date}T00:00:00.000Z` : undefined,
+        history: [{ type: 'creation', date: new Date().toISOString(), note: `Lead criado e vinculado à Pessoa ID: ${personId}` }]
       });
 
       onSuccess();
