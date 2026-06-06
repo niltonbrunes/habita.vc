@@ -30,22 +30,54 @@ export class DashboardService {
     const now = new Date();
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
-    // 1. Get Profile for Goal
+    // 1. Get Profile for Goal and Role
     const { data: profile } = await supabase
       .from('profiles')
-      .select('earnings_goal_monthly, avg_commission_percent')
+      .select('earnings_goal_monthly, avg_commission_percent, role')
       .eq('id', userId)
       .single();
 
     const monthlyGoal = profile?.earnings_goal_monthly || 15000;
     const avgCommission = (profile?.avg_commission_percent || 4) / 100;
+    const role = profile?.role || 'broker';
 
-    // 2. Get Real Earnings from Sales this month
-    const { data: sales } = await supabase
+    // Determine target scope based on user role
+    let salesQuery = supabase
       .from('sales')
       .select('id, total_price, commissions(total_commission_value, split_details)')
-      .eq('broker_id', userId)
       .gte('sale_date', firstDayOfMonth);
+
+    let leadsQuery = supabase
+      .from('leads')
+      .select('status, created_at');
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    let newLeadsTodayQuery = supabase
+      .from('leads')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', startOfToday.toISOString());
+
+    if (role === 'manager') {
+      const { data: team } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('manager_id', userId);
+      const teamIds = [(team || []).map((t: any) => t.id), userId].flat();
+      salesQuery = salesQuery.in('broker_id', teamIds);
+      leadsQuery = leadsQuery.in('assigned_to_id', teamIds);
+      newLeadsTodayQuery = newLeadsTodayQuery.in('assigned_to_id', teamIds);
+    } else if (role === 'admin' || role === 'director') {
+      // Admins and directors get all sales and leads
+    } else {
+      // Broker - default behavior
+      salesQuery = salesQuery.eq('broker_id', userId);
+      leadsQuery = leadsQuery.eq('assigned_to_id', userId);
+      newLeadsTodayQuery = newLeadsTodayQuery.eq('assigned_to_id', userId);
+    }
+
+    // 2. Get Real Earnings from Sales this month
+    const { data: sales } = await salesQuery;
 
     const currentVGV = (sales as any)?.reduce((acc: number, sale: any) => acc + Number(sale.total_price || 0), 0) || 0;
     const realEarnings = (sales as any)?.reduce((acc: number, sale: any) => {
@@ -54,13 +86,10 @@ export class DashboardService {
       return acc + Number(brokerSplit?.value || 0);
     }, 0) || 0;
 
-        // 3. Get Active Leads
-    const { data: allLeadsData } = await supabase
-      .from('leads')
-      .select('status, created_at, updated_at')
-      .eq('assigned_to_id', userId);
+    // 3. Get Active Leads
+    const { data: allLeadsData } = await leadsQuery;
 
-    const activeLeads = (allLeadsData || []).filter(l => l.status !== 'sale' && l.status !== 'lost').length;
+    const activeLeads = (allLeadsData || []).filter(l => l.status !== 'sale' && l.status !== 'captured' && l.status !== 'lost').length;
 
     const funnelStats = {
       base: 0,
@@ -75,14 +104,35 @@ export class DashboardService {
 
     (allLeadsData || []).forEach((l: any) => {
       funnelStats.base++;
-      if (l.status === 'lead' || l.status === 'contact') {
+      
+      const isOportunidade = 
+        l.status === 'lead' || 
+        l.status === 'contact' || 
+        l.status === 'prospecting' || 
+        l.status === 'contacted';
+        
+      const isApresentacao = 
+        l.status === 'presentation' || 
+        l.status === 'visit' || 
+        l.status === 'visit_scheduled' || 
+        l.status === 'visited';
+        
+      const isProposta = 
+        l.status === 'proposal' || 
+        l.status === 'proposal_sent';
+        
+      const isVenda = 
+        l.status === 'sale' || 
+        l.status === 'captured';
+
+      if (isOportunidade) {
         funnelStats.oportunidades++;
-      } else if (l.status === 'presentation' || l.status === 'visit') {
+      } else if (isApresentacao) {
         funnelStats.apresentacoes++;
-      } else if (l.status === 'proposal') {
+      } else if (isProposta) {
         funnelStats.propostas++;
-      } else if (l.status === 'sale') {
-        const d = new Date(l.updated_at || l.created_at);
+      } else if (isVenda) {
+        const d = new Date(l.created_at);
         const q = Math.floor((d.getMonth() + 3) / 3);
         if (q === currentQuarter && d.getFullYear() === currentYear) {
           funnelStats.vendas++;
@@ -91,16 +141,9 @@ export class DashboardService {
     });
 
     // 4. New Leads Today
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
-    const { count: newLeadsToday } = await supabase
-      .from('leads')
-      .select('*', { count: 'exact', head: true })
-      .eq('assigned_to_id', userId)
-      .gte('created_at', startOfToday.toISOString());
+    const { count: newLeadsToday } = await newLeadsTodayQuery;
 
     // 5. Calculate VGV Needed
-    // Formula: (Target Earnings - Current Earnings) / Avg Commission
     const earningsGap = Math.max(0, monthlyGoal - realEarnings);
     const vgvNeeded = earningsGap / (avgCommission || 0.04);
 
@@ -108,7 +151,7 @@ export class DashboardService {
       monthlyGoal,
       realEarnings,
       vgvNeeded,
-            activeLeads: activeLeads || 0,
+      activeLeads: activeLeads || 0,
       newLeadsToday: newLeadsToday || 0,
       goalProgress: Math.min(100, Math.round((realEarnings / monthlyGoal) * 100)),
       realVgv: currentVGV,
