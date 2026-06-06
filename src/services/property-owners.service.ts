@@ -5,10 +5,27 @@ export const PropertyOwnersService = {
   async getByPropertyId(propertyId: string): Promise<PropertyOwner[]> {
     const { data, error } = await supabase
       .from('property_owners')
-      .select('*')
+      .select('*, people(*)')
       .eq('property_id', propertyId);
     if (error) throw error;
-    return data as PropertyOwner[];
+    
+    return (data || []).map((o: any) => {
+      const person = o.people || {};
+      const primaryEmail = person.contacts?.find((c: any) => c.type === 'email')?.value || '';
+      const primaryPhone = person.contacts?.find((c: any) => c.type === 'phone' || c.type === 'whatsapp' || c.type === 'cel')?.value || '';
+      return {
+        id: o.id || `${o.property_id}_${o.person_id}`,
+        property_id: o.property_id,
+        person_id: o.person_id,
+        name: person.name || '',
+        cpf_cnpj: person.document_id || '',
+        phone: primaryPhone,
+        email: primaryEmail,
+        ownership_percent: o.ownership_percent !== undefined ? o.ownership_percent : 100,
+        owner_type: o.owner_type || 'owner',
+        created_at: o.created_at || new Date().toISOString()
+      };
+    });
   },
 
   async create(owner: Omit<PropertyOwner, 'id' | 'created_at'>): Promise<PropertyOwner> {
