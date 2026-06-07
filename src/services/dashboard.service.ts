@@ -47,9 +47,11 @@ export class DashboardService {
       .select('id, total_price, commissions(total_commission_value, split_details)')
       .gte('sale_date', firstDayOfMonth);
 
+    // Funil de Vendas: apenas leads compradores (buyer ou sem tipo definido)
     let leadsQuery = supabase
       .from('leads')
-      .select('status, created_at');
+      .select('status, created_at')
+      .or('lead_type.eq.buyer,lead_type.is.null');
 
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
@@ -89,7 +91,7 @@ export class DashboardService {
     // 3. Get Active Leads
     const { data: allLeadsData } = await leadsQuery;
 
-    const activeLeads = (allLeadsData || []).filter(l => l.status !== 'sale' && l.status !== 'captured' && l.status !== 'lost').length;
+    const activeLeads = (allLeadsData || []).filter(l => l.status !== 'sale' && l.status !== 'lost').length;
 
     const funnelStats = {
       base: 0,
@@ -104,34 +106,14 @@ export class DashboardService {
 
     (allLeadsData || []).forEach((l: any) => {
       funnelStats.base++;
-      
-      const isOportunidade = 
-        l.status === 'lead' || 
-        l.status === 'contact' || 
-        l.status === 'prospecting' || 
-        l.status === 'contacted';
-        
-      const isApresentacao = 
-        l.status === 'presentation' || 
-        l.status === 'visit' || 
-        l.status === 'visit_scheduled' || 
-        l.status === 'visited';
-        
-      const isProposta = 
-        l.status === 'proposal' || 
-        l.status === 'proposal_sent';
-        
-      const isVenda = 
-        l.status === 'sale' || 
-        l.status === 'captured';
 
-      if (isOportunidade) {
+      if (l.status === 'lead' || l.status === 'contact') {
         funnelStats.oportunidades++;
-      } else if (isApresentacao) {
+      } else if (l.status === 'presentation' || l.status === 'visit') {
         funnelStats.apresentacoes++;
-      } else if (isProposta) {
+      } else if (l.status === 'proposal') {
         funnelStats.propostas++;
-      } else if (isVenda) {
+      } else if (l.status === 'sale') {
         const d = new Date(l.created_at);
         const q = Math.floor((d.getMonth() + 3) / 3);
         if (q === currentQuarter && d.getFullYear() === currentYear) {
