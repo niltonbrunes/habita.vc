@@ -23,6 +23,7 @@ import { LeadsService } from '@/services/leads.service';
 import { useAuth } from '@/context/AuthContext';
 
 import Link from 'next/link';
+import { CaptacaoAnalyticsPanel } from '@/components/dashboard/CaptacaoAnalyticsPanel';
 
 export default function ProspeccaoPage() {
   const { user } = useAuth();
@@ -351,6 +352,22 @@ export default function ProspeccaoPage() {
             )}
           </AnimatePresence>
         </div>
+      </div>
+
+      {/* ── PAINEL DE CAPTAÇÃO ── */}
+      <div className="p-6 lg:p-8 border-t border-border bg-muted/20">
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+              <span className="text-lg">📦</span>
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-heading tracking-tight">Análise de Captação</h2>
+              <p className="text-xs font-bold text-muted-foreground">Estoque captado · Velocidade · Oferta vs Demanda por bairro</p>
+            </div>
+          </div>
+        </div>
+        <CaptacaoAnalyticsPanel />
       </div>
     </div>
   );
