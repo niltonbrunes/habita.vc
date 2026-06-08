@@ -254,6 +254,115 @@ export const GamificationService = {
     }
   },
 
+  async recalculateBadgesAfterDeletion(userId: string, currentBadges: string[]): Promise<string[]> {
+    try {
+      const { data: remainingSales } = await supabase
+        .from('sales')
+        .select('total_price, sale_date')
+        .eq('broker_id', userId);
+
+      const remaining = remainingSales || [];
+      const totalVgv = remaining.reduce((acc, curr) => acc + (Number(curr.total_price) || 0), 0);
+      const salesCount = remaining.length;
+      const hasLuxury = remaining.some(s => (Number(s.total_price) || 0) >= 2000000);
+
+      // Group remaining sales by month
+      const salesCountMap: Record<string, number> = {};
+      remaining.forEach(s => {
+        if (s.sale_date) {
+          const month = s.sale_date.substring(0, 7);
+          salesCountMap[month] = (salesCountMap[month] || 0) + 1;
+        }
+      });
+      const hasAnyMonthWith3Sales = Object.values(salesCountMap).some(count => count >= 3);
+
+      const updatedBadges = currentBadges.filter(badge => {
+        if (badge === BADGES.FIRST_SALE) {
+          return salesCount > 0;
+        }
+        if (badge === BADGES.VGV_1M) {
+          return totalVgv >= 1000000;
+        }
+        if (badge === BADGES.VGV_3M) {
+          return totalVgv >= 3000000;
+        }
+        if (badge === BADGES.VGV_10M) {
+          return totalVgv >= 10000000;
+        }
+        if (badge === BADGES.VGV_50M) {
+          return totalVgv >= 50000000;
+        }
+        if (badge === BADGES.LUXURY) {
+          return hasLuxury;
+        }
+        if (badge === BADGES.SALES_3) {
+          return hasAnyMonthWith3Sales;
+        }
+        return true;
+      });
+
+      return updatedBadges;
+    } catch (err) {
+      console.error('Error recalculating badges:', err);
+      return currentBadges;
+    }
+  },
+
+  async handleSaleDeleted(userId: string, salePrice: number, saleDate?: string) {
+    try {
+      // 1. Calculate points to reverse
+      const extraPoints = Math.floor(salePrice / 100000) * 100;
+      const totalSalePoints = POINTS_RULES.SALE_CLOSED_BASE + extraPoints;
+
+      // 2. Get profile to update total points and badges
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('total_points, badges')
+        .eq('id', userId)
+        .single();
+
+      if (profile) {
+        const currentTotalPoints = profile.total_points || 0;
+        const newTotalPoints = Math.max(0, currentTotalPoints - totalSalePoints);
+        const newBadges = await this.recalculateBadgesAfterDeletion(userId, profile.badges || []);
+
+        await supabase
+          .from('profiles')
+          .update({
+            total_points: newTotalPoints,
+            badges: newBadges
+          })
+          .eq('id', userId);
+      }
+
+      // 3. Update performance stats for the sale month
+      if (saleDate) {
+        const targetMonth = saleDate.split('T')[0].substring(0, 7) + '-01'; // YYYY-MM-01
+        const { data: stats } = await supabase
+          .from('performance_stats')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('month_year', targetMonth)
+          .single();
+
+        if (stats) {
+          const newMonthlyPoints = Math.max(0, (stats.monthly_points || 0) - totalSalePoints);
+          const newVgvAchieved = Math.max(0, (stats.vgv_achieved || 0) - salePrice);
+
+          await supabase
+            .from('performance_stats')
+            .update({
+              monthly_points: newMonthlyPoints,
+              vgv_achieved: newVgvAchieved
+            })
+            .eq('id', stats.id);
+        }
+      }
+    } catch (err) {
+      console.error('Error handling sale deletion gamification:', err);
+    }
+  },
+
 
   async getRankingData(monthYear?: string) {
     // Fetch all profiles and their stats for a given month

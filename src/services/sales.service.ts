@@ -80,6 +80,25 @@ export const SalesService = {
   },
 
   async delete(id: string) {
+    try {
+      // 1. Fetch sale details to reverse gamification
+      const { data: sale } = await supabase
+        .from('sales')
+        .select('broker_id, total_price, sale_date')
+        .eq('id', id)
+        .single();
+
+      if (sale && sale.broker_id) {
+        await GamificationService.handleSaleDeleted(
+          sale.broker_id, 
+          Number(sale.total_price) || 0, 
+          sale.sale_date
+        ).catch(console.error);
+      }
+    } catch (gamErr) {
+      console.error('Error fetching sale details for gamification reversal:', gamErr);
+    }
+
     // Delete commissions first (foreign key)
     await supabase.from('commissions').delete().eq('sale_id', id);
     
