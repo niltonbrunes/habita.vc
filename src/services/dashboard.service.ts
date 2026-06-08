@@ -61,6 +61,11 @@ export class DashboardService {
       .select('*', { count: 'exact', head: true })
       .gte('created_at', startOfToday.toISOString());
 
+    // Query for total contacts (Base)
+    let peopleCountQuery = supabase
+      .from('people')
+      .select('*', { count: 'exact', head: true });
+
     if (role === 'manager') {
       const { data: team } = await supabase
         .from('profiles')
@@ -70,13 +75,15 @@ export class DashboardService {
       salesQuery = salesQuery.in('broker_id', teamIds);
       leadsQuery = leadsQuery.in('assigned_to_id', teamIds);
       newLeadsTodayQuery = newLeadsTodayQuery.in('assigned_to_id', teamIds);
+      peopleCountQuery = peopleCountQuery.in('assigned_to_id', teamIds);
     } else if (role === 'admin' || role === 'director') {
-      // Admins and directors get all sales and leads
+      // Admins and directors get all sales, leads and people
     } else {
       // Broker - default behavior
       salesQuery = salesQuery.eq('broker_id', userId);
       leadsQuery = leadsQuery.eq('assigned_to_id', userId);
       newLeadsTodayQuery = newLeadsTodayQuery.eq('assigned_to_id', userId);
+      peopleCountQuery = peopleCountQuery.eq('assigned_to_id', userId);
     }
 
     // 2. Get Real Earnings from Sales this month
@@ -92,10 +99,13 @@ export class DashboardService {
     // 3. Get Active Leads
     const { data: allLeadsData } = await leadsQuery;
 
-    const activeLeads = (allLeadsData || []).filter(l => l.status !== 'sale' && l.status !== 'lost').length;
+    const activeLeads = (allLeadsData || []).filter(l => l.status !== 'sale' && l.status !== 'captured' && l.status !== 'lost').length;
+
+    // Get Base count from people table
+    const { count: basePeopleCount } = await peopleCountQuery;
 
     const funnelStats = {
-      base: 0,
+      base: basePeopleCount || 0,
       oportunidades: 0,
       apresentacoes: 0,
       propostas: 0,
@@ -106,15 +116,33 @@ export class DashboardService {
     const currentYear = now.getFullYear();
 
     (allLeadsData || []).forEach((l: any) => {
-      funnelStats.base++;
+      const isOportunidade = 
+        l.status === 'lead' || 
+        l.status === 'contact' || 
+        l.status === 'prospecting' || 
+        l.status === 'contacted';
+        
+      const isApresentacao = 
+        l.status === 'presentation' || 
+        l.status === 'visit' || 
+        l.status === 'visit_scheduled' || 
+        l.status === 'visited';
+        
+      const isProposta = 
+        l.status === 'proposal' || 
+        l.status === 'proposal_sent';
+        
+      const isVenda = 
+        l.status === 'sale' || 
+        l.status === 'captured';
 
-      if (l.status === 'lead' || l.status === 'contact') {
+      if (isOportunidade) {
         funnelStats.oportunidades++;
-      } else if (l.status === 'presentation' || l.status === 'visit') {
+      } else if (isApresentacao) {
         funnelStats.apresentacoes++;
-      } else if (l.status === 'proposal') {
+      } else if (isProposta) {
         funnelStats.propostas++;
-      } else if (l.status === 'sale') {
+      } else if (isVenda) {
         const d = new Date(l.created_at);
         const q = Math.floor((d.getMonth() + 3) / 3);
         if (q === currentQuarter && d.getFullYear() === currentYear) {
