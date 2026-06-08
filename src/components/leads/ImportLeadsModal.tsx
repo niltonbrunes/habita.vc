@@ -6,6 +6,7 @@ import { LeadsService } from '@/services/leads.service';
 import { PeopleService } from '@/services/people.service';
 import { PropertiesService } from '@/services/properties.service';
 import { useAuth } from '@/context/AuthContext';
+import { LEAD_CHANNELS } from '@/lib/constants/channels';
 import { Building, MapPin, Search as SearchIcon } from 'lucide-react';
 
 interface ImportLeadsModalProps {
@@ -13,6 +14,18 @@ interface ImportLeadsModalProps {
   onClose: () => void;
   onSuccess: () => void;
 }
+
+
+const normalizeSourceValue = (val: string): string => {
+  if (!val) return 'outros';
+  const clean = val.trim().toLowerCase();
+  const found = LEAD_CHANNELS.find(c => 
+    c.id === clean || 
+    c.name.toLowerCase() === clean ||
+    c.name.toLowerCase().replace(/[^a-z0-9]/g, '') === clean.replace(/[^a-z0-9]/g, '')
+  );
+  return found ? found.id : 'outros';
+};
 
 export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModalProps) => {
   const { user } = useAuth();
@@ -179,7 +192,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
             assigned_to_id: user?.id,
             registered_by_id: user?.id,
             commercial_info: {
-              lead_source: globalSource || raw.source || 'ImportaÃ§Ã£o CSV',
+              lead_source: normalizeSourceValue(globalSource || raw.source),
               notes: 'Criado automaticamente via importaÃ§Ã£o de leads.'
             }
           } as any);
@@ -199,7 +212,7 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
           status: 'lead' as any,
           temperature: 'warm' as any,
           score: 50,
-          source: globalSource || raw.source || 'ImportaÃ§Ã£o CSV',
+          source: normalizeSourceValue(globalSource || raw.source),
           value: selectedPropertyId ? selectedPropertyPrice : undefined,
           interest_description: selectedPropertyType === 'development' ? `Interesse no Empreendimento: ${selectedPropertyTitle}` : undefined,
           property_id: selectedPropertyType === 'property' ? (selectedPropertyId || undefined) : undefined,
@@ -442,16 +455,9 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
                   className="w-full px-4 py-3 bg-muted/50 border border-transparent rounded-xl focus:bg-white focus:border-primary/20 outline-none font-bold text-primary placeholder:text-muted-foreground/40 transition-all"
                 />
                 <datalist id="lead-sources">
-                  <option value="IndicaÃ§Ã£o" />
-                  <option value="Base de clientes" />
-                  <option value="Network" />
-                  <option value="Portais" />
-                  <option value="Redes sociais" />
-                  <option value="LigaÃ§Ã£o ativa" />
-                  <option value="Ponto avanÃ§ado" />
-                  <option value="IA ProspecÃ§Ã£o" />
-                  <option value="Manual" />
-                  <option value="AÃ§Ã£o de Vendas" />
+                  {LEAD_CHANNELS.map(channel => (
+                    <option key={channel.id} value={channel.name} />
+                  ))}
                 </datalist>
               </div>
               <p className="text-[9px] font-medium text-muted-foreground leading-relaxed italic">

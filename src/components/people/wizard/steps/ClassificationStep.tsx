@@ -2,6 +2,7 @@
 import React from 'react';
 import { PeopleWizardData } from '../PeopleWizard';
 import { PersonRole } from '@/types/people';
+import { LEAD_CHANNELS } from '@/lib/constants/channels';
 import { Check } from 'lucide-react';
 
 interface Props {
@@ -69,16 +70,13 @@ export function ClassificationStep({ data, onChange }: Props) {
             <select
               value={data.commercial_info.lead_source || ''}
               onChange={e => onChange({ commercial_info: { ...data.commercial_info, lead_source: e.target.value } })}
-                className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary transition-all"
-              >
-                    <option value="">Selecione...</option>
-                    <option value="indicacao">Indicação</option>
-                    <option value="redes_sociais">Redes Sociais</option>
-                    <option value="base_clientes">Base de Clientes</option>
-                    <option value="network">Network</option>
-                    <option value="ponto_avancado">Ponto Avançado</option>
-                    <option value="plantao">Plantão</option>
-                  </select>
+              className="w-full px-5 py-4 bg-surface border-2 border-border rounded-2xl focus:border-primary outline-none font-medium text-primary transition-all"
+            >
+              <option value="">Selecione...</option>
+              {LEAD_CHANNELS.map(channel => (
+                <option key={channel.id} value={channel.id}>{channel.name}</option>
+              ))}
+            </select>
           </div>
           <div className="space-y-2">
             <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Interesse</label>

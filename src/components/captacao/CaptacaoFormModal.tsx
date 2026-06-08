@@ -8,6 +8,7 @@ import {
 import { LeadsService } from '@/services/leads.service';
 import { PeopleService } from '@/services/people.service';
 import { useAuth } from '@/context/AuthContext';
+import { LEAD_CHANNELS } from '@/lib/constants/channels';
 import { SELLER_MOTIVATIONS, PROPERTY_TYPES } from '@/lib/constants/captacao';
 
 interface CaptacaoFormModalProps {
@@ -200,18 +201,15 @@ export const CaptacaoFormModal = ({ isOpen, onClose, onSuccess }: CaptacaoFormMo
                 <div className="relative group">
                   <Tag className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <select
+                    required
                     value={formData.source}
-                    onChange={e => set('source', e.target.value)}
+                    onChange={e => setFormData({ ...formData, source: e.target.value })}
                     className={INPUT_CLASS}
                   >
-                    <option value="Manual">Manual</option>
-                    <option value="Indicação">Indicação</option>
-                    <option value="Base de clientes">Base de clientes</option>
-                    <option value="Network">Network</option>
-                    <option value="Portais">Portais</option>
-                    <option value="Redes sociais">Redes sociais</option>
-                    <option value="Ligação ativa">Ligação ativa</option>
-                    <option value="Ponto avançado">Ponto avançado</option>
+                    <option value="">Selecionar origem...</option>
+                    {LEAD_CHANNELS.map(channel => (
+                      <option key={channel.id} value={channel.id}>{channel.name}</option>
+                    ))}
                   </select>
                 </div>
               </div>

@@ -6,6 +6,7 @@ import { LeadsService } from '@/services/leads.service';
 import { PeopleService } from '@/services/people.service';
 import { PropertiesService } from '@/services/properties.service';
 import { useAuth } from '@/context/AuthContext';
+import { LEAD_CHANNELS } from '@/lib/constants/channels';
 
 interface LeadFormModalProps {
   isOpen: boolean;
@@ -450,19 +451,12 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
                   value={formData.source}
                   onChange={e => setFormData({ ...formData, source: e.target.value })}
                   className="block w-full pl-10 pr-4 py-3 bg-muted/50 border border-transparent rounded-2xl focus:bg-surface focus:border-primary/20 transition-all outline-none font-bold text-primary"
-                  >
-                    <option value="">Selecione...</option>
-                    <option value="IndicaÃ§Ã£o">IndicaÃ§Ã£o</option>
-                    <option value="Base de clientes">Base de clientes</option>
-                    <option value="Network">Network</option>
-                    <option value="Portais">Portais</option>
-                    <option value="Redes sociais">Redes sociais</option>
-                    <option value="LigaÃ§Ã£o ativa">LigaÃ§Ã£o ativa</option>
-                    <option value="Ponto avanÃ§ado">Ponto avanÃ§ado</option>
-                  
-                    <option value="IA Prospec??o">IA Prospec??o</option>
-                    <option value="Manual">Manual</option>
-                    </select>
+                >
+                  <option value="">Selecione...</option>
+                  {LEAD_CHANNELS.map(channel => (
+                    <option key={channel.id} value={channel.id}>{channel.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
 

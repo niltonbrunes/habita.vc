@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { Lead, Sale, Task, Profile } from '@/types/database';
+import { LEAD_CHANNELS, CHANNEL_MAP } from '@/lib/constants/channels';
 
 export interface DashboardMetrics {
   monthlyGoal: number;
@@ -235,15 +236,39 @@ export class DashboardService {
 
   
   static async getChannelPerformance(userId: string) {
-    const fetchAll = async (tableName: string, columns: string, filterField: string) => {
+    // 1. Get Profile for Role scoping
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', userId)
+      .single();
+    const role = profile?.role || 'broker';
+
+    // 2. Build Query scopes
+    let leadsQuery = supabase.from('leads').select('source, status');
+    let peopleQuery = supabase.from('people').select('commercial_info, roles, relationship_status');
+
+    if (role === 'manager') {
+      const { data: team } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('manager_id', userId);
+      const teamIds = [(team || []).map((t: any) => t.id), userId].flat();
+      leadsQuery = leadsQuery.in('assigned_to_id', teamIds);
+      peopleQuery = peopleQuery.in('assigned_to_id', teamIds);
+    } else if (role === 'admin' || role === 'director') {
+      // All
+    } else {
+      leadsQuery = leadsQuery.eq('assigned_to_id', userId);
+      peopleQuery = peopleQuery.eq('assigned_to_id', userId);
+    }
+
+    const fetchAll = async (query: any) => {
       let results: any[] = [];
       let page = 0;
       const pageSize = 1000;
       while (true) {
-        const { data, error } = await supabase
-          .from(tableName)
-          .select(columns)
-          .eq(filterField, userId)
+        const { data, error } = await query
           .range(page * pageSize, (page + 1) * pageSize - 1);
         if (error) throw error;
         if (!data || data.length === 0) break;
@@ -258,27 +283,30 @@ export class DashboardService {
     let people: any[] = [];
 
     try {
-      leads = await fetchAll('leads', 'source, status', 'assigned_to_id');
+      leads = await fetchAll(leadsQuery);
     } catch (err) {
       console.error('Error fetching leads for channel performance:', err);
     }
 
     try {
-      people = await fetchAll('people', 'commercial_info, roles, relationship_status', 'assigned_to_id');
+      people = await fetchAll(peopleQuery);
     } catch (err) {
       console.error('Error fetching people for channel performance:', err);
     }
 
     const benchmarks: Record<string, number> = {
-      'Indicaǜo': 70,
-      'Base de clientes': 45,
+      'Indicação': 70,
+      'Base de Clientes': 45,
       'Network': 40,
       'Portais': 10,
-      'Redes sociais': 15,
-      'Ligaǜo ativa': 5,
-      'Ponto avan\u00E7ado': 30,
-      'IA Prospec\u00E7\u00E3o': 15,
-      'Manual': 15
+      'Redes Sociais': 15,
+      'Ligação Ativa': 5,
+      'Ponto Avançado': 30,
+      'IA Prospecção': 15,
+      'Manual': 15,
+      'Plantão': 15,
+      'Ação de Vendas': 15,
+      'Outros': 10
     };
 
     const stats: Record<string, { total: number; opps: number }> = {};
@@ -288,33 +316,23 @@ export class DashboardService {
 
     const oppStatuses = ['presentation', 'visit', 'proposal', 'sale'];
 
-    const normalizeSource = (src: string): string => {
+    const getNormalizedDisplaySource = (src: string | null | undefined): string => {
       if (!src) return 'Outros';
       const clean = src.trim().toLowerCase();
-
-      const strip = (s: string) => {
-        return s.toLowerCase()
-          .replace(/ǜ/g, 'ca') // ǜ represents çã in the broken encoding
-          .replace(/[áàâãäǟ]/g, 'a')
-          .replace(/[éèêëǸ]/g, 'e')
-          .replace(/[íìîï]/g, 'i')
-          .replace(/[óòôõö]/g, 'o')
-          .replace(/[úùûü]/g, 'u')
-          .replace(/ç/g, 'c')
-          .replace(/[^a-z0-9]/g, '');
-      };
-
-      const cleanSrc = strip(clean);
-      const matchedKey = Object.keys(benchmarks).find(k => {
-        const cleanK = strip(k);
-        return cleanK === cleanSrc || cleanK.includes(cleanSrc) || cleanSrc.includes(cleanK);
-      });
-      return matchedKey || src.trim();
+      if (CHANNEL_MAP[clean]) {
+        return CHANNEL_MAP[clean];
+      }
+      const found = LEAD_CHANNELS.find(c => 
+        c.id === clean || 
+        c.name.toLowerCase() === clean ||
+        c.name.toLowerCase().replace(/[^a-z0-9]/g, '') === clean.replace(/[^a-z0-9]/g, '')
+      );
+      return found ? found.name : 'Outros';
     };
 
     // Process leads
     (leads || []).forEach(lead => {
-      const source = normalizeSource(lead.source);
+      const source = getNormalizedDisplaySource(lead.source);
       if (!stats[source]) {
         stats[source] = { total: 0, opps: 0 };
       }
@@ -328,7 +346,7 @@ export class DashboardService {
     // Process people
     (people || []).forEach(person => {
       const commInfo = person.commercial_info || {};
-      const source = normalizeSource(commInfo.lead_source);
+      const source = getNormalizedDisplaySource(commInfo.lead_source);
       if (!stats[source]) {
         stats[source] = { total: 0, opps: 0 };
       }
@@ -358,7 +376,6 @@ export class DashboardService {
 
     return results;
   }
-
 
   static async saveFunnelConfig(userId: string, config: any) {
       const updateData: any = { funnel_config: config };
