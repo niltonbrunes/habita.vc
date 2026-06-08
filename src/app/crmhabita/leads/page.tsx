@@ -129,7 +129,32 @@ export default function LeadsPage() {
 
   const handleMoveBuyer = async (id: string, newStatus: string) => {
     try {
-      await LeadsService.update(id, { status: newStatus as any });
+      const current = leads.find((l: Lead) => l.id === id);
+      const buyerStatusLabels: Record<string, string> = {
+        lead: 'Novos Leads',
+        contact: 'Contato',
+        presentation: 'Apresentação',
+        visit: 'Visitas',
+        proposal: 'Proposta',
+        sale: 'Fechamento',
+        lost: 'Perdido',
+      };
+      
+      const fromLabel = buyerStatusLabels[current?.status || ''] || current?.status || '';
+      const toLabel = buyerStatusLabels[newStatus] || newStatus;
+      
+      const historyEntry = {
+        type: 'status_change',
+        from: current?.status || '',
+        to: newStatus,
+        date: new Date().toISOString(),
+        note: `Movido de "${fromLabel}" para "${toLabel}"`,
+      };
+
+      await LeadsService.update(id, { 
+        status: newStatus as any,
+        history: [...(current?.history || []), historyEntry]
+      });
       refresh();
     } catch (err) {
       console.error('Erro ao mover lead comprador:', err);
@@ -138,7 +163,32 @@ export default function LeadsPage() {
 
   const handleMoveSeller = async (id: string, newStatus: SellerLeadStatus) => {
     try {
-      await LeadsService.update(id, { status: newStatus as any });
+      const current = leads.find((l: Lead) => l.id === id);
+      const sellerStatusLabels: Record<string, string> = {
+        prospecting: 'Prospecção',
+        contacted: 'Contatado',
+        visit_scheduled: 'Visita Agendada',
+        visited: 'Visitado',
+        proposal_sent: 'Proposta Enviada',
+        captured: 'Captado',
+        lost: 'Perdido',
+      };
+
+      const fromLabel = sellerStatusLabels[current?.status || ''] || current?.status || '';
+      const toLabel = sellerStatusLabels[newStatus] || newStatus;
+
+      const historyEntry = {
+        type: 'status_change',
+        from: current?.status || '',
+        to: newStatus,
+        date: new Date().toISOString(),
+        note: `Movido de "${fromLabel}" para "${toLabel}"`,
+      };
+
+      await LeadsService.update(id, { 
+        status: newStatus as any,
+        history: [...(current?.history || []), historyEntry]
+      });
 
       // ── Conversão automática: Captado → Imóvel Suspenso ──────────
       if (newStatus === 'captured' && profile) {

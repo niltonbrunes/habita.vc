@@ -21,7 +21,9 @@ import {
   RefreshCw,
   MessageCircle,
   Clock,
-  Tag
+  Tag,
+  PlusCircle,
+  MessageSquare
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -30,6 +32,31 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
   const [lead, setLead] = useState<Lead | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [savingNote, setSavingNote] = useState(false);
+
+  const handleAddNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!lead || !noteText.trim()) return;
+
+    setSavingNote(true);
+    try {
+      const historyEntry = {
+        type: 'note',
+        date: new Date().toISOString(),
+        note: noteText.trim(),
+      };
+
+      const updatedHistory = [...(lead.history || []), historyEntry];
+      await LeadsService.update(lead.id, { history: updatedHistory });
+      setLead({ ...lead, history: updatedHistory });
+      setNoteText('');
+    } catch (err) {
+      console.error('Erro ao adicionar nota:', err);
+    } finally {
+      setSavingNote(false);
+    }
+  };
 
   useEffect(() => {
     const fetch = async () => {
@@ -113,9 +140,42 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
                     <User size={40} />
                   </div>
                   <div>
-                    <h1 className="text-3xl font-black text-primary">{lead.name}</h1>
+                    <h1 className="text-3xl font-black text-primary flex flex-wrap items-center gap-3">
+                      {lead.name}
+                      {lead.person_id && (
+                        <Link 
+                          href={`/crmhabita/pessoas/${lead.person_id}`}
+                          className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl border border-blue-200"
+                          title="Ver Cadastro Completo"
+                        >
+                          <User size={12} />
+                          Pessoa
+                          <ExternalLink size={10} />
+                        </Link>
+                      )}
+                    </h1>
                     <div className="flex gap-3 mt-2">
-                      <span className="bg-blue-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">{lead.status}</span>
+                      <span className="bg-blue-primary text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
+                        {
+                          (
+                            {
+                              lead: 'Novos Leads',
+                              contact: 'Contato',
+                              presentation: 'Apresentação',
+                              visit: 'Visitas',
+                              proposal: 'Proposta',
+                              sale: 'Fechamento',
+                              lost: 'Perdido',
+                              prospecting: 'Prospecção',
+                              contacted: 'Contatado',
+                              visit_scheduled: 'Visita Agendada',
+                              visited: 'Visitado',
+                              proposal_sent: 'Proposta Enviada',
+                              captured: 'Captado',
+                            } as Record<string, string>
+                          )[lead.status] || lead.status
+                        }
+                      </span>
                       <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${
                         lead.temperature === 'hot' ? 'bg-red-100 text-red-600' : 
                         lead.temperature === 'warm' ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'
@@ -149,25 +209,78 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
 
             {/* History Section */}
             <div className="bg-surface p-10 rounded-xl shadow-card border border-border">
-              <h3 className="text-xl font-black text-primary mb-8 flex items-center gap-2">
-                <Clock size={20} className="text-accent" /> Histórico de Interações
-              </h3>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                <h3 className="text-xl font-black text-primary flex items-center gap-2">
+                  <Clock size={20} className="text-accent" /> Histórico de Interações
+                </h3>
+              </div>
+
+              {/* Novo formulário para registrar notas manuais */}
+              <form onSubmit={handleAddNote} className="mb-8 p-4 bg-muted/20 border border-border/60 rounded-2xl space-y-3">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  📝 Registrar Nova Interação / Anotação
+                </p>
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: Liguei para o cliente, agendamos visita para quinta..."
+                    value={noteText}
+                    onChange={e => setNoteText(e.target.value)}
+                    className="flex-1 px-4 py-3 bg-surface border border-border rounded-xl focus:border-primary outline-none text-xs font-medium text-primary placeholder:text-muted-foreground/30"
+                  />
+                  <button
+                    type="submit"
+                    disabled={savingNote}
+                    className="px-5 py-3 bg-blue-primary text-white font-bold text-xs rounded-xl hover:bg-blue-primary-light transition-all shadow-sm shrink-0 flex items-center gap-2"
+                  >
+                    {savingNote ? <Loader2 className="animate-spin" size={14} /> : 'Registrar'}
+                  </button>
+                </div>
+              </form>
+
               <div className="space-y-6">
-                {lead.history?.map((entry: any, i: number) => (
-                  <div key={i} className="flex gap-6 relative">
-                    {i < lead.history.length - 1 && <div className="absolute left-4 top-8 bottom-[-24px] w-0.5 bg-border" />}
-                    <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center shrink-0 relative z-10">
-                      <div className="w-2 h-2 rounded-full bg-blue-primary" />
-                    </div>
-                    <div className="flex-1 pb-8">
-                      <div className="flex justify-between items-center mb-1">
-                        <p className="font-bold text-primary">{entry.note}</p>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase">{new Date(entry.date).toLocaleString()}</p>
+                {lead.history?.map((entry: any, i: number) => {
+                  let icon = <Clock size={16} className="text-muted-foreground" />;
+                  let bgColor = 'bg-muted border-border';
+                  if (entry.type === 'creation') {
+                    icon = <PlusCircle size={16} className="text-green-600" />;
+                    bgColor = 'bg-green-50 border-green-200';
+                  } else if (entry.type === 'status_change') {
+                    icon = <RefreshCw size={16} className="text-blue-600" />;
+                    bgColor = 'bg-blue-50 border-blue-200';
+                  } else if (entry.type === 'note') {
+                    icon = <MessageSquare size={16} className="text-orange-600" />;
+                    bgColor = 'bg-orange-50 border-orange-200';
+                  } else if (entry.type === 'document' || entry.type === 'upload') {
+                    icon = <FileText size={16} className="text-purple-600" />;
+                    bgColor = 'bg-purple-50 border-purple-200';
+                  }
+
+                  return (
+                    <div key={i} className="flex gap-6 relative">
+                      {i < lead.history.length - 1 && <div className="absolute left-4 top-8 bottom-[-24px] w-0.5 bg-border" />}
+                      <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 relative z-10 shadow-sm ${bgColor}`}>
+                        {icon}
                       </div>
-                      <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{entry.type}</p>
+                      <div className="flex-1 pb-6">
+                        <div className="flex justify-between items-start mb-1">
+                          <p className="font-bold text-primary leading-tight">{entry.note}</p>
+                          <p className="text-[9px] font-bold text-muted-foreground/60 uppercase whitespace-nowrap ml-4">
+                            {new Date(entry.date).toLocaleString('pt-BR')}
+                          </p>
+                        </div>
+                        <p className="text-[9px] text-muted-foreground/50 font-black uppercase tracking-widest">
+                          {entry.type === 'creation' ? 'Criação' 
+                           : entry.type === 'status_change' ? 'Alteração de Etapa' 
+                           : entry.type === 'note' ? 'Anotações / Visita / Ligação' 
+                           : entry.type === 'document' || entry.type === 'upload' ? 'Documento Adicionado' 
+                           : entry.type}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

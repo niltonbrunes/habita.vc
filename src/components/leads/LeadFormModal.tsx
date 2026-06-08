@@ -108,7 +108,8 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
               ...(formData.email ? [{ id: crypto.randomUUID(), type: 'email', value: formData.email, is_primary: true }] : []),
               ...(formData.phone ? [{ id: crypto.randomUUID(), type: 'whatsapp', value: formData.phone, is_primary: !formData.email }] : [])
             ],
-            assigned_to_id: user.id,
+            assigned_to_id: user?.id,
+            registered_by_id: user?.id,
             commercial_info: {
               lead_source: formData.source,
               notes: 'Criado via cadastro manual de lead.'
@@ -129,7 +130,7 @@ export const LeadFormModal = ({ isOpen, onClose, onSuccess, preSelectedPersonId,
           : (propertyMode === 'base' && selectedPropertyType === 'development') 
             ? `Interesse no Empreendimento: ${selectedPropertyTitle}` 
             : undefined,
-        assigned_to_id: user.id,
+        assigned_to_id: user?.id,
         status: 'lead' as any,
         created_at: entry_date ? `${entry_date}T00:00:00.000Z` : undefined,
         history: [{ type: 'creation', date: new Date().toISOString(), note: `Lead criado e vinculado à Pessoa ID: ${personId}` }]

@@ -69,7 +69,8 @@ export const CaptacaoFormModal = ({ isOpen, onClose, onSuccess }: CaptacaoFormMo
             ...(formData.email ? [{ id: crypto.randomUUID(), type: 'email', value: formData.email, is_primary: true }] : []),
             ...(formData.phone ? [{ id: crypto.randomUUID(), type: 'whatsapp', value: formData.phone, is_primary: !formData.email }] : []),
           ],
-          assigned_to_id: user.id,
+          assigned_to_id: user?.id,
+          registered_by_id: user?.id,
           commercial_info: {
             lead_source: formData.source,
             notes: 'Criado via pipeline de captação.',

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PeopleService } from '@/services/people.service';
 import { Person } from '@/types/people';
-import { ArrowLeft, User, Building2, MapPin, Phone, Mail, Briefcase, Calendar, Globe, FileText, Pencil, Trash2, Ban, CheckCircle2, Sparkles } from 'lucide-react';
+import { ArrowLeft, User, Building2, MapPin, Phone, Mail, Briefcase, Calendar, Globe, FileText, Pencil, Trash2, Ban, CheckCircle2, Sparkles, ExternalLink, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
 import { LeadFormModal } from '@/components/leads/LeadFormModal';
@@ -19,12 +19,21 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showInactivateModal, setShowInactivateModal] = useState(false);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [leads, setLeads] = useState<any[]>([]);
+  const [loadingLeads, setLoadingLeads] = useState(true);
 
   useEffect(() => {
-    PeopleService.getById(id)
-      .then(setPerson)
+    setLoading(true);
+    setLoadingLeads(true);
+    Promise.all([
+      PeopleService.getById(id).then(setPerson),
+      PeopleService.getLeadsByPerson(id).then(setLeads)
+    ])
       .catch(console.error)
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setLoadingLeads(false);
+      });
   }, [id]);
 
   const handleDelete = async () => {
@@ -220,6 +229,82 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                 </button>
               </div>
             </div>
+
+            {/* Oportunidades Vinculadas */}
+            <div className="bg-surface rounded-xl p-8 shadow-card border border-border">
+              <h3 className="font-black text-primary text-lg mb-6 flex items-center gap-2">
+                <Briefcase size={20} className="text-accent" /> Oportunidades Vinculadas (CRM)
+              </h3>
+              
+              {loadingLeads ? (
+                <div className="flex justify-center py-6">
+                  <Loader2 className="animate-spin text-primary" size={24} />
+                </div>
+              ) : leads && leads.length > 0 ? (
+                <div className="space-y-4">
+                  {leads.map((l: any) => {
+                    const isSeller = l.lead_type === 'seller';
+                    const leadTypeLabel = isSeller ? 'Captação' : 'Venda';
+                    const leadTypeBg = isSeller ? 'bg-orange-50 text-orange-600 border-orange-200' : 'bg-blue-50 text-blue-600 border-blue-200';
+                    
+                    const statusLabel = (({
+                      lead: 'Novos Leads',
+                      contact: 'Contato',
+                      presentation: 'Apresentação',
+                      visit: 'Visitas',
+                      proposal: 'Proposta',
+                      sale: 'Fechamento',
+                      lost: 'Perdido',
+                      prospecting: 'Prospecção',
+                      contacted: 'Contatado',
+                      visit_scheduled: 'Visita Agendada',
+                      visited: 'Visitado',
+                      proposal_sent: 'Proposta Enviada',
+                      captured: 'Captado',
+                    } as Record<string, string>)[l.status] || l.status);
+
+                    return (
+                      <div key={l.id} className="p-4 bg-muted/30 border border-border/80 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-primary/20 transition-all">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className={`px-2 py-0.5 border text-[9px] font-black uppercase tracking-widest rounded-md ${leadTypeBg}`}>
+                              {leadTypeLabel}
+                            </span>
+                            <span className="px-2 py-0.5 bg-muted text-muted-foreground border border-border/60 text-[9px] font-black uppercase tracking-widest rounded-md">
+                              {statusLabel}
+                            </span>
+                            {l.value && l.value > 0 && (
+                              <span className="text-xs font-bold text-green-600">
+                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(l.value)}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs font-bold text-primary">
+                            {l.property?.title ? `Interesse: ${l.property.title}` : l.interest_description || 'Interesse não detalhado'}
+                          </p>
+                          {l.source && (
+                            <p className="text-[10px] text-muted-foreground font-medium">
+                              Origem: {l.source}
+                            </p>
+                          )}
+                        </div>
+                        <Link 
+                          href={`/crmhabita/leads/${l.id}`}
+                          className="px-4 py-2 bg-surface hover:bg-muted border border-border rounded-xl text-xs font-bold text-primary flex items-center justify-center gap-2 transition-all shadow-sm shrink-0"
+                        >
+                          Ver Oportunidade <ExternalLink size={12} />
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8 bg-muted/20 rounded-2xl border-2 border-dashed border-border/60">
+                  <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">Nenhuma oportunidade ativa</p>
+                  <p className="text-[10px] text-muted-foreground/60 mt-1">Crie uma nova oportunidade/lead para vincular a esta pessoa.</p>
+                </div>
+              )}
+            </div>
             
             {/* Informações Detalhadas */}
             <div className="bg-surface rounded-xl p-8 shadow-sm border border-border">
@@ -328,7 +413,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         onClose={() => setIsLeadModalOpen(false)}
         onSuccess={() => {
           setIsLeadModalOpen(false);
-          // Opcional: Recarregar timeline no futuro
+          // Recarregar os leads vinculados
+          PeopleService.getLeadsByPerson(id).then(setLeads).catch(console.error);
         }}
         preSelectedPersonId={id}
       />

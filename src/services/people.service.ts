@@ -107,6 +107,17 @@ export const PeopleService = {
     if (error) throw error;
   },
 
+  async getLeadsByPerson(personId: string) {
+    const { data, error } = await supabase
+      .from('leads')
+      .select('*, property:properties(*)')
+      .eq('person_id', personId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  },
+
   // Helper for PropertyWizard: Search people to link as owners
   async searchForOwners(searchQuery: string) {
     const term = `%${searchQuery}%`;

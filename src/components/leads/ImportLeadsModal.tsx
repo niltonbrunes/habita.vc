@@ -176,7 +176,8 @@ export const ImportLeadsModal = ({ isOpen, onClose, onSuccess }: ImportLeadsModa
               ...(raw.email ? [{ id: crypto.randomUUID(), type: 'email', value: raw.email, is_primary: true }] : []),
               ...(raw.phone ? [{ id: crypto.randomUUID(), type: 'whatsapp', value: raw.phone, is_primary: !raw.email }] : [])
             ],
-            assigned_to_id: user.id,
+            assigned_to_id: user?.id,
+            registered_by_id: user?.id,
             commercial_info: {
               lead_source: globalSource || raw.source || 'ImportaÃ§Ã£o CSV',
               notes: 'Criado automaticamente via importaÃ§Ã£o de leads.'
