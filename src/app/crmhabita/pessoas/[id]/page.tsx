@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PeopleService } from '@/services/people.service';
 import { Person } from '@/types/people';
-import { ArrowLeft, User, Building2, MapPin, Phone, Mail, Briefcase, Calendar, Globe, FileText, Pencil, Trash2, Ban, CheckCircle2, Sparkles, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowLeft, User, Building2, MapPin, Phone, Mail, Briefcase, Calendar, Globe, FileText, Pencil, Trash2, Ban, CheckCircle2, Sparkles, ExternalLink, Loader2, Clock, PlusCircle, RefreshCw, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
 import { LeadFormModal } from '@/components/leads/LeadFormModal';
@@ -21,6 +21,27 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [leads, setLeads] = useState<any[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
+
+  // ⚡ Compile history from all leads ⚡
+  const compiledHistory = React.useMemo(() => {
+    if (!leads || leads.length === 0) return [];
+    
+    const allEntries: any[] = [];
+    leads.forEach((lead: any) => {
+      if (Array.isArray(lead.history)) {
+        lead.history.forEach((entry: any) => {
+          allEntries.push({
+            ...entry,
+            leadId: lead.id,
+            leadType: lead.lead_type || 'buyer',
+            leadTitle: lead.property?.title || lead.interest_description || 'Oportunidade',
+          });
+        });
+      }
+    });
+
+    return allEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [leads]);
 
   useEffect(() => {
     setLoading(true);
@@ -377,10 +398,64 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                 <Calendar size={20} /> Histórico de Relacionamento
               </h3>
               
-              <div className="text-center py-10 bg-muted/30 rounded-3xl border border-dashed border-border">
-                <p className="text-sm font-bold text-muted-foreground">Timeline em desenvolvimento...</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">Aqui você verá o registro de ligações, reuniões e visitas.</p>
-              </div>
+              {compiledHistory.length > 0 ? (
+                <div className="space-y-6">
+                  {compiledHistory.map((entry, i) => {
+                    let icon = <Clock size={16} className="text-muted-foreground" />;
+                    let bgColor = 'bg-muted border-border';
+                    if (entry.type === 'creation') {
+                      icon = <PlusCircle size={16} className="text-green-600" />;
+                      bgColor = 'bg-green-50 border-green-200';
+                    } else if (entry.type === 'status_change') {
+                      icon = <RefreshCw size={16} className="text-blue-600" />;
+                      bgColor = 'bg-blue-50 border-blue-200';
+                    } else if (entry.type === 'note') {
+                      icon = <MessageSquare size={16} className="text-orange-600" />;
+                      bgColor = 'bg-orange-50 border-orange-200';
+                    } else if (entry.type === 'document' || entry.type === 'upload') {
+                      icon = <FileText size={16} className="text-purple-600" />;
+                      bgColor = 'bg-purple-50 border-purple-200';
+                    }
+
+                    const leadTypeLabel = entry.leadType === 'seller' ? 'Captação' : 'Venda';
+                    const leadTypeBg = entry.leadType === 'seller' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700';
+
+                    return (
+                      <div key={i} className="flex gap-6 relative">
+                        {i < compiledHistory.length - 1 && (
+                          <div className="absolute left-4 top-8 bottom-[-24px] w-0.5 bg-border" />
+                        )}
+                        <div className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 relative z-10 shadow-sm ${bgColor}`}>
+                          {icon}
+                        </div>
+                        <div className="flex-1 pb-6">
+                          <div className="flex justify-between items-start mb-1 flex-wrap gap-2">
+                            <p className="font-bold text-primary leading-tight">{entry.note}</p>
+                            <p className="text-[9px] font-bold text-muted-foreground/60 uppercase whitespace-nowrap">
+                              {new Date(entry.date).toLocaleString('pt-BR')}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded ${leadTypeBg}`}>
+                              {leadTypeLabel}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground/60 font-medium">
+                              {entry.leadTitle}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-10 bg-muted/30 rounded-3xl border border-dashed border-border">
+                  <p className="text-sm font-bold text-muted-foreground">Nenhum histórico de relacionamento registrado</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">
+                    As interações e movimentações das oportunidades vinculadas a este contato aparecerão aqui.
+                  </p>
+                </div>
+              )}
             </div>
 
           </div>
