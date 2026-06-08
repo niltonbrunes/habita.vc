@@ -11,6 +11,7 @@ import {
   ShoppingBag, Home
 } from 'lucide-react';
 import { LeadFormModal } from '@/components/leads/LeadFormModal';
+import { MoveJustificationModal } from '@/components/leads/MoveJustificationModal';
 import { ImportLeadsModal } from '@/components/leads/ImportLeadsModal';
 import { CaptacaoFormModal } from '@/components/captacao/CaptacaoFormModal';
 import { CaptacaoColumnComponent } from '@/components/captacao/CaptacaoKanban';
@@ -33,6 +34,13 @@ export default function LeadsPage() {
   const [isImportModalOpen, setIsImportModalOpen] = React.useState(false);
   const [isCaptacaoModalOpen, setIsCaptacaoModalOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
+  const [pendingMove, setPendingMove] = React.useState<{
+    id: string;
+    newStatus: string;
+    fromStatus: string;
+    leadName: string;
+    type: 'buyer' | 'seller';
+  } | null>(null);
 
   // ── Role-based filter ──────────────────────────────────────────────
   const visibleLeads = React.useMemo(() => {
@@ -128,88 +136,95 @@ export default function LeadsPage() {
   };
 
   const handleMoveBuyer = async (id: string, newStatus: string) => {
-    try {
-      const current = leads.find((l: Lead) => l.id === id);
-      const buyerStatusLabels: Record<string, string> = {
-        lead: 'Novos Leads',
-        contact: 'Contato',
-        presentation: 'Apresentação',
-        visit: 'Visitas',
-        proposal: 'Proposta',
-        sale: 'Fechamento',
-        lost: 'Perdido',
-      };
-      
-      const fromLabel = buyerStatusLabels[current?.status || ''] || current?.status || '';
-      const toLabel = buyerStatusLabels[newStatus] || newStatus;
-      
-      const historyEntry = {
-        type: 'status_change',
-        from: current?.status || '',
-        to: newStatus,
-        date: new Date().toISOString(),
-        note: `Movido de "${fromLabel}" para "${toLabel}"`,
-      };
-
-      await LeadsService.update(id, { 
-        status: newStatus as any,
-        history: [...(current?.history || []), historyEntry]
-      });
-      refresh();
-    } catch (err) {
-      console.error('Erro ao mover lead comprador:', err);
-    }
+    const current = leads.find((l: Lead) => l.id === id);
+    if (!current) return;
+    setPendingMove({
+      id,
+      newStatus,
+      fromStatus: current.status,
+      leadName: current.name || 'Lead',
+      type: 'buyer'
+    });
   };
 
   const handleMoveSeller = async (id: string, newStatus: SellerLeadStatus) => {
+    const current = leads.find((l: Lead) => l.id === id);
+    if (!current) return;
+    setPendingMove({
+      id,
+      newStatus,
+      fromStatus: current.status,
+      leadName: current.name || 'Lead',
+      type: 'seller'
+    });
+  };
+
+  const executeMove = async (justificationNote?: string) => {
+    if (!pendingMove) return;
+    const { id, newStatus, fromStatus, type } = pendingMove;
+    
     try {
       const current = leads.find((l: Lead) => l.id === id);
-      const sellerStatusLabels: Record<string, string> = {
-        prospecting: 'Prospecção',
-        contacted: 'Contatado',
-        visit_scheduled: 'Visita Agendada',
-        visited: 'Visitado',
-        proposal_sent: 'Proposta Enviada',
-        captured: 'Captado',
-        lost: 'Perdido',
-      };
+      if (!current) return;
 
-      const fromLabel = sellerStatusLabels[current?.status || ''] || current?.status || '';
-      const toLabel = sellerStatusLabels[newStatus] || newStatus;
+      const labels = type === 'buyer' 
+        ? {
+            lead: 'Novos Leads',
+            contact: 'Contato',
+            presentation: 'Apresentação',
+            visit: 'Visitas',
+            proposal: 'Proposta',
+            sale: 'Fechamento',
+            lost: 'Perdido',
+          }
+        : {
+            prospecting: 'Prospecção',
+            contacted: 'Contatado',
+            visit_scheduled: 'Visita Agendada',
+            visited: 'Visitado',
+            proposal_sent: 'Proposta Enviada',
+            captured: 'Captado',
+            lost: 'Perdido',
+          };
+
+      const fromLabel = labels[fromStatus as keyof typeof labels] || fromStatus;
+      const toLabel = labels[newStatus as keyof typeof labels] || newStatus;
+
+      const noteText = justificationNote 
+        ? `Movido de "${fromLabel}" para "${toLabel}". Justificativa: ${justificationNote}`
+        : `Movido de "${fromLabel}" para "${toLabel}"`;
 
       const historyEntry = {
         type: 'status_change',
-        from: current?.status || '',
+        from: fromStatus,
         to: newStatus,
         date: new Date().toISOString(),
-        note: `Movido de "${fromLabel}" para "${toLabel}"`,
+        note: noteText,
       };
 
-      await LeadsService.update(id, { 
+      await LeadsService.update(id, {
         status: newStatus as any,
-        history: [...(current?.history || []), historyEntry]
+        history: [...(current.history || []), historyEntry]
       });
 
-      // ── Conversão automática: Captado → Imóvel Suspenso ──────────
-      if (newStatus === 'captured' && profile) {
-        const lead = visibleLeads.find((l: Lead) => l.id === id);
-        if (lead) {
-          try {
-            const property = await PropertiesService.createFromSellerLead(lead, profile.id);
-            console.log('✅ Imóvel criado automaticamente (suspenso):', property.id);
-            // Notificação discreta — toast seria ideal, usamos alert como fallback
-            window.dispatchEvent(
-              new CustomEvent('habita:property-created', { detail: { propertyId: property.id } }),
-            );
-          } catch (propErr) {
-            console.error('Erro ao criar imóvel automaticamente:', propErr);
-          }
+      // ⚡ Conversão automática: Captado ➔ Imóvel Suspenso ⚡
+      if (type === 'seller' && newStatus === 'captured' && profile) {
+        try {
+          const property = await PropertiesService.createFromSellerLead(current, profile.id);
+          console.log('✔ Imóvel criado automaticamente (suspenso):', property.id);
+          window.dispatchEvent(
+            new CustomEvent('habita:property-created', { detail: { propertyId: property.id } }),
+          );
+        } catch (propErr) {
+          console.error('Erro ao criar imóvel automaticamente:', propErr);
         }
       }
 
       refresh();
     } catch (err) {
-      console.error('Erro ao mover lead vendedor:', err);
+      console.error(`Erro ao mover lead ${type}:`, err);
+    } finally {
+      setPendingMove(null);
     }
   };
 
@@ -388,6 +403,16 @@ export default function LeadsPage() {
           isOpen={isCaptacaoModalOpen}
           onClose={() => setIsCaptacaoModalOpen(false)}
           onSuccess={refresh}
+        />
+        <MoveJustificationModal
+          isOpen={!!pendingMove}
+          onClose={() => setPendingMove(null)}
+          onConfirm={(note) => executeMove(note)}
+          onSkip={() => executeMove()}
+          leadName={pendingMove?.leadName || ''}
+          fromStatus={pendingMove?.fromStatus || ''}
+          toStatus={pendingMove?.newStatus || ''}
+          leadType={pendingMove?.type || 'buyer'}
         />
       </div>
     </DashboardLayout>
