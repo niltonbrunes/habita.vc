@@ -246,7 +246,6 @@ export class DashboardService {
 
     // 2. Build Query scopes
     let leadsQuery = supabase.from('leads').select('source, status');
-    let peopleQuery = supabase.from('people').select('commercial_info, roles, relationship_status');
 
     if (role === 'manager') {
       const { data: team } = await supabase
@@ -255,12 +254,10 @@ export class DashboardService {
         .eq('manager_id', userId);
       const teamIds = [(team || []).map((t: any) => t.id), userId].flat();
       leadsQuery = leadsQuery.in('assigned_to_id', teamIds);
-      peopleQuery = peopleQuery.in('assigned_to_id', teamIds);
     } else if (role === 'admin' || role === 'director') {
       // All
     } else {
       leadsQuery = leadsQuery.eq('assigned_to_id', userId);
-      peopleQuery = peopleQuery.eq('assigned_to_id', userId);
     }
 
     const fetchAll = async (query: any) => {
@@ -280,18 +277,11 @@ export class DashboardService {
     };
 
     let leads: any[] = [];
-    let people: any[] = [];
 
     try {
       leads = await fetchAll(leadsQuery);
     } catch (err) {
       console.error('Error fetching leads for channel performance:', err);
-    }
-
-    try {
-      people = await fetchAll(peopleQuery);
-    } catch (err) {
-      console.error('Error fetching people for channel performance:', err);
     }
 
     const benchmarks: Record<string, number> = {
@@ -339,24 +329,6 @@ export class DashboardService {
       stats[source].total += 1;
       
       if (oppStatuses.includes(lead.status)) {
-        stats[source].opps += 1;
-      }
-    });
-
-    // Process people
-    (people || []).forEach(person => {
-      const commInfo = person.commercial_info || {};
-      const source = getNormalizedDisplaySource(commInfo.lead_source);
-      if (!stats[source]) {
-        stats[source] = { total: 0, opps: 0 };
-      }
-      stats[source].total += 1;
-      
-      const isConverted = 
-        person.relationship_status === 'ativo' || 
-        (person.roles && person.roles.some((r: string) => r !== 'lead'));
-        
-      if (isConverted) {
         stats[source].opps += 1;
       }
     });
