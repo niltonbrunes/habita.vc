@@ -16,9 +16,25 @@ const AVATAR_COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#
 const getAvatarBg = (name: string) => AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
 const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 
-export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, onDragStart: (e: React.DragEvent, id: string) => void, onDeleteLead: (id: string) => void }) => {
+export const KanbanCard = ({ 
+  lead, 
+  onDragStart, 
+  onDeleteLead,
+  onScheduleLead
+}: { 
+  lead: Lead, 
+  onDragStart: (e: React.DragEvent, id: string) => void, 
+  onDeleteLead: (id: string) => void,
+  onScheduleLead?: (lead: Lead) => void
+}) => {
   const displayName = lead.person?.name || lead.name;
   
+  const phone = lead.phone || lead.person?.contacts?.find((c: any) => c.type === 'phone' || c.type === 'whatsapp' || c.type === 'cel')?.value;
+  const cleanPhone = phone ? phone.replace(/\D/g, '') : '';
+  const whatsappUrl = cleanPhone 
+    ? `https://wa.me/${cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone}`
+    : '#';
+
   const formattedValue = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -61,11 +77,48 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
           </button>
         </div>
 
-        <div className="flex items-center justify-between mt-1">
+        <div className="flex items-center justify-between mt-1 pt-1 border-t border-border-light/50">
           <p className="text-[10px] font-black text-primary">{formattedValue}</p>
+          
           <div className="flex items-center gap-1">
-             <Sparkles size={8} className="text-accent" />
-             <span className="text-[8px] font-bold text-muted">{lead.score} pts</span>
+            {phone && (
+              <>
+                <a
+                  href={`tel:${cleanPhone}`}
+                  onClick={(e) => e.stopPropagation()}
+                  title={`Ligar para ${displayName}`}
+                  className="p-1 rounded-full bg-muted/20 hover:bg-blue-primary/10 hover:text-blue-primary text-muted-foreground/60 transition-all cursor-pointer flex items-center justify-center"
+                >
+                  <Phone size={9} />
+                </a>
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  title="Chamar no WhatsApp"
+                  className="p-1 rounded-full bg-muted/20 hover:bg-emerald-500/10 hover:text-emerald-600 text-muted-foreground/60 transition-all cursor-pointer flex items-center justify-center"
+                >
+                  <MessageCircle size={9} />
+                </a>
+              </>
+            )}
+            
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onScheduleLead?.(lead);
+              }}
+              title="Agendar Compromisso"
+              className="p-1 rounded-full bg-muted/20 hover:bg-accent/10 hover:text-accent text-muted-foreground/60 transition-all cursor-pointer flex items-center justify-center"
+            >
+              <Calendar size={9} />
+            </button>
+
+            <div className="flex items-center gap-0.5 ml-1">
+              <Sparkles size={7} className="text-accent" />
+              <span className="text-[8px] font-bold text-muted">{lead.score} pts</span>
+            </div>
           </div>
         </div>
       </div>
@@ -73,7 +126,21 @@ export const KanbanCard = ({ lead, onDragStart, onDeleteLead }: { lead: Lead, on
   );
 };
 
-export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, onDeleteLead }: { column: KanbanColumn, leads: Lead[], onMoveLead: (id: string, status: string) => void, onAddLead: () => void, onDeleteLead: (id: string) => void }) => {
+export const KanbanColumnComponent = ({ 
+  column, 
+  leads, 
+  onMoveLead, 
+  onAddLead, 
+  onDeleteLead,
+  onScheduleLead
+}: { 
+  column: KanbanColumn, 
+  leads: Lead[], 
+  onMoveLead: (id: string, status: string) => void, 
+  onAddLead: () => void, 
+  onDeleteLead: (id: string) => void,
+  onScheduleLead?: (lead: Lead) => void
+}) => {
   const [isOver, setIsOver] = React.useState(false);
   
   const columnTotalValue = leads.reduce((acc, lead) => acc + (lead.value || 0), 0);
@@ -136,6 +203,7 @@ export const KanbanColumnComponent = ({ column, leads, onMoveLead, onAddLead, on
                 e.dataTransfer.effectAllowed = 'move';
               }} 
               onDeleteLead={onDeleteLead} 
+              onScheduleLead={onScheduleLead}
             />
           ))
         ) : (

@@ -76,11 +76,13 @@ export async function POST(req: Request) {
           video_url: getTagValue(item, 'video'),
           images: images,
           main_image: images[0] || '',
-          metadata: { features },
+          metadata: { 
+            features,
+            commission_estimated_percent: 6
+          },
           status: 'available',
           pattern: 'medium',
-          is_highlight: getTagValue(item, 'destaque') === '1',
-          commission_estimated_percent: 6
+          is_highlight: getTagValue(item, 'destaque') === '1'
         };
 
         const { error: insertError } = await supabase

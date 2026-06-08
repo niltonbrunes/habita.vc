@@ -15,6 +15,7 @@ import { MoveJustificationModal } from '@/components/leads/MoveJustificationModa
 import { ImportLeadsModal } from '@/components/leads/ImportLeadsModal';
 import { CaptacaoFormModal } from '@/components/captacao/CaptacaoFormModal';
 import { CaptacaoColumnComponent } from '@/components/captacao/CaptacaoKanban';
+import { TaskModal } from '@/components/agenda/TaskModal';
 import { CaptacaoHeader } from '@/components/captacao/CaptacaoHeader';
 import { LeadsService } from '@/services/leads.service';
 import { PropertiesService } from '@/services/properties.service';
@@ -33,6 +34,16 @@ export default function LeadsPage() {
   const [isBuyerModalOpen, setIsBuyerModalOpen] = React.useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = React.useState(false);
   const [isCaptacaoModalOpen, setIsCaptacaoModalOpen] = React.useState(false);
+  const [isTaskModalOpen, setIsTaskModalOpen] = React.useState(false);
+  const [selectedLeadForTask, setSelectedLeadForTask] = React.useState<{ id: string, name: string } | null>(null);
+
+  const handleScheduleLead = (lead: Lead) => {
+    setSelectedLeadForTask({
+      id: lead.id,
+      name: lead.person?.name || lead.name
+    });
+    setIsTaskModalOpen(true);
+  };
   const [search, setSearch] = React.useState('');
   const [pendingMove, setPendingMove] = React.useState<{
     id: string;
@@ -369,6 +380,7 @@ export default function LeadsPage() {
                   onMoveLead={handleMoveBuyer}
                   onAddLead={() => setIsBuyerModalOpen(true)}
                   onDeleteLead={handleDeleteLead}
+                  onScheduleLead={handleScheduleLead}
                 />
               ))}
             </div>
@@ -382,6 +394,7 @@ export default function LeadsPage() {
                   onMoveLead={handleMoveSeller}
                   onAddLead={() => setIsCaptacaoModalOpen(true)}
                   onDeleteLead={handleDeleteLead}
+                  onScheduleLead={handleScheduleLead}
                 />
               ))}
             </div>
@@ -389,6 +402,16 @@ export default function LeadsPage() {
         </div>
 
         {/* ── Modals ── */}
+        <TaskModal
+          isOpen={isTaskModalOpen}
+          onClose={() => {
+            setIsTaskModalOpen(false);
+            setSelectedLeadForTask(null);
+          }}
+          onSuccess={refresh}
+          leadId={selectedLeadForTask?.id}
+          leadName={selectedLeadForTask?.name}
+        />
         <LeadFormModal
           isOpen={isBuyerModalOpen}
           onClose={() => setIsBuyerModalOpen(false)}

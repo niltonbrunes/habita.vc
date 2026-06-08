@@ -10,9 +10,11 @@ interface TaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  leadId?: string;
+  leadName?: string;
 }
 
-export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
+export const TaskModal = ({ isOpen, onClose, onSuccess, leadId, leadName }: TaskModalProps) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -24,13 +26,16 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
     due_time: '09:00',
   });
 
-  // Set today's date only on the client to avoid hydration mismatch
+  // Set today's date and prefill title if lead is linked
   useEffect(() => {
-    setFormData(prev => ({
-      ...prev,
-      due_date: new Date().toISOString().split('T')[0],
-    }));
-  }, []);
+    if (isOpen) {
+      setFormData(prev => ({
+        ...prev,
+        title: leadName ? `Acompanhamento: ${leadName}` : '',
+        due_date: new Date().toISOString().split('T')[0],
+      }));
+    }
+  }, [isOpen, leadName]);
 
 
   if (!isOpen) return null;
@@ -44,6 +49,7 @@ export const TaskModal = ({ isOpen, onClose, onSuccess }: TaskModalProps) => {
       const fullDueDate = `${formData.due_date}T${formData.due_time}:00Z`;
       await TasksService.create({
         user_id: user.id,
+        lead_id: leadId || undefined,
         title: formData.title,
         description: formData.description,
         category: formData.category,

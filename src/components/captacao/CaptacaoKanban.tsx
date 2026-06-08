@@ -4,7 +4,7 @@ import React from 'react';
 import { Lead, SellerLeadStatus } from '@/types/database';
 import { CaptacaoColumn } from '@/lib/constants/captacao';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, MapPin, Home, DollarSign, Ruler, CheckCircle2 } from 'lucide-react';
+import { Plus, Trash2, MapPin, Home, DollarSign, Ruler, CheckCircle2, Phone, Calendar, MessageCircle } from 'lucide-react';
 
 const AVATAR_COLORS = ['#10b981', '#06b6d4', '#8b5cf6', '#f59e0b', '#ef4444', '#6366f1'];
 const getAvatarBg = (name: string) => AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
@@ -22,13 +22,21 @@ export const CaptacaoCard = ({
   lead,
   onDragStart,
   onDeleteLead,
+  onScheduleLead,
 }: {
   lead: Lead;
   onDragStart: (e: React.DragEvent, id: string) => void;
   onDeleteLead: (id: string) => void;
+  onScheduleLead?: (lead: Lead) => void;
 }) => {
   const displayName = lead.person?.name || lead.name;
   const askingPrice = lead.seller_asking_price || lead.value || 0;
+  
+  const phone = lead.phone || lead.person?.contacts?.find((c: any) => c.type === 'phone' || c.type === 'whatsapp' || c.type === 'cel')?.value;
+  const cleanPhone = phone ? phone.replace(/\D/g, '') : '';
+  const whatsappUrl = cleanPhone 
+    ? `https://wa.me/${cleanPhone.startsWith('55') ? cleanPhone : '55' + cleanPhone}`
+    : '#';
 
   return (
     <motion.div
@@ -91,17 +99,48 @@ export const CaptacaoCard = ({
             <DollarSign size={10} className="text-emerald-500" />
             <span className="text-[11px] font-black text-primary">{fmt(askingPrice)}</span>
           </div>
-          {lead.status === 'captured' && (
-            <div className="flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-              <CheckCircle2 size={10} className="text-emerald-500" />
-              <span className="text-[9px] font-black text-emerald-600 uppercase tracking-wider">Captado</span>
-            </div>
-          )}
-          {lead.seller_motivation && (
-            <span className="text-[9px] font-bold text-muted-foreground/50 truncate max-w-[80px]">
-              {lead.seller_motivation}
-            </span>
-          )}
+          
+          <div className="flex items-center gap-1">
+            {phone && (
+              <>
+                <a
+                  href={`tel:${cleanPhone}`}
+                  onClick={(e) => e.stopPropagation()}
+                  title={`Ligar para ${displayName}`}
+                  className="p-1 rounded-full bg-muted/20 hover:bg-blue-primary/10 hover:text-blue-primary text-muted-foreground/60 transition-all cursor-pointer flex items-center justify-center"
+                >
+                  <Phone size={9} />
+                </a>
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  title="Chamar no WhatsApp"
+                  className="p-1 rounded-full bg-muted/20 hover:bg-emerald-500/10 hover:text-emerald-600 text-muted-foreground/60 transition-all cursor-pointer flex items-center justify-center"
+                >
+                  <MessageCircle size={9} />
+                </a>
+              </>
+            )}
+            
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onScheduleLead?.(lead);
+              }}
+              title="Agendar Compromisso"
+              className="p-1 rounded-full bg-muted/20 hover:bg-accent/10 hover:text-accent text-muted-foreground/60 transition-all cursor-pointer flex items-center justify-center"
+            >
+              <Calendar size={9} />
+            </button>
+
+            {lead.status === 'captured' && (
+              <span className="text-[8px] font-black text-emerald-600 bg-emerald-50 px-1 rounded-full border border-emerald-100 uppercase tracking-wider ml-1">
+                Captado
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
@@ -114,12 +153,14 @@ export const CaptacaoColumnComponent = ({
   onMoveLead,
   onAddLead,
   onDeleteLead,
+  onScheduleLead,
 }: {
   column: CaptacaoColumn;
   leads: Lead[];
   onMoveLead: (id: string, status: SellerLeadStatus) => void;
   onAddLead: () => void;
   onDeleteLead: (id: string) => void;
+  onScheduleLead?: (lead: Lead) => void;
 }) => {
   const [isOver, setIsOver] = React.useState(false);
 
@@ -189,6 +230,7 @@ export const CaptacaoColumnComponent = ({
                 e.dataTransfer.effectAllowed = 'move';
               }}
               onDeleteLead={onDeleteLead}
+              onScheduleLead={onScheduleLead}
             />
           ))
         ) : (
