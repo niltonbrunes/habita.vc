@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PeopleService } from '@/services/people.service';
 import { Person } from '@/types/people';
-import { ArrowLeft, User, Building2, MapPin, Phone, Mail, Briefcase, Calendar, Globe, FileText, Pencil, Trash2, Ban, CheckCircle2, Sparkles, ExternalLink, Loader2, Clock, PlusCircle, RefreshCw, MessageSquare } from 'lucide-react';
+import { ArrowLeft, User, Building2, MapPin, Phone, Mail, Briefcase, Calendar, Globe, FileText, Pencil, Trash2, Ban, CheckCircle2, Sparkles, ExternalLink, Loader2, Clock, PlusCircle, RefreshCw, MessageSquare, Search, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
 import { LeadFormModal } from '@/components/leads/LeadFormModal';
@@ -23,6 +23,16 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [leads, setLeads] = useState<any[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
   const [tasks, setTasks] = useState<any[]>([]);
+
+  // States for PJ/PF relationships
+  const [linkedCompanies, setLinkedCompanies] = useState<Person[]>([]);
+  const [repsDetails, setRepsDetails] = useState<Person[]>([]);
+  const [showLinkModal, setShowLinkModal] = useState(false);
+  const [linkSearch, setLinkSearch] = useState('');
+  const [linkSearchResults, setLinkSearchResults] = useState<any[]>([]);
+  const [selectedPersonToLink, setSelectedPersonToLink] = useState<any | null>(null);
+  const [representativeRole, setRepresentativeRole] = useState('');
+  const [linking, setLinking] = useState(false);
 
   // ⚡ Compile history from all leads ⚡
   const compiledHistory = React.useMemo(() => {
@@ -62,11 +72,53 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
     return allEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [leads, tasks]);
 
+  const fetchRelatedData = async (currentPerson: Person) => {
+    if (currentPerson.person_type === 'PJ') {
+      const respIds = currentPerson.responsibles
+        ?.map((r: any) => r.person_id)
+        .filter((pid): pid is string => !!pid);
+
+      if (respIds && respIds.length > 0) {
+        try {
+          const { data: reps, error: repsError } = await supabase
+            .from('people')
+            .select('*')
+            .in('id', respIds);
+          
+          if (repsError) throw repsError;
+          setRepsDetails(reps || []);
+        } catch (err) {
+          console.error('Erro ao buscar representantes:', err);
+        }
+      } else {
+        setRepsDetails([]);
+      }
+    } else if (currentPerson.person_type === 'PF') {
+      try {
+        const { data: companies, error: compError } = await supabase
+          .from('people')
+          .select('*')
+          .eq('person_type', 'PJ')
+          .contains('responsibles', [{ person_id: currentPerson.id }]);
+        
+        if (compError) throw compError;
+        setLinkedCompanies(companies || []);
+      } catch (err) {
+        console.error('Erro ao buscar empresas representadas:', err);
+      }
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
     setLoadingLeads(true);
     Promise.all([
-      PeopleService.getById(id).then(setPerson),
+      PeopleService.getById(id).then(async (loadedPerson) => {
+        setPerson(loadedPerson);
+        if (loadedPerson) {
+          await fetchRelatedData(loadedPerson);
+        }
+      }),
       PeopleService.getLeadsByPerson(id).then(async (loadedLeads) => {
         setLeads(loadedLeads);
         if (loadedLeads && loadedLeads.length > 0) {
@@ -94,6 +146,91 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         setLoadingLeads(false);
       });
   }, [id]);
+
+  useEffect(() => {
+    if (!linkSearch.trim()) {
+      setLinkSearchResults([]);
+      return;
+    }
+    
+    const delayDebounce = setTimeout(() => {
+      supabase
+        .from('people')
+        .select('id, name, document_id, contacts')
+        .eq('person_type', 'PF')
+        .ilike('name', '%' + linkSearch + '%')
+        .limit(5)
+        .then(({ data, error }) => {
+          if (error) {
+            console.error('Erro ao buscar contatos:', error);
+          } else {
+            setLinkSearchResults(data || []);
+          }
+        });
+    }, 300);
+    
+    return () => clearTimeout(delayDebounce);
+  }, [linkSearch]);
+
+  const handleLinkRepresentative = async () => {
+    if (!person || !selectedPersonToLink) return;
+    
+    setLinking(true);
+    try {
+      const newResponsible = {
+        person_id: selectedPersonToLink.id,
+        name: selectedPersonToLink.name,
+        role: representativeRole || 'Representante'
+      };
+      
+      const currentResponsibles = person.responsibles || [];
+      if (currentResponsibles.some((r: any) => r.person_id === selectedPersonToLink.id)) {
+        alert('Este representante já está vinculado.');
+        setLinking(false);
+        return;
+      }
+      
+      const updatedResponsibles = [...currentResponsibles, newResponsible];
+      await PeopleService.update(person.id, { responsibles: updatedResponsibles });
+      
+      const updatedPerson = { ...person, responsibles: updatedResponsibles };
+      setPerson(updatedPerson);
+      await fetchRelatedData(updatedPerson);
+      
+      setShowLinkModal(false);
+      setSelectedPersonToLink(null);
+      setRepresentativeRole('');
+      setLinkSearch('');
+      setLinkSearchResults([]);
+    } catch (err) {
+      console.error('Erro ao vincular representante:', err);
+      alert('Erro ao vincular representante.');
+    } finally {
+      setLinking(false);
+    }
+  };
+
+  const handleUnlinkRepresentative = async (personId: string) => {
+    if (!person) return;
+    
+    if (!confirm('Tem certeza que deseja desvincular este representante?')) {
+      return;
+    }
+    
+    try {
+      const currentResponsibles = person.responsibles || [];
+      const updatedResponsibles = currentResponsibles.filter((r: any) => r.person_id !== personId);
+      
+      await PeopleService.update(person.id, { responsibles: updatedResponsibles });
+      
+      const updatedPerson = { ...person, responsibles: updatedResponsibles };
+      setPerson(updatedPerson);
+      await fetchRelatedData(updatedPerson);
+    } catch (err) {
+      console.error('Erro ao desvincular representante:', err);
+      alert('Erro ao desvincular representante.');
+    }
+  };
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -238,6 +375,41 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                 </div>
               </div>
             )}
+
+            {/* Empresas Representadas (para PF) */}
+            {person.person_type === 'PF' && (
+              <div className="bg-surface rounded-xl p-8 shadow-sm border border-border">
+                <h3 className="font-black text-primary text-sm mb-4 flex items-center gap-2">
+                  <Briefcase size={18} /> Empresas Representadas
+                </h3>
+                {linkedCompanies.length > 0 ? (
+                  <div className="space-y-4">
+                    {linkedCompanies.map((company) => {
+                      const rel = company.responsibles?.find((r: any) => r.person_id === person.id);
+                      return (
+                        <div key={company.id} className="text-sm border-l-2 border-primary/20 pl-4 py-1 flex items-center justify-between gap-2">
+                          <div>
+                            <p className="font-bold text-primary">
+                              <Link href={"/crmhabita/pessoas/" + company.id} className="hover:underline">
+                                {company.fantasy_name || company.name}
+                              </Link>
+                            </p>
+                            {rel?.role && (
+                              <p className="text-xs text-muted-foreground font-medium">{rel.role}</p>
+                            )}
+                          </div>
+                          <Link href={"/crmhabita/pessoas/" + company.id} className="text-primary hover:text-primary/80">
+                            <ExternalLink size={14} />
+                          </Link>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted-foreground/60 italic">Nenhuma empresa representada vinculada.</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Coluna Direita: Conteúdo Principal */}
@@ -288,6 +460,93 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                 </button>
               </div>
             </div>
+
+            {/* Representantes da Empresa (para PJ) */}
+            {person.person_type === 'PJ' && (
+              <div className="bg-surface rounded-xl p-8 shadow-card border border-border">
+                <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+                  <h3 className="font-black text-primary text-lg flex items-center gap-2">
+                    <UserPlus size={20} className="text-accent" /> Representantes da Empresa
+                  </h3>
+                  <button
+                    onClick={() => setShowLinkModal(true)}
+                    className="px-4 py-2 bg-blue-primary/10 border border-primary/20 text-primary text-xs font-bold rounded-xl hover:bg-blue-primary/20 transition-all flex items-center gap-2"
+                  >
+                    <UserPlus size={14} /> Vincular Representante
+                  </button>
+                </div>
+
+                {person.responsibles && person.responsibles.length > 0 ? (
+                  <div className="space-y-4">
+                    {person.responsibles.map((rep: any) => {
+                      const detail = repsDetails.find((d: any) => d.id === rep.person_id);
+                      const primaryPhone = detail?.contacts?.find((c: any) => c.type === 'phone' || c.type === 'whatsapp')?.value;
+                      const cleanPhone = primaryPhone ? primaryPhone.replace(/\D/g, '') : '';
+                      const waLink = cleanPhone ? "https://wa.me/55" + cleanPhone : '';
+
+                      return (
+                        <div key={rep.person_id || rep.name} className="p-4 bg-muted/30 border border-border/80 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-primary/20 transition-all">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                              <User size={20} className="text-primary" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-bold text-primary">
+                                {rep.person_id ? (
+                                  <Link href={"/crmhabita/pessoas/" + rep.person_id} className="hover:underline">
+                                    {rep.name}
+                                  </Link>
+                                ) : (
+                                  rep.name
+                                )}
+                              </p>
+                              <p className="text-xs text-muted-foreground font-medium">{rep.role}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 self-end sm:self-center">
+                            {primaryPhone && (
+                              <a
+                                href={"tel:" + primaryPhone}
+                                className="p-2 bg-surface hover:bg-muted border border-border rounded-xl text-primary transition-all shadow-sm"
+                                title={"Ligar para " + rep.name}
+                              >
+                                <Phone size={14} />
+                              </a>
+                            )}
+                            {primaryPhone && (
+                              <a
+                                href={waLink || "https://wa.me/55" + cleanPhone}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/30 text-green-600 rounded-xl transition-all shadow-sm"
+                                title="Chamar no WhatsApp"
+                              >
+                                <MessageSquare size={14} />
+                              </a>
+                            )}
+                            {rep.person_id && (
+                              <button
+                                onClick={() => handleUnlinkRepresentative(rep.person_id)}
+                                className="p-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-600 rounded-xl transition-all shadow-sm"
+                                title="Desvincular Representante"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 bg-muted/20 rounded-2xl border-2 border-dashed border-border/60">
+                    <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">Nenhum representante vinculado</p>
+                    <p className="text-[10px] text-muted-foreground/60 mt-1">Vincule pessoas físicas (PF) que respondem por esta empresa.</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Oportunidades Vinculadas */}
             <div className="bg-surface rounded-xl p-8 shadow-card border border-border">
@@ -534,6 +793,100 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         }}
         preSelectedPersonId={id}
       />
+
+      {/* Modal para Vincular Representante */}
+      {showLinkModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-surface border border-border w-full max-w-md rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-border">
+              <h3 className="text-lg font-black text-primary flex items-center gap-2">
+                <UserPlus size={20} className="text-primary" /> Vincular Representante
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">Busque um contato (Pessoa Física) para vincular à empresa.</p>
+            </div>
+            
+            <div className="p-6 space-y-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-3.5 text-muted-foreground" size={16} />
+                <input
+                  type="text"
+                  placeholder="Buscar contato por nome..."
+                  value={linkSearch}
+                  onChange={(e) => setLinkSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-3 bg-muted/50 border border-border rounded-xl text-sm font-bold text-primary placeholder-muted-foreground/60 focus:outline-none focus:border-primary/30 transition-all"
+                />
+              </div>
+
+              {linkSearchResults.length > 0 && (
+                <div className="border border-border/80 rounded-xl overflow-hidden divide-y divide-border/60 bg-muted/20">
+                  {linkSearchResults.map((pf) => (
+                    <button
+                      key={pf.id}
+                      type="button"
+                      onClick={() => setSelectedPersonToLink(pf)}
+                      className={`w-full text-left p-3 text-sm font-bold flex justify-between items-center transition-all ${
+                        selectedPersonToLink?.id === pf.id ? 'bg-blue-primary/10 text-primary' : 'hover:bg-muted/50 text-muted-foreground hover:text-primary'
+                      }`}
+                    >
+                      <span>{pf.name}</span>
+                      {pf.document_id && <span className="text-[10px] text-muted-foreground/60 font-medium">{pf.document_id}</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {linkSearch.trim() && linkSearchResults.length === 0 && (
+                <p className="text-xs text-muted-foreground/60 text-center py-2">Nenhum contato encontrado.</p>
+              )}
+
+              {selectedPersonToLink && (
+                <div className="space-y-2 pt-2 border-t border-border/60">
+                  <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">Contato Selecionado:</p>
+                  <div className="p-3 bg-blue-primary/5 border border-primary/20 rounded-xl text-sm font-bold text-primary">
+                    {selectedPersonToLink.name}
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Cargo / Função</label>
+                    <input
+                      type="text"
+                      placeholder="Ex: Sócio Diretor, Financeiro, Procurador"
+                      value={representativeRole}
+                      onChange={(e) => setRepresentativeRole(e.target.value)}
+                      className="w-full px-4 py-3 bg-muted/50 border border-border rounded-xl text-sm font-bold text-primary placeholder-muted-foreground/60 focus:outline-none focus:border-primary/30 transition-all"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 bg-muted/30 border-t border-border flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowLinkModal(false);
+                  setSelectedPersonToLink(null);
+                  setRepresentativeRole('');
+                  setLinkSearch('');
+                  setLinkSearchResults([]);
+                }}
+                className="px-5 py-3 border border-border hover:bg-muted font-bold text-xs rounded-xl text-primary transition-all uppercase tracking-wider"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={linking || !selectedPersonToLink}
+                onClick={handleLinkRepresentative}
+                className="px-5 py-3 bg-blue-primary text-white font-bold text-xs rounded-xl hover:bg-blue-primary/95 disabled:opacity-50 transition-all flex items-center gap-2 uppercase tracking-wider shadow-md shadow-primary/20"
+              >
+                {linking && <Loader2 className="animate-spin" size={14} />}
+                Vincular
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
