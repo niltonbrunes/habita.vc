@@ -228,7 +228,7 @@ export class DashboardService {
   static async getDailyActions(userId: string) {
     const { data } = await supabase
       .from('tasks')
-      .select('*')
+      .select('*, leads(id, name)')
       .eq('user_id', userId)
       .eq('completed', false)
       .order('due_date', { ascending: true })

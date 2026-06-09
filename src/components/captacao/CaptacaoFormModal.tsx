@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import {
   X, User, Phone, Mail, Tag, ShieldCheck, Loader2,
-  MapPin, Home, DollarSign, Ruler, BedDouble, Heart
+  MapPin, Home, DollarSign, Ruler, BedDouble, Heart, Search
 } from 'lucide-react';
 import { LeadsService } from '@/services/leads.service';
 import { PeopleService } from '@/services/people.service';
@@ -25,6 +25,8 @@ const LABEL_CLASS =
 export const CaptacaoFormModal = ({ isOpen, onClose, onSuccess }: CaptacaoFormModalProps) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     // Contato do proprietário
@@ -56,28 +58,30 @@ export const CaptacaoFormModal = ({ isOpen, onClose, onSuccess }: CaptacaoFormMo
     setLoading(true);
     try {
       // 1. Unificar com base de Pessoas
-      let personId: string | undefined;
-      const existing = await PeopleService.findByContact(formData.email || formData.phone);
-      if (existing) {
-        personId = existing.id;
-      } else {
-        const newPerson = await PeopleService.create({
-          name: formData.name,
-          person_type: 'PF',
-          roles: ['lead'],
-          relationship_status: 'novo',
-          contacts: [
-            ...(formData.email ? [{ id: crypto.randomUUID(), type: 'email', value: formData.email, is_primary: true }] : []),
-            ...(formData.phone ? [{ id: crypto.randomUUID(), type: 'whatsapp', value: formData.phone, is_primary: !formData.email }] : []),
-          ],
-          assigned_to_id: user?.id,
-          registered_by_id: user?.id,
-          commercial_info: {
-            lead_source: formData.source,
-            notes: 'Criado via pipeline de captação.',
-          },
-        } as any);
-        personId = newPerson.id;
+      let personId: string | undefined = selectedPersonId || undefined;
+      if (!personId) {
+        const existing = await PeopleService.findByContact(formData.email || formData.phone);
+        if (existing) {
+          personId = existing.id;
+        } else {
+          const newPerson = await PeopleService.create({
+            name: formData.name,
+            person_type: 'PF',
+            roles: ['lead'],
+            relationship_status: 'novo',
+            contacts: [
+              ...(formData.email ? [{ id: crypto.randomUUID(), type: 'email', value: formData.email, is_primary: true }] : []),
+              ...(formData.phone ? [{ id: crypto.randomUUID(), type: 'whatsapp', value: formData.phone, is_primary: !formData.email }] : []),
+            ],
+            assigned_to_id: user?.id,
+            registered_by_id: user?.id,
+            commercial_info: {
+              lead_source: formData.source,
+              notes: 'Criado via pipeline de captação.',
+            },
+          } as any);
+          personId = newPerson.id;
+        }
       }
 
       // 2. Criar lead vendedor
@@ -103,6 +107,8 @@ export const CaptacaoFormModal = ({ isOpen, onClose, onSuccess }: CaptacaoFormMo
 
       onSuccess();
       onClose();
+      setSelectedPersonId(null);
+      setSearchResults([]);
       setFormData({
         name: '', phone: '', email: '', source: 'Manual', temperature: 'warm', score: 50,
         seller_property_address: '', seller_property_type: '', seller_asking_price: 0,
@@ -152,6 +158,54 @@ export const CaptacaoFormModal = ({ isOpen, onClose, onSuccess }: CaptacaoFormMo
               </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2 md:col-span-2">
+                <label className={LABEL_CLASS}>Vincular a uma Pessoa (Opcional)</label>
+                <div className="relative group">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-emerald-500 transition-colors" />
+                  <input
+                    type="text"
+                    placeholder="Pesquisar por nome ou documento..."
+                    className={INPUT_CLASS}
+                    onChange={async (e) => {
+                      const term = e.target.value;
+                      if (term.length > 2) {
+                        const results = await PeopleService.searchForOwners(term);
+                        setSearchResults(results as any[]);
+                      } else {
+                        setSearchResults([]);
+                      }
+                    }}
+                  />
+                  {searchResults.length > 0 && (
+                    <div className="absolute z-50 left-0 right-0 mt-2 bg-surface rounded-2xl shadow-card border border-border overflow-hidden animate-in fade-in slide-in-from-top-2">
+                      {searchResults.map(p => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => {
+                            setFormData({ 
+                              ...formData, 
+                              name: p.name, 
+                              email: p.contacts?.find((c: any) => c.type === 'email')?.value || '',
+                              phone: p.contacts?.find((c: any) => c.type === 'whatsapp' || c.type === 'phone')?.value || '',
+                              source: p.commercial_info?.lead_source || 'Manual'
+                            });
+                            setSelectedPersonId(p.id);
+                            setSearchResults([]);
+                          }}
+                          className="w-full px-4 py-3 text-left hover:bg-emerald-500/5 transition-colors border-b border-border last:border-0"
+                        >
+                          <p className="font-bold text-primary text-sm">{p.name}</p>
+                          <p className="text-[10px] text-muted-foreground font-medium">{p.document_id || 'Sem documento'}</p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="w-full h-px bg-border/40 md:col-span-2 my-2" />
+
               <div className="space-y-2 md:col-span-2">
                 <label className={LABEL_CLASS}>Nome completo *</label>
                 <div className="relative group">

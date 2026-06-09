@@ -5,8 +5,10 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/context/AuthContext';
 import {
   TrendingUp, DollarSign, UserPlus, Target,
-  ArrowUpRight, Users, ChevronRight
+  ArrowUpRight, Users, ChevronRight, Check, Calendar
 } from 'lucide-react';
+import { TasksService } from '@/services/tasks.service';
+import { TaskModal } from '@/components/agenda/TaskModal';
 import { DashboardService, DashboardMetrics, RankingData } from '@/services/dashboard.service';
 import { ProfilesService } from '@/services/profiles.service';
 import { Lead, Task, Profile } from '@/types/database';
@@ -29,6 +31,35 @@ export default function DashboardPage() {
   const [isSaleModalOpen, setIsSaleModalOpen] = useState(false);
   const [teamMembers, setTeamMembers] = React.useState<Profile[]>([]);
   const [teamStats, setTeamStats] = React.useState<any>(null);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [selectedLeadForTask, setSelectedLeadForTask] = useState<{ id: string, name: string } | null>(null);
+
+  const handleCompleteTask = async (task: Task) => {
+    try {
+      await TasksService.toggleComplete(task.id, task.completed);
+      await loadDashboardData();
+
+      if (task.lead_id) {
+        const leadName = (task as any).leads?.name || task.title.replace('Acompanhamento: ', '');
+        const shouldScheduleNext = window.confirm(
+          `Tarefa "${task.title}" concluída com sucesso!\n\nDeseja agendar um novo compromisso de retorno/acompanhamento para este lead?`
+        );
+        
+        if (shouldScheduleNext) {
+          setSelectedLeadForTask({
+            id: task.lead_id,
+            name: leadName
+          });
+          setIsTaskModalOpen(true);
+        }
+      } else {
+        alert(`Tarefa "${task.title}" concluída com sucesso!`);
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert('Erro ao concluir tarefa: ' + err.message);
+    }
+  };
 
   const loadDashboardData = async () => {
     if (!user || !profile) return;
@@ -206,9 +237,19 @@ export default function DashboardPage() {
         <aside className="w-[280px] flex-shrink-0 border-l border-border bg-surface overflow-y-auto hidden xl:flex flex-col">
 
           <SectionCard title="Agenda do dia" link={{ label: 'Ver tudo', href: '/crmhabita/agenda' }} noBorder>
-            {actions.length > 0 ? actions.slice(0, 6).map((task, i) => (
-              <AgendaRow key={i} time="—" type={task.category || 'Tarefa'} client={task.title} detail={task.description || ''} />
-            )) : (
+            {actions.length > 0 ? actions.slice(0, 6).map((task, i) => {
+              const taskTime = task.due_date ? new Date(task.due_date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '—';
+              return (
+                <AgendaRow 
+                  key={i} 
+                  time={taskTime} 
+                  type={task.category || 'Tarefa'} 
+                  client={task.title} 
+                  detail={task.description || ''} 
+                  onComplete={() => handleCompleteTask(task)}
+                />
+              );
+            }) : (
               <>
                 <AgendaRow time="09:00" type="Visita"    client="Lead #1" detail="Aguardando confirmação" color="blue" />
                 <AgendaRow time="11:00" type="Proposta"  client="Lead #2" detail="Enviar proposta comercial" color="orange" />
@@ -240,6 +281,16 @@ export default function DashboardPage() {
       </div>
 
       <SaleModal isOpen={isSaleModalOpen} onClose={() => setIsSaleModalOpen(false)} onSuccess={loadDashboardData} />
+      <TaskModal
+        isOpen={isTaskModalOpen}
+        onClose={() => {
+          setIsTaskModalOpen(false);
+          setSelectedLeadForTask(null);
+        }}
+        onSuccess={loadDashboardData}
+        leadId={selectedLeadForTask?.id}
+        leadName={selectedLeadForTask?.name}
+      />
     </DashboardLayout>
   );
 }
@@ -321,16 +372,31 @@ const RankingRow = ({ pos, name, value, active }: any) => (
   </div>
 );
 
-const AgendaRow = ({ time, type, client, detail, color = 'blue' }: any) => {
+const AgendaRow = ({ time, type, client, detail, color = 'blue', onComplete }: any) => {
   const colors: Record<string, string> = { blue: 'text-blue-primary', orange: 'text-orange-primary', green: 'text-green-primary', purple: 'text-purple-primary' };
   return (
-    <div className="flex gap-3 px-4 py-2.5 hover:bg-bg transition-colors border-b border-border-light last:border-0 cursor-pointer">
-      <p className="text-[10px] font-bold text-muted w-10 flex-shrink-0 pt-0.5">{time}</p>
-      <div className="flex-1 min-w-0">
-        <p className={`text-[11px] font-bold mb-0.5 ${colors[color] || colors.blue}`}>▸ {type}</p>
-        <p className="text-[12px] font-semibold text-heading truncate">{client}</p>
-        <p className="text-[11px] text-muted truncate">{detail}</p>
+    <div className="flex items-center justify-between px-4 py-2.5 hover:bg-bg transition-colors border-b border-border-light last:border-0 group">
+      <div className="flex gap-3 min-w-0 flex-1">
+        <p className="text-[10px] font-bold text-muted w-10 flex-shrink-0 pt-0.5">{time}</p>
+        <div className="flex-1 min-w-0">
+          <p className={`text-[11px] font-bold mb-0.5 ${colors[color] || colors.blue}`}>▸ {type}</p>
+          <p className="text-[12px] font-semibold text-heading truncate">{client}</p>
+          <p className="text-[11px] text-muted truncate">{detail}</p>
+        </div>
       </div>
+      
+      {onComplete && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onComplete();
+          }}
+          title="Finalizar Agendamento"
+          className="p-1.5 rounded-lg border border-border bg-surface hover:bg-green-50 hover:text-green-600 hover:border-green-200 text-muted-foreground transition-all flex-shrink-0 cursor-pointer shadow-sm opacity-0 group-hover:opacity-100 focus:opacity-100"
+        >
+          <Check size={14} />
+        </button>
+      )}
     </div>
   );
 };
