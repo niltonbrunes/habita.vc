@@ -8,6 +8,7 @@ import { ArrowLeft, User, Building2, MapPin, Phone, Mail, Briefcase, Calendar, G
 import Link from 'next/link';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
 import { LeadFormModal } from '@/components/leads/LeadFormModal';
+import { supabase } from '@/lib/supabase';
 
 export default function PersonDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
@@ -21,34 +22,71 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
   const [leads, setLeads] = useState<any[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
+  const [tasks, setTasks] = useState<any[]>([]);
 
   // ⚡ Compile history from all leads ⚡
   const compiledHistory = React.useMemo(() => {
-    if (!leads || leads.length === 0) return [];
-    
     const allEntries: any[] = [];
-    leads.forEach((lead: any) => {
-      if (Array.isArray(lead.history)) {
-        lead.history.forEach((entry: any) => {
-          allEntries.push({
-            ...entry,
-            leadId: lead.id,
-            leadType: lead.lead_type || 'buyer',
-            leadTitle: lead.property?.title || lead.interest_description || 'Oportunidade',
+
+    if (leads && leads.length > 0) {
+      leads.forEach((lead: any) => {
+        if (Array.isArray(lead.history)) {
+          lead.history.forEach((entry: any) => {
+            allEntries.push({
+              ...entry,
+              leadId: lead.id,
+              leadType: lead.lead_type || 'buyer',
+              leadTitle: lead.property?.title || lead.interest_description || 'Oportunidade',
+            });
           });
+        }
+      });
+    }
+
+    if (tasks && tasks.length > 0) {
+      tasks.forEach((task: any) => {
+        const lead = leads.find((l: any) => l.id === task.lead_id);
+        const dateFormatted = new Date(task.due_date).toLocaleDateString('pt-BR');
+        const timeFormatted = new Date(task.due_date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        allEntries.push({
+          type: 'appointment',
+          note: `Compromisso Agendado: ${task.title}${task.description ? ` (${task.description})` : ''} - Marcado para ${dateFormatted} às ${timeFormatted}${task.completed ? ' (Concluído)' : ''}`,
+          date: task.created_at,
+          leadId: task.lead_id,
+          leadType: lead?.lead_type || 'buyer',
+          leadTitle: lead?.property?.title || lead?.interest_description || 'Oportunidade',
         });
-      }
-    });
+      });
+    }
 
     return allEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [leads]);
+  }, [leads, tasks]);
 
   useEffect(() => {
     setLoading(true);
     setLoadingLeads(true);
     Promise.all([
       PeopleService.getById(id).then(setPerson),
-      PeopleService.getLeadsByPerson(id).then(setLeads)
+      PeopleService.getLeadsByPerson(id).then(async (loadedLeads) => {
+        setLeads(loadedLeads);
+        if (loadedLeads && loadedLeads.length > 0) {
+          try {
+            const leadIds = loadedLeads.map((l: any) => l.id);
+            const { data: loadedTasks, error: tasksError } = await supabase
+              .from('tasks')
+              .select('*')
+              .in('lead_id', leadIds)
+              .order('due_date', { ascending: false });
+
+            if (tasksError) throw tasksError;
+            setTasks(loadedTasks || []);
+          } catch (err) {
+            console.error('Erro ao buscar tarefas do contato:', err);
+          }
+        } else {
+          setTasks([]);
+        }
+      })
     ])
       .catch(console.error)
       .finally(() => {
@@ -415,6 +453,9 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
                     } else if (entry.type === 'document' || entry.type === 'upload') {
                       icon = <FileText size={16} className="text-purple-600" />;
                       bgColor = 'bg-purple-50 border-purple-200';
+                    } else if (entry.type === 'appointment') {
+                      icon = <Calendar size={16} className="text-indigo-600" />;
+                      bgColor = 'bg-indigo-50 border-indigo-200';
                     }
 
                     const leadTypeLabel = entry.leadType === 'seller' ? 'Captação' : 'Venda';
