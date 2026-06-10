@@ -99,7 +99,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
           .from('people')
           .select('*')
           .eq('person_type', 'PJ')
-          .contains('responsibles', [{ person_id: currentPerson.id }]);
+          .contains('responsibles', JSON.stringify([{ person_id: currentPerson.id }]));
         
         if (compError) throw compError;
         setLinkedCompanies(companies || []);
