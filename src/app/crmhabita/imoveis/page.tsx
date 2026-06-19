@@ -58,7 +58,7 @@ export default function PropertiesPage() {
 
   return (
     <DashboardLayout>
-      <div className="h-[calc(100vh-100px)] flex flex-col bg-surface overflow-hidden rounded-xl shadow-card">
+      <div className="h-[calc(100vh-58px)] md:h-[calc(100vh-100px)] flex flex-col bg-surface overflow-hidden rounded-xl shadow-card">
         {/* Header Section */}
         <header className="p-6 border-b border-border bg-surface z-10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
@@ -116,7 +116,7 @@ export default function PropertiesPage() {
         {/* Split View Content */}
         <div className="flex-1 flex overflow-hidden">
           {/* List Section */}
-          <section className="w-full md:w-[60%] lg:w-[50%] overflow-y-auto p-6 scrollbar-hide bg-surface">
+          <section className="w-full md:w-[60%] lg:w-[50%] overflow-y-auto p-3 md:p-6 scrollbar-hide bg-surface">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {filtered.length > 0 ? (
                 filtered.map(property => (

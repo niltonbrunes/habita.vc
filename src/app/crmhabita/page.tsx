@@ -137,10 +137,10 @@ export default function DashboardPage() {
       }
     >
       {/* ── 3-COLUMN LAYOUT ── */}
-      <div className="flex h-full min-h-0">
+      <div className="flex flex-col xl:flex-row h-full min-h-0 overflow-hidden">
 
         {/* 📊 CENTER: Stats + Imóveis + Oportunidades ── */}
-        <div className="flex-1 min-w-0 overflow-y-auto p-5 space-y-5">
+        <div className="flex-1 min-w-0 overflow-y-auto p-3 md:p-5 space-y-5 pb-20 xl:pb-5">
 
           {/* STATS BAR */}
           <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
@@ -234,7 +234,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── RIGHT: Agenda + Oportunidades ── */}
-        <aside className="w-[280px] flex-shrink-0 border-l border-border bg-surface overflow-y-auto hidden xl:flex flex-col">
+        <aside className="w-full xl:w-[280px] flex-shrink-0 border-t xl:border-t-0 xl:border-l border-border bg-surface overflow-y-auto flex flex-col">
 
           <SectionCard title="Agenda do dia" link={{ label: 'Ver tudo', href: '/crmhabita/agenda' }} noBorder>
             {actions.length > 0 ? actions.slice(0, 6).map((task, i) => {

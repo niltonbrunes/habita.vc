@@ -8,6 +8,23 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    viewportFit: 'cover',
+  },
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#2563EB' },
+    { media: '(prefers-color-scheme: dark)', color: '#2563EB' },
+  ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'HabitaVC CRM',
+  },
+  formatDetection: {
+    telephone: false,
+  },
   metadataBase: new URL("https://habita.vc"),
   title: {
     default: "Habita.vc | Imóveis em Goiânia com Curadoria de Especialistas",
@@ -89,6 +106,20 @@ export default function RootLayout({
             {children}
           </NotificationProvider>
         </AuthProvider>
+        {/* PWA Service Worker Registration */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(reg) { console.log('[SW] Registered:', reg.scope); })
+                    .catch(function(err) { console.log('[SW] Failed:', err); });
+                });
+              }
+            `
+          }}
+        />
       </body>
     </html>
   );

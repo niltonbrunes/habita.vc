@@ -266,7 +266,7 @@ export default function LeadsPage() {
 
   return (
     <DashboardLayout>
-      <div className="h-[calc(100vh-58px)] flex flex-col p-6 lg:p-8">
+      <div className="h-[calc(100vh-58px)] flex flex-col p-3 md:p-6 lg:p-8">
         {/* Page Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
           <div>
@@ -363,7 +363,7 @@ export default function LeadsPage() {
         )}
 
         {/* ── Kanban Board ── */}
-        <div className="flex-1 overflow-x-auto pb-10 scrollbar-thin scrollbar-thumb-primary/10 relative min-h-[600px] -mx-8 px-8">
+        <div className="flex-1 overflow-x-auto pb-10 scrollbar-thin scrollbar-thumb-primary/10 relative min-h-[400px] md:min-h-[600px] -mx-3 px-3 md:-mx-6 md:px-6 lg:-mx-8 lg:px-8">
           {loading && (
             <div className="absolute inset-0 bg-surface/50 backdrop-blur-[1px] z-20 flex items-center justify-center">
               <RefreshCw className="animate-spin text-primary" size={32} />

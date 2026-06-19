@@ -750,3 +750,54 @@ h1, h2, h3, h4, h5, h6 {
   border-color: #D4AF37;
 }
 
+
+/* ===========================
+   PWA & Mobile Utilities
+   =========================== */
+
+/* Safe area insets for iPhones with notch/home indicator */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Hide scrollbar while keeping scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Thin scrollbar for kanban */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(37, 99, 235, 0.15) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.15);
+  border-radius: 99px;
+}
+
+/* Prevent double-tap zoom on touch targets */
+button, a, [role="button"] {
+  touch-action: manipulation;
+}
+
+/* Prevent text size adjustment on iOS */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}

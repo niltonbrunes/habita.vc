@@ -37,7 +37,7 @@ export default function AgendaPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 pb-20 max-w-5xl relative">
+      <div className="space-y-6 md:space-y-8 pb-20 max-w-5xl mx-auto px-4 md:px-6 relative">
         {loading && (
           <div className="absolute inset-0 bg-surface/50 backdrop-blur-[1px] z-20 flex items-center justify-center min-h-[400px]">
             <RefreshCw className="animate-spin text-primary" size={32} />

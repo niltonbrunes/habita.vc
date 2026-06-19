@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { InstallPrompt } from '@/components/pwa/InstallPrompt';
 import {
   LayoutDashboard, Users, Home, TrendingUp, Target,
   Settings, LogOut, Bell, Calendar, Briefcase,
@@ -10,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/context/NotificationContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -23,6 +24,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   const initials = profile?.full_name?.split(' ').map((n: string) => n[0]).slice(0, 2).join('') || 'HB';
   const firstName = profile?.full_name?.split(' ')[0] || 'Corretor';
@@ -43,9 +49,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:static lg:translate-x-0
       `}>
-        <div className="w-[34px] h-[34px] rounded-[9px] bg-blue-primary flex items-center justify-center mb-5 flex-shrink-0">
+        <div className="w-[34px] h-[34px] rounded-[9px] bg-blue-primary flex items-center justify-center mb-2 flex-shrink-0">
           <Home className="w-[17px] h-[17px] text-white" />
         </div>
+        {/* Close button — mobile only */}
+        <button
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="lg:hidden w-[34px] h-[34px] rounded-[9px] flex items-center justify-center text-white/50 hover:text-white hover:bg-surface/10 transition-all mb-3"
+          title="Fechar menu"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
 
         <NavIcon icon={<LayoutDashboard size={17} />} href="/crmhabita"             label="Dashboard"    active={pathname === '/crmhabita'} />
         <NavIcon icon={<Target size={17} />}           href="/crmhabita/leads"       label="Leads"        active={pathname.startsWith('/crmhabita/leads')} />
@@ -83,8 +97,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
         {/* TOPBAR */}
         <header className="h-[58px] bg-surface border-b border-border px-5 flex items-center justify-between flex-shrink-0 gap-4">
           <div className="flex items-center gap-3">
-            <button className="lg:hidden text-subtle hover:text-heading" onClick={() => setIsMobileMenuOpen(true)}>
-              <Menu size={20} />
+            <button className="lg:hidden text-subtle hover:text-heading p-1 -ml-1 rounded-lg hover:bg-muted/50 transition-colors" onClick={() => setIsMobileMenuOpen(true)}>
+              <Menu size={22} />
             </button>
             <div>
               <h1 className="text-[15px] font-bold text-heading leading-tight">
@@ -137,6 +151,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, acti
           {children}
         </div>
       </div>
+    <InstallPrompt />
     </div>
   );
 };
