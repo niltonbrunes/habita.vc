@@ -15,7 +15,6 @@ import {
   DollarSign,
   ChevronDown
 } from 'lucide-react';
-import { ImportService } from '@/services/import.service';
 import { PropertyMap } from '@/components/properties/PropertyMap';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
@@ -41,15 +40,36 @@ export default function PropertiesPage() {
     return matchSearch && matchPattern && matchStatus;
   });
 
-  const handleSync = async () => {
+    const handleSync = async () => {
     if (!user) return;
     try {
       setSyncing(true);
-      const stats = await ImportService.importFromXml('https://api.urbs.com.br/Portal/chaves.ashx?uid=4395', user.id);
-      alert(`Sincronização concluída!\nImportados: ${stats.imported}\nPulados: ${stats.skipped}\nErros: ${stats.errors}`);
+      // Uses server-side API route (no CORS issues, service role key, longer timeout)
+      const res = await fetch('/api/import/xml', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          xmlUrl: 'https://api.urbs.com.br/Portal/chaves.ashx?uid=4395',
+          userId: user.id,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({ error: 'Erro desconhecido' }));
+        throw new Error(errData.error || `HTTP ${res.status}`);
+      }
+
+      const stats = await res.json();
+      alert(
+        `✅ Sincronização concluída!\n\n` +
+        `📥 Novos: ${stats.imported}\n` +
+        `🔄 Atualizados: ${stats.updated}\n` +
+        `⏭️  Sem alteração: ${stats.skipped}\n` +
+        `❌ Erros: ${stats.errors}`
+      );
       refresh();
-    } catch (err) {
-      alert('Erro ao sincronizar XML.');
+    } catch (err: any) {
+      alert('Erro ao sincronizar XML: ' + (err.message || 'Verifique o console.'));
       console.error(err);
     } finally {
       setSyncing(false);
