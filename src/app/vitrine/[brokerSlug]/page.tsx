@@ -32,7 +32,10 @@ export default function BrokerShowcasePage({ params }: { params: Promise<{ broke
         
         // Buscar imoveis deste corretor
         const { data: props } = await (PropertiesService as any).getAllFiltered({});
-        setProperties((props || []).filter((p: any) => p.show_in_vitrine !== false));
+        // Only show properties that are active (available) and enabled for vitrine
+        setProperties((props || []).filter((p: any) =>
+          p.show_in_vitrine !== false && p.status === 'available'
+        ));
       } catch (err) {
         console.error('Erro ao carregar vitrine:', err);
       } finally {

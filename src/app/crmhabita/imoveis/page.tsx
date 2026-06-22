@@ -26,7 +26,7 @@ export default function PropertiesPage() {
   const [syncing, setSyncing] = React.useState(false);
   const [search, setSearch] = React.useState('');
   const [patternFilter, setPatternFilter] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState('');
+  const [statusFilter, setStatusFilter] = React.useState('available'); // Default: only show active properties
   const [hoveredPropertyId, setHoveredPropertyId] = React.useState<string | null>(null);
 
   const filtered = properties.filter(p => {
@@ -84,7 +84,9 @@ export default function PropertiesPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
             <div>
               <h1 className="text-3xl font-black text-primary tracking-tight">Gestão de Imóveis</h1>
-              <p className="text-muted-foreground text-xs font-medium">Portfólio atualizado: {properties.length} ativos</p>
+              <p className="text-muted-foreground text-xs font-medium">
+                {filtered.length} imóvel{filtered.length !== 1 ? 'is' : ''} exibido{filtered.length !== 1 ? 's' : ''} · {properties.length} no portfólio
+              </p>
             </div>
             <div className="flex items-center gap-3">
                <button 
@@ -125,10 +127,12 @@ export default function PropertiesPage() {
             ]} />
 
             <FilterPill label="Status" value={statusFilter} onChange={setStatusFilter} options={[
+              { label: 'Ativos', value: 'available' },
+              { label: 'Reservados', value: 'reserved' },
+              { label: 'Vendidos', value: 'sold' },
+              { label: 'Suspensos', value: 'suspended' },
+              { label: 'Inativos', value: 'inactive' },
               { label: 'Todos', value: '' },
-              { label: 'Disponível', value: 'available' },
-              { label: 'Reservado', value: 'reserved' },
-              { label: 'Vendido', value: 'sold' }
             ]} />
           </div>
         </header>
