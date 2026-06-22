@@ -37,7 +37,7 @@ export default function PublicPropertyDetailSlugPage({ params }: { params: Promi
         // Fetch similar properties
         if (data) {
           const { data: similar } = await PropertiesService.getAllFiltered({});
-          const filtered = similar?.filter(p => p.id !== data.id).slice(0, 3) || [];
+          const filtered = similar?.filter(p => p.id !== data.id && p.status === 'available').slice(0, 3) || [];
           setSimilarProperties(filtered);
         }
       } catch (err) {
@@ -92,7 +92,7 @@ export default function PublicPropertyDetailSlugPage({ params }: { params: Promi
     </div>
   );
 
-  if (!property) return (
+  if (!property || property.status !== 'available') return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center space-y-6 px-4 text-center">
       <h2 className="text-3xl font-black text-primary">Imóvel não encontrado</h2>
       <p className="text-muted-foreground max-w-md">O link que você acessou pode estar expirado ou o imóvel já foi vendido.</p>

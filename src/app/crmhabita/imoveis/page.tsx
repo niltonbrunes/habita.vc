@@ -35,8 +35,8 @@ export default function PropertiesPage() {
       (p.title ?? '').toLowerCase().includes(q) ||
       (p.address_city ?? '').toLowerCase().includes(q) ||
       (p.address_street ?? '').toLowerCase().includes(q);
-    const matchPattern = !patternFilter || p.pattern === patternFilter;
-    const matchStatus  = !statusFilter  || p.status  === statusFilter;
+    const matchPattern = !patternFilter || patternFilter === 'all' || p.pattern === patternFilter;
+    const matchStatus = statusFilter === 'all' ? true : (statusFilter ? p.status === statusFilter : p.status === 'available');
     return matchSearch && matchPattern && matchStatus;
   });
 
@@ -120,7 +120,7 @@ export default function PropertiesPage() {
             </div>
             
             <FilterPill label="Padrão" value={patternFilter} onChange={setPatternFilter} options={[
-              { label: 'Todos', value: '' },
+              { label: 'Todos', value: 'all' },
               { label: 'Alto Padrão', value: 'high_end' },
               { label: 'Médio', value: 'medium' },
               { label: 'Econômico', value: 'economic' }
@@ -132,7 +132,7 @@ export default function PropertiesPage() {
               { label: 'Vendidos', value: 'sold' },
               { label: 'Suspensos', value: 'suspended' },
               { label: 'Inativos', value: 'inactive' },
-              { label: 'Todos', value: '' },
+              { label: 'Todos', value: 'all' },
             ]} />
           </div>
         </header>
@@ -174,7 +174,7 @@ const FilterPill = ({ label, value, onChange, options }: any) => (
       onChange={e => onChange(e.target.value)}
       className={`
         appearance-none pl-5 pr-10 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all border cursor-pointer
-        ${value ? 'bg-blue-primary/5 text-primary border-primary/20' : 'bg-surface text-primary/40 border-border hover:bg-muted/50'}
+        ${(value && value !== 'all') ? 'bg-blue-primary/5 text-primary border-primary/20' : 'bg-surface text-primary/40 border-border hover:bg-muted/50'}
       `}
     >
       <option value="" disabled>{label}</option>

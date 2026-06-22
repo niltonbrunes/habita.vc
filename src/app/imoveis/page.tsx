@@ -22,6 +22,9 @@ export default function PublicPropertiesPage() {
   const [hoveredPropertyId, setHoveredPropertyId] = useState<string | null>(null);
 
   const filteredProperties = properties.filter(p => {
+    // Only show active properties in the public portal
+    if (p.status !== 'available') return false;
+
     const matchSearch = !searchTerm || 
       p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.address_city.toLowerCase().includes(searchTerm.toLowerCase()) ||

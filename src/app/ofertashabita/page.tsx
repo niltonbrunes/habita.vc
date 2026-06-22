@@ -14,8 +14,9 @@ export default function OfertasPage() {
   useEffect(() => {
     // Fetch top properties for the landing page (3 to 6 max)
     PropertiesService.getAllFiltered({}).then(res => {
-      // Just taking the first 3 for the high-conversion landing
-      setProperties(res.data?.slice(0, 3) || []);
+      // Just taking the first 3 active properties for the high-conversion landing
+      const activeProps = res.data?.filter((p) => p.status === 'available') || [];
+      setProperties(activeProps.slice(0, 3));
     });
   }, []);
 
