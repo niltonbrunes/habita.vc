@@ -23,6 +23,8 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
   const [leads, setLeads] = useState<any[]>([]);
   const [loadingLeads, setLoadingLeads] = useState(true);
   const [tasks, setTasks] = useState<any[]>([]);
+  const [ownedProperties, setOwnedProperties] = useState<any[]>([]);
+  const [loadingProperties, setLoadingProperties] = useState(true);
 
   // States for PJ/PF relationships
   const [linkedCompanies, setLinkedCompanies] = useState<Person[]>([]);
@@ -117,6 +119,22 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
         setPerson(loadedPerson);
         if (loadedPerson) {
           await fetchRelatedData(loadedPerson);
+          try {
+            setLoadingProperties(true);
+            const { data: ownersData, error: ownersError } = await supabase
+              .from('property_owners')
+              .select('*, properties(*)')
+              .eq('person_id', id);
+            if (ownersError) throw ownersError;
+            const props = (ownersData || [])
+              .map((o: any) => o.properties)
+              .filter((p: any) => !!p);
+            setOwnedProperties(props);
+          } catch (err) {
+            console.error('Erro ao buscar imóveis do proprietário:', err);
+          } finally {
+            setLoadingProperties(false);
+          }
         }
       }),
       PeopleService.getLeadsByPerson(id).then(async (loadedLeads) => {
@@ -144,6 +162,7 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
       .finally(() => {
         setLoading(false);
         setLoadingLeads(false);
+        setLoadingProperties(false);
       });
   }, [id]);
 
@@ -624,6 +643,54 @@ export default function PersonDetailPage({ params }: { params: Promise<{ id: str
               )}
             </div>
             
+
+            {/* Imóveis do Proprietário */}
+            <div className="bg-surface rounded-xl p-8 shadow-sm border border-border mb-6">
+              <h3 className="font-black text-primary text-lg mb-6 flex items-center gap-2">
+                <Building2 size={20} className="text-accent" /> Imóveis do Proprietário
+              </h3>
+              
+              {loadingProperties ? (
+                <div className="flex justify-center py-6">
+                  <Loader2 className="animate-spin text-primary" size={24} />
+                </div>
+              ) : ownedProperties && ownedProperties.length > 0 ? (
+                <div className="space-y-4">
+                  {ownedProperties.map((p: any) => (
+                    <div key={p.id} className="p-4 bg-muted/30 border border-border/80 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-primary/20 transition-all">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-200 text-[9px] font-black uppercase tracking-widest rounded-md">
+                            Ref: {p.reference || 'Sem Ref'}
+                          </span>
+                          <span className="px-2 py-0.5 bg-muted text-muted-foreground border border-border/60 text-[9px] font-black uppercase tracking-widest rounded-md">
+                            {p.type || 'Tipo não informado'}
+                          </span>
+                        </div>
+                        <p className="text-xs font-bold text-primary">
+                          {p.title}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
+                          <MapPin size={10} /> Bairro: {p.address_neighborhood || 'Não informado'} · {p.address_city}
+                        </p>
+                      </div>
+                      <Link 
+                        href={`/crmhabita/imoveis/${p.id}`}
+                        className="px-4 py-2 bg-surface hover:bg-muted border border-border rounded-xl text-xs font-bold text-primary flex items-center justify-center gap-2 transition-all shadow-sm shrink-0"
+                      >
+                        Ver Imóvel <ExternalLink size={12} />
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 bg-muted/20 rounded-2xl border-2 border-dashed border-border/60">
+                  <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">Nenhum imóvel vinculado</p>
+                  <p className="text-[10px] text-muted-foreground/60 mt-1">Este contato não está vinculado como proprietário de nenhum imóvel.</p>
+                </div>
+              )}
+            </div>
+
             {/* Informações Detalhadas */}
             <div className="bg-surface rounded-xl p-8 shadow-sm border border-border">
               <h3 className="font-black text-primary text-lg mb-6 flex items-center gap-2">
