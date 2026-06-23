@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { JSDOM } from 'jsdom';
 
 // Increase Vercel function timeout via route config
-export const maxDuration = 60; // seconds (requires Vercel Pro for >10s)
+export const maxDuration = 60; // seconds
 
 export async function POST(req: Request) {
   try {
@@ -43,49 +43,132 @@ export async function POST(req: Request) {
       errors: 0,
     };
 
-    // Process in batches to avoid timeout and N+1 issues
-    const BATCH_SIZE = 20;
+    // 1. Fetch all existing properties references in a single query
+    const { data: existingProperties, error: selectErr } = await supabase
+      .from('properties')
+      .select('id, reference, price, status, images');
+
+    if (selectErr) throw selectErr;
+
+    const existingMap = new Map();
+    (existingProperties || []).forEach(p => {
+      if (p.reference) {
+        existingMap.set(p.reference, p);
+      }
+    });
+
+    const updateTasks: (() => Promise<void>)[] = [];
+    const newPropsList: any[] = [];
+
+    // Helper functions inside POST scope
+    const getTagValue = (parent: Element, tagName: string): string => {
+      const element = parent.getElementsByTagName(tagName)[0];
+      return element ? (element.textContent || '').trim() : '';
+    };
+
+    const getImages = (parent: Element): string[] => {
+      const fotos = parent.getElementsByTagName('foto');
+      const urls: string[] = [];
+      for (let i = 0; i < fotos.length; i++) {
+        const urlTag = fotos[i].getElementsByTagName('url')[0];
+        if (urlTag && urlTag.textContent) {
+          urls.push(urlTag.textContent.trim());
+        }
+      }
+      return urls;
+    };
+
+    const getFeatures = (parent: Element): string[] => {
+      const features: string[] = [];
+      const common = parent.getElementsByTagName('area_comum')[0];
+      const private_area = parent.getElementsByTagName('area_privativa')[0];
+
+      const extractItems = (node: Element) => {
+        if (!node) return;
+        const items = node.getElementsByTagName('item');
+        for (let i = 0; i < items.length; i++) {
+          const text = items[i].textContent?.trim();
+          if (text) features.push(text);
+        }
+      };
+
+      if (common) extractItems(common);
+      if (private_area) extractItems(private_area);
+
+      return Array.from(new Set(features));
+    };
+
+    // Batch runner helper
+    const runInBatches = async (tasks: (() => Promise<void>)[], batchSize: number) => {
+      for (let i = 0; i < tasks.length; i += batchSize) {
+        const batch = tasks.slice(i, i + batchSize).map(t => t());
+        await Promise.all(batch);
+      }
+    };
 
     for (let i = 0; i < imoveis.length; i++) {
-      try {
-        const item = imoveis[i];
-        const reference = getTagValue(item, 'referencia');
+      const item = imoveis[i];
+      const reference = getTagValue(item, 'referencia');
 
-        // Skip items without a reference code (can't safely upsert without it)
-        if (!reference || reference.trim() === '') {
+      // Skip items without a reference code
+      if (!reference || reference.trim() === '') {
+        stats.skipped++;
+        continue;
+      }
+
+      const images = getImages(item);
+      const features = getFeatures(item);
+      const newPrice = parseFloat(getTagValue(item, 'valor')) || 0;
+      const isHighlight = getTagValue(item, 'destaque') === '1';
+
+      const updateFields = {
+        title: getTagValue(item, 'titulo'),
+        description: getTagValue(item, 'descritivo'),
+        price: newPrice,
+        price_iptu: parseFloat(getTagValue(item, 'valor_iptu')) || 0,
+        price_condo: parseFloat(getTagValue(item, 'valor_condominio')) || 0,
+        area_total: parseFloat(getTagValue(item, 'area_total')) || 0,
+        area_useful: parseFloat(getTagValue(item, 'area_util')) || 0,
+        rooms: parseInt(getTagValue(item, 'quartos')) || 0,
+        suites: parseInt(getTagValue(item, 'suites')) || 0,
+        bathrooms: parseInt(getTagValue(item, 'banheiro')) || 0,
+        parking_spaces: parseInt(getTagValue(item, 'garagem')) || 0,
+        images: images,
+        main_image: images[0] || '',
+        is_highlight: isHighlight,
+        video_url: getTagValue(item, 'video'),
+        metadata: {
+          features,
+          commission_estimated_percent: 6,
+        },
+      };
+
+      const existing = existingMap.get(reference);
+
+      if (existing) {
+        // Compare price, status or images
+        const priceChanged = Math.abs(existing.price - newPrice) >= 1;
+        const imagesChanged = JSON.stringify(existing.images || []) !== JSON.stringify(images);
+
+        if (!priceChanged && !imagesChanged) {
           stats.skipped++;
-          continue;
+        } else {
+          updateTasks.push(async () => {
+            try {
+              const { error: updateErr } = await supabase
+                .from('properties')
+                .update(updateFields)
+                .eq('id', existing.id);
+
+              if (updateErr) throw updateErr;
+              stats.updated++;
+            } catch (err) {
+              console.error(`Erro ao atualizar Ref ${reference}:`, err);
+              stats.errors++;
+            }
+          });
         }
-
-        const images = getImages(item);
-        const features = getFeatures(item);
-        const newPrice = parseFloat(getTagValue(item, 'valor')) || 0;
-        const isHighlight = getTagValue(item, 'destaque') === '1';
-
-        // Fields to always update from XML (dynamic data)
-        const updateFields = {
-          title: getTagValue(item, 'titulo'),
-          description: getTagValue(item, 'descritivo'),
-          price: newPrice,
-          price_iptu: parseFloat(getTagValue(item, 'valor_iptu')) || 0,
-          price_condo: parseFloat(getTagValue(item, 'valor_condominio')) || 0,
-          area_total: parseFloat(getTagValue(item, 'area_total')) || 0,
-          area_useful: parseFloat(getTagValue(item, 'area_util')) || 0,
-          rooms: parseInt(getTagValue(item, 'quartos')) || 0,
-          suites: parseInt(getTagValue(item, 'suites')) || 0,
-          bathrooms: parseInt(getTagValue(item, 'banheiro')) || 0,
-          parking_spaces: parseInt(getTagValue(item, 'garagem')) || 0,
-          images: images,
-          main_image: images[0] || '',
-          is_highlight: isHighlight,
-          video_url: getTagValue(item, 'video'),
-          metadata: {
-            features,
-            commission_estimated_percent: 6,
-          },
-        };
-
-        // Fields only set on first insert
+      } else {
         const insertOnlyFields = {
           registered_by_id: userId,
           reference: reference,
@@ -102,42 +185,27 @@ export async function POST(req: Request) {
           pattern: 'medium',
         };
 
-        // Check if property already exists
-        const { data: existing, error: selectErr } = await supabase
+        newPropsList.push({ ...insertOnlyFields, ...updateFields });
+      }
+    }
+
+    // Execute updates in parallel batches of 20
+    if (updateTasks.length > 0) {
+      await runInBatches(updateTasks, 20);
+    }
+
+    // Execute inserts in a single bulk operation
+    if (newPropsList.length > 0) {
+      try {
+        const { error: insertErr } = await supabase
           .from('properties')
-          .select('id, price, status')
-          .eq('reference', reference)
-          .maybeSingle();
+          .insert(newPropsList);
 
-        if (selectErr) throw selectErr;
-
-        if (existing) {
-          // Upsert: update dynamic fields, preserve manual edits (status set by broker, etc.)
-          const { error: updateErr } = await supabase
-            .from('properties')
-            .update(updateFields)
-            .eq('id', existing.id);
-
-          if (updateErr) throw updateErr;
-
-          // Count as "skipped" only if price didn't change (no meaningful update)
-          if (Math.abs(existing.price - newPrice) < 1) {
-            stats.skipped++;
-          } else {
-            stats.updated++;
-          }
-        } else {
-          // Insert new property
-          const { error: insertErr } = await supabase
-            .from('properties')
-            .insert([{ ...insertOnlyFields, ...updateFields }]);
-
-          if (insertErr) throw insertErr;
-          stats.imported++;
-        }
+        if (insertErr) throw insertErr;
+        stats.imported += newPropsList.length;
       } catch (err) {
-        console.error(`Erro no imóvel ${i}:`, err);
-        stats.errors++;
+        console.error('Erro ao realizar bulk insert de novos imóveis:', err);
+        stats.errors += newPropsList.length;
       }
     }
 
@@ -146,41 +214,4 @@ export async function POST(req: Request) {
     console.error('Erro na API de importação:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
-}
-
-function getTagValue(parent: Element, tagName: string): string {
-  const element = parent.getElementsByTagName(tagName)[0];
-  return element ? (element.textContent || '').trim() : '';
-}
-
-function getImages(parent: Element): string[] {
-  const fotos = parent.getElementsByTagName('foto');
-  const urls: string[] = [];
-  for (let i = 0; i < fotos.length; i++) {
-    const urlTag = fotos[i].getElementsByTagName('url')[0];
-    if (urlTag && urlTag.textContent) {
-      urls.push(urlTag.textContent.trim());
-    }
-  }
-  return urls;
-}
-
-function getFeatures(parent: Element): string[] {
-  const features: string[] = [];
-  const common = parent.getElementsByTagName('area_comum')[0];
-  const private_area = parent.getElementsByTagName('area_privativa')[0];
-
-  const extractItems = (node: Element) => {
-    if (!node) return;
-    const items = node.getElementsByTagName('item');
-    for (let i = 0; i < items.length; i++) {
-      const text = items[i].textContent?.trim();
-      if (text) features.push(text);
-    }
-  };
-
-  if (common) extractItems(common);
-  if (private_area) extractItems(private_area);
-
-  return Array.from(new Set(features));
 }
