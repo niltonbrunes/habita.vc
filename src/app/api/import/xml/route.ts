@@ -40,25 +40,9 @@ export async function POST(req: Request) {
       imported: 0,   // new properties created
       updated: 0,    // existing properties updated
       skipped: 0,    // no changes detected
+      suspended: 0,  // absent properties suspended
       errors: 0,
     };
-
-    // 1. Fetch all existing properties references in a single query
-    const { data: existingProperties, error: selectErr } = await supabase
-      .from('properties')
-      .select('id, reference, price, status, images');
-
-    if (selectErr) throw selectErr;
-
-    const existingMap = new Map();
-    (existingProperties || []).forEach(p => {
-      if (p.reference) {
-        existingMap.set(p.reference, p);
-      }
-    });
-
-    const updateTasks: (() => Promise<void>)[] = [];
-    const newPropsList: any[] = [];
 
     // Helper functions inside POST scope
     const getTagValue = (parent: Element, tagName: string): string => {
@@ -97,6 +81,32 @@ export async function POST(req: Request) {
 
       return Array.from(new Set(features));
     };
+
+    // Collect all XML references in a Set
+    const xmlReferences = new Set<string>();
+    for (let i = 0; i < imoveis.length; i++) {
+      const ref = getTagValue(imoveis[i], 'referencia');
+      if (ref && ref.trim() !== '') {
+        xmlReferences.add(ref.trim());
+      }
+    }
+
+    // 1. Fetch all existing properties references in a single query
+    const { data: existingProperties, error: selectErr } = await supabase
+      .from('properties')
+      .select('id, reference, price, status, images');
+
+    if (selectErr) throw selectErr;
+
+    const existingMap = new Map();
+    (existingProperties || []).forEach(p => {
+      if (p.reference) {
+        existingMap.set(p.reference, p);
+      }
+    });
+
+    const updateTasks: (() => Promise<void>)[] = [];
+    const newPropsList: any[] = [];
 
     // Batch runner helper
     const runInBatches = async (tasks: (() => Promise<void>)[], batchSize: number) => {
@@ -146,18 +156,23 @@ export async function POST(req: Request) {
       const existing = existingMap.get(reference);
 
       if (existing) {
-        // Compare price, status or images
+        // Compare price, images and status
         const priceChanged = Math.abs(existing.price - newPrice) >= 1;
         const imagesChanged = JSON.stringify(existing.images || []) !== JSON.stringify(images);
+        const statusChanged = existing.status !== 'available';
 
-        if (!priceChanged && !imagesChanged) {
+        if (!priceChanged && !imagesChanged && !statusChanged) {
           stats.skipped++;
         } else {
           updateTasks.push(async () => {
             try {
+              const fieldsToUpdate = {
+                ...updateFields,
+                ...(statusChanged ? { status: 'available' } : {})
+              };
               const { error: updateErr } = await supabase
                 .from('properties')
-                .update(updateFields)
+                .update(fieldsToUpdate)
                 .eq('id', existing.id);
 
               if (updateErr) throw updateErr;
@@ -206,6 +221,30 @@ export async function POST(req: Request) {
       } catch (err) {
         console.error('Erro ao realizar bulk insert de novos imóveis:', err);
         stats.errors += newPropsList.length;
+      }
+    }
+
+    // 2. Identify and suspend database properties not present in the XML
+    const idsToSuspend: string[] = [];
+    (existingProperties || []).forEach(p => {
+      if (p.reference && !xmlReferences.has(p.reference) && p.status !== 'suspended') {
+        idsToSuspend.push(p.id);
+      }
+    });
+
+    if (idsToSuspend.length > 0) {
+      try {
+        console.log(`Suspending ${idsToSuspend.length} properties absent from XML...`);
+        const { error: suspendErr } = await supabase
+          .from('properties')
+          .update({ status: 'suspended' })
+          .in('id', idsToSuspend);
+
+        if (suspendErr) throw suspendErr;
+        stats.suspended = idsToSuspend.length;
+      } catch (err) {
+        console.error('Erro ao suspender imóveis ausentes:', err);
+        stats.errors += idsToSuspend.length;
       }
     }
 

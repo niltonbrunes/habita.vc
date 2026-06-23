@@ -64,6 +64,7 @@ export default function PropertiesPage() {
         `✅ Sincronização concluída!\n\n` +
         `📥 Novos: ${stats.imported}\n` +
         `🔄 Atualizados: ${stats.updated}\n` +
+        `⏸️  Suspensos: ${stats.suspended || 0}\n` +
         `⏭️  Sem alteração: ${stats.skipped}\n` +
         `❌ Erros: ${stats.errors}`
       );
