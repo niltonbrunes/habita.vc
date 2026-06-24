@@ -91,15 +91,28 @@ export async function POST(req: Request) {
       }
     }
 
-    // 1. Fetch all existing properties references in a single query
-    const { data: existingProperties, error: selectErr } = await supabase
-      .from('properties')
-      .select('id, reference, price, status, images');
+    // 1. Fetch all existing properties references (paginated to bypass Supabase 1000 limit)
+    let existingProperties: any[] = [];
+    let page = 0;
+    const pageSize = 1000;
+    while (true) {
+      const start = page * pageSize;
+      const end = start + pageSize - 1;
+      const { data, error: selectErr } = await supabase
+        .from('properties')
+        .select('id, reference, price, status, images')
+        .range(start, end);
 
-    if (selectErr) throw selectErr;
+      if (selectErr) throw selectErr;
+      if (!data || data.length === 0) break;
+
+      existingProperties = existingProperties.concat(data);
+      if (data.length < pageSize) break;
+      page++;
+    }
 
     const existingMap = new Map();
-    (existingProperties || []).forEach(p => {
+    existingProperties.forEach(p => {
       if (p.reference) {
         existingMap.set(p.reference, p);
       }
@@ -234,13 +247,17 @@ export async function POST(req: Request) {
 
     if (idsToSuspend.length > 0) {
       try {
-        console.log(`Suspending ${idsToSuspend.length} properties absent from XML...`);
-        const { error: suspendErr } = await supabase
-          .from('properties')
-          .update({ status: 'suspended' })
-          .in('id', idsToSuspend);
+        console.log(`Suspending ${idsToSuspend.length} properties absent from XML in batches of 100...`);
+        const batchSize = 100;
+        for (let i = 0; i < idsToSuspend.length; i += batchSize) {
+          const batch = idsToSuspend.slice(i, i + batchSize);
+          const { error: suspendErr } = await supabase
+            .from('properties')
+            .update({ status: 'suspended' })
+            .in('id', batch);
 
-        if (suspendErr) throw suspendErr;
+          if (suspendErr) throw suspendErr;
+        }
         stats.suspended = idsToSuspend.length;
       } catch (err) {
         console.error('Erro ao suspender imóveis ausentes:', err);
