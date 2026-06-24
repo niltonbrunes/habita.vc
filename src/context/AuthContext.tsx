@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
 import { useRouter, usePathname } from 'next/navigation';
@@ -39,6 +39,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const pathnameRef = useRef(pathname);
+  useEffect(() => {
+    pathnameRef.current = pathname;
+  }, [pathname]);
+
   useEffect(() => {
     // Initial check
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -60,7 +65,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       
       if (_event === 'SIGNED_IN') {
-        router.push('/crmhabita');
+        // Prevent redirecting back to /crmhabita if the user is already on a dashboard page
+        const isDashboardRoute = pathnameRef.current.startsWith('/crmhabita');
+        if (!isDashboardRoute) {
+          router.push('/crmhabita');
+        }
       }
       if (_event === 'SIGNED_OUT') {
         router.push('/login');
