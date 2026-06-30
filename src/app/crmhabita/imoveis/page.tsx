@@ -73,10 +73,10 @@ export default function PropertiesPage() {
       
       setSyncStatus('Baixando XML...');
       const targetUrl = 'https://api.urbs.com.br/Portal/chaves.ashx?uid=4395';
-      const proxyRes = await fetch(`/api/proxy?url=${encodeURIComponent(targetUrl)}`);
-      if (!proxyRes.ok) throw new Error('Falha ao baixar o XML da URBS via proxy');
+      const xmlRes = await fetch(targetUrl);
+      if (!xmlRes.ok) throw new Error('Falha ao baixar o XML direto da URBS');
       
-      const xmlText = await proxyRes.text();
+      const xmlText = await xmlRes.text();
       
       setSyncStatus('Analisando XML...');
       const parser = new DOMParser();
@@ -384,3 +384,4 @@ const PropertyCard = ({ property, isHovered }: { property: any, isHovered?: bool
     </Link>
   );
 };
+
