@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
-import { MoreVertical, Calendar, MessageSquare, Flame, Sparkles, Plus, Building, MapPin, Trash2, Phone, Mail, MessageCircle } from 'lucide-react';
+import { MoreVertical, Calendar, MessageSquare, Flame, Sparkles, Plus, Building, MapPin, Trash2, Phone, Mail, MessageCircle , Edit2 } from 'lucide-react';
 import { Lead } from '@/types/database';
 import { KanbanColumn } from '@/lib/constants/kanban';
 import { motion } from 'framer-motion';
@@ -20,13 +20,13 @@ export const KanbanCard = ({
   lead, 
   onDragStart, 
   onDeleteLead,
-  onScheduleLead
+  onScheduleLead,
+onEditLead,
 }: { 
   lead: Lead, 
   onDragStart: (e: React.DragEvent, id: string) => void, 
   onDeleteLead: (id: string) => void,
-  onScheduleLead?: (lead: Lead) => void
-}) => {
+  onScheduleLead?: (lead: Lead) => void, onEditLead?: (lead: Lead) => void }) => {
   const displayName = lead.person?.name || lead.name;
   
   const phone = lead.phone || lead.person?.contacts?.find((c: any) => c.type === 'phone' || c.type === 'whatsapp' || c.type === 'cel')?.value;
@@ -66,15 +66,7 @@ export const KanbanCard = ({
             </Link>
           </div>
           
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              if (window.confirm('Excluir esta oportunidade?')) onDeleteLead(lead.id);
-            }}
-            className="text-muted/40 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
-          >
-            <Trash2 size={12} />
-          </button>
+          <button onClick={(e) => { e.stopPropagation(); onEditLead?.(lead); }} className="text-muted/40 hover:text-blue-500 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0" title="Editar"><Edit2 size={12} /></button><button onClick={(e) => { e.stopPropagation(); if (window.confirm('Excluir esta oportunidade?')) onDeleteLead(lead.id); }} className="text-muted/40 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0" title="Excluir"><Trash2 size={12} /></button>
         </div>
 
         <div className="flex items-center justify-between mt-1 pt-1 border-t border-border-light/50">
@@ -132,15 +124,15 @@ export const KanbanColumnComponent = ({
   onMoveLead, 
   onAddLead, 
   onDeleteLead,
-  onScheduleLead
+  onScheduleLead,
+onEditLead,
 }: { 
   column: KanbanColumn, 
   leads: Lead[], 
   onMoveLead: (id: string, status: string) => void, 
   onAddLead: () => void, 
   onDeleteLead: (id: string) => void,
-  onScheduleLead?: (lead: Lead) => void
-}) => {
+  onScheduleLead?: (lead: Lead) => void, onEditLead?: (lead: Lead) => void }) => {
   const [isOver, setIsOver] = React.useState(false);
   
   const columnTotalValue = leads.reduce((acc, lead) => acc + (lead.value || 0), 0);
@@ -202,8 +194,7 @@ export const KanbanColumnComponent = ({
                 e.dataTransfer.setData('leadId', id);
                 e.dataTransfer.effectAllowed = 'move';
               }} 
-              onDeleteLead={onDeleteLead} 
-              onScheduleLead={onScheduleLead}
+              onDeleteLead={onDeleteLead} onScheduleLead={onScheduleLead} onEditLead={onEditLead}
             />
           ))
         ) : (
@@ -211,7 +202,7 @@ export const KanbanColumnComponent = ({
              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center">
                 <Plus size={32} className="text-muted-foreground" />
              </div>
-             <span className="text-[12px] font-black uppercase tracking-[0.3em]">Arrastar para cá</span>
+             <span className="text-[12px] font-black uppercase tracking-[0.3em]">Arrastar para cÃ¡</span>
           </div>
         )}
         
@@ -225,3 +216,6 @@ export const KanbanColumnComponent = ({
     </div>
   );
 };
+
+
+

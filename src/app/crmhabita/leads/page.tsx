@@ -11,6 +11,7 @@ import {
   ShoppingBag, Home
 } from 'lucide-react';
 import { LeadFormModal } from '@/components/leads/LeadFormModal';
+import { EditLeadModal } from '@/components/leads/EditLeadModal';
 import { MoveJustificationModal } from '@/components/leads/MoveJustificationModal';
 import { ImportLeadsModal } from '@/components/leads/ImportLeadsModal';
 import { CaptacaoFormModal } from '@/components/captacao/CaptacaoFormModal';
@@ -35,6 +36,13 @@ export default function LeadsPage() {
   const [isImportModalOpen, setIsImportModalOpen] = React.useState(false);
   const [isCaptacaoModalOpen, setIsCaptacaoModalOpen] = React.useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = React.useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [selectedLeadForEdit, setSelectedLeadForEdit] = React.useState<Lead | null>(null);
+
+  const handleEditLead = (lead: Lead) => {
+    setSelectedLeadForEdit(lead);
+    setIsEditModalOpen(true);
+  };
   const [selectedLeadForTask, setSelectedLeadForTask] = React.useState<{ id: string, name: string } | null>(null);
 
   const handleScheduleLead = (lead: Lead) => {
@@ -381,6 +389,7 @@ export default function LeadsPage() {
                   onAddLead={() => setIsBuyerModalOpen(true)}
                   onDeleteLead={handleDeleteLead}
                   onScheduleLead={handleScheduleLead}
+                  onEditLead={handleEditLead}
                 />
               ))}
             </div>
@@ -395,6 +404,7 @@ export default function LeadsPage() {
                   onAddLead={() => setIsCaptacaoModalOpen(true)}
                   onDeleteLead={handleDeleteLead}
                   onScheduleLead={handleScheduleLead}
+                  onEditLead={handleEditLead}
                 />
               ))}
             </div>
@@ -437,6 +447,15 @@ export default function LeadsPage() {
           toStatus={pendingMove?.newStatus || ''}
           leadType={pendingMove?.type || 'buyer'}
         />
+        <EditLeadModal
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setSelectedLeadForEdit(null);
+          }}
+          onSuccess={refresh}
+          lead={selectedLeadForEdit}
+        />
       </div>
     </DashboardLayout>
   );
@@ -472,3 +491,4 @@ const TabButton = ({
     </span>
   </button>
 );
+

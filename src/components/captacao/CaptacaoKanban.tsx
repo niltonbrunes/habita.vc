@@ -4,7 +4,7 @@ import React from 'react';
 import { Lead, SellerLeadStatus } from '@/types/database';
 import { CaptacaoColumn } from '@/lib/constants/captacao';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, MapPin, Home, DollarSign, Ruler, CheckCircle2, Phone, Calendar, MessageCircle } from 'lucide-react';
+import { Plus, Trash2, MapPin, Home, DollarSign, Ruler, CheckCircle2, Phone, Calendar, MessageCircle , Edit2 } from 'lucide-react';
 
 const AVATAR_COLORS = ['#10b981', '#06b6d4', '#8b5cf6', '#f59e0b', '#ef4444', '#6366f1'];
 const getAvatarBg = (name: string) => AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
@@ -23,11 +23,13 @@ export const CaptacaoCard = ({
   onDragStart,
   onDeleteLead,
   onScheduleLead,
+onEditLead,
 }: {
   lead: Lead;
   onDragStart: (e: React.DragEvent, id: string) => void;
   onDeleteLead: (id: string) => void;
   onScheduleLead?: (lead: Lead) => void;
+  onEditLead?: (lead: Lead) => void;
 }) => {
   const displayName = lead.person?.name || lead.name;
   const askingPrice = lead.seller_asking_price || lead.value || 0;
@@ -61,7 +63,7 @@ export const CaptacaoCard = ({
             </div>
             <h4 className="font-bold text-heading text-[11px] leading-tight truncate">{displayName}</h4>
           </div>
-          <button
+          <button onClick={e => { e.stopPropagation(); onEditLead?.(lead); }} className="text-muted/40 hover:text-blue-500 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0" title="Editar"><Edit2 size={12} /></button><button
             onClick={e => {
               e.stopPropagation();
               if (window.confirm('Excluir este lead de captação?')) onDeleteLead(lead.id);
@@ -69,6 +71,9 @@ export const CaptacaoCard = ({
             className="text-muted/40 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
           >
             <Trash2 size={12} />
+          </button>
+          <button onClick={e => { e.stopPropagation(); onEditLead?.(lead); }} className="text-muted/40 hover:text-blue-500 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0 ml-1" title="Editar">
+            <Edit2 size={12} />
           </button>
         </div>
 
@@ -154,6 +159,7 @@ export const CaptacaoColumnComponent = ({
   onAddLead,
   onDeleteLead,
   onScheduleLead,
+onEditLead,
 }: {
   column: CaptacaoColumn;
   leads: Lead[];
@@ -161,6 +167,7 @@ export const CaptacaoColumnComponent = ({
   onAddLead: () => void;
   onDeleteLead: (id: string) => void;
   onScheduleLead?: (lead: Lead) => void;
+  onEditLead?: (lead: Lead) => void;
 }) => {
   const [isOver, setIsOver] = React.useState(false);
 
@@ -229,8 +236,7 @@ export const CaptacaoColumnComponent = ({
                 e.dataTransfer.setData('leadId', id);
                 e.dataTransfer.effectAllowed = 'move';
               }}
-              onDeleteLead={onDeleteLead}
-              onScheduleLead={onScheduleLead}
+              onDeleteLead={onDeleteLead} onScheduleLead={onScheduleLead} onEditLead={onEditLead}
             />
           ))
         ) : (
@@ -252,3 +258,8 @@ export const CaptacaoColumnComponent = ({
     </div>
   );
 };
+
+
+
+
+
